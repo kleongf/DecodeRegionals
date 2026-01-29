@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.robot.robots.TeleopRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.TeleopDrivetrain;
-import org.firstinspires.ftc.teamcode.util.decodeutil.ClosestPoint;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import com.pedropathing.paths.Path;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
