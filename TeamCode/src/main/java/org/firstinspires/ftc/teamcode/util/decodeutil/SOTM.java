@@ -180,4 +180,33 @@ public class SOTM {
         }
         return 2.0;
     }
+
+    private double[] calculateAzimuthThetaVelocity(Pose robotPose, Pose virtualGoal) {
+        double dx = virtualGoal.getX() - robotPose.getX();
+        double dy = virtualGoal.getY() - robotPose.getY();
+        double dist = Math.hypot(dx, dy);
+
+        boolean isBlue = goal.getX() == 0;
+        double offset = isBlue ? offsetFactor : -offsetFactor;
+
+        double azimuth = Math.atan2(-dx, dy) - robotPose.getHeading() + Math.toRadians(90) + offset;
+        double theta = thetaLUT.getValue(dist);
+        double velocity = velocityLUT.getValue(dist);
+        return new double[] {azimuth, theta, velocity};
+    }
+
+    public double[] calculateAzimuthThetaVelocityFRC(Pose robotPose, Vector robotVelocity) {
+        double dx = goal.getX() - robotPose.getX();
+        double dy = goal.getY() - robotPose.getY();
+        double dist = Math.hypot(dx, dy);
+
+        double theta = thetaLUT.getValue(dist);
+        double velocity = velocityLUT.getValue(dist);
+
+        // not perfect. timestep is going to overshoot a bit but not tryna use newtons method or do it again. it should be good enough.
+        double timestep = constantTimeFactor + timeScaleFactor * simulateProjectileTOF(0, MathUtil.inToM(dist), theta, velocity);
+        Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent());
+
+        return calculateAzimuthThetaVelocity(robotPose, virtualGoal);
+    }
 }

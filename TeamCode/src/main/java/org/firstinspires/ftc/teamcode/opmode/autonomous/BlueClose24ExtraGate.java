@@ -79,8 +79,13 @@ public class BlueClose24ExtraGate extends OpMode {
             ),
             new HeadingInterpolator.PiecewiseNode(
                     0.6,
+                    0.9,
+                    HeadingInterpolator.linear(Math.toRadians(180), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+            ),
+            new HeadingInterpolator.PiecewiseNode(
+                    0.9,
                     1,
-                    HeadingInterpolator.constant(Math.toRadians(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()))
+                    HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
             )
     );
 
@@ -88,6 +93,11 @@ public class BlueClose24ExtraGate extends OpMode {
             // TODO: find derivative of bezier curve @ toGate and make it linear fromGate
             new HeadingInterpolator.PiecewiseNode(
                     0,
+                    0.4,
+                    HeadingInterpolator.linear(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading(), Math.toRadians(180))
+            ),
+            new HeadingInterpolator.PiecewiseNode(
+                    0.4,
                     1,
                     HeadingInterpolator.tangent.reverse()
             )

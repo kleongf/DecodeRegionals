@@ -23,6 +23,17 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
+// realistically, these are the only two autonomous programs needed: an extra gate, a far auto,
+// and a safe far auto with Theseus pathing just in case.
+
+// that means that we must do our job and do it well.
+// the far auto must work well. cv must not just work in close ranges like this - it should work from all distances.
+// idea: we can update the closest point and always point to it with the face point interpolation?
+// but i think we should always be 180.
+// for more accuracy, maybe go to the middle? about x = 24 ish? we are going from x = 48 to x = 9 to check.
+// and check when we are like 24 inches away or something idk, so that where we go is good
+// could always be driving to the best point or something
+
 @Autonomous(name="Blue Far 30", group="!")
 public class BlueFar30 extends OpMode {
     private Follower follower;
