@@ -90,6 +90,11 @@ public class BlueFar30Better extends OpMode {
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
+//        follower.startTeleopDrive();
+//        follower.setTeleOpDrive();
+        // idea: set to teleop drive field centric and make it work idk
+        // pid to pose
+        // but in this case we need exact coords of ball
     }
 
     @Override
