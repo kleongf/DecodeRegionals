@@ -205,7 +205,7 @@ public class SOTM {
 
         // not perfect. timestep is going to overshoot a bit but not tryna use newtons method or do it again. it should be good enough.
         double timestep = constantTimeFactor + timeScaleFactor * simulateProjectileTOF(0, MathUtil.inToM(dist), theta, velocity);
-        Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent());
+        Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent()*timestep);
 
         return calculateAzimuthThetaVelocity(robotPose, virtualGoal);
     }
