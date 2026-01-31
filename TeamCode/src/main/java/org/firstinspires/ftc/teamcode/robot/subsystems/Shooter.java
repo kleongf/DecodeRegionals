@@ -67,7 +67,9 @@ public class Shooter extends Subsystem {
         double ticksPerRadian = (PITCH_SERVO_F-PITCH_SERVO_I)/(PITCH_F-PITCH_I);
         double adjustedAngle = angle - PITCH_I;
         double pos = PITCH_SERVO_MIN + adjustedAngle * ticksPerRadian;
-        pitchServo.setPosition(MathUtil.clamp(pos, PITCH_SERVO_I, PITCH_SERVO_F));
+        if (!Double.isNaN(pos)) {
+            pitchServo.setPosition(MathUtil.clamp(pos, PITCH_SERVO_I, PITCH_SERVO_F));
+        }
     }
 
     public void setTargetVelocity(double t) {

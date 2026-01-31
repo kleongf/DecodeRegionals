@@ -122,8 +122,9 @@ public class VisionAlign extends LinearOpMode {
          * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
          * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
          */
+        // TODO: GET THIS POSITION RIGHT. it's also
         Position cameraPosition = new Position(DistanceUnit.INCH,
-                -4, -6, 5, 0);
+                -4, 6, -5, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 0, -90, 0, 0);
 

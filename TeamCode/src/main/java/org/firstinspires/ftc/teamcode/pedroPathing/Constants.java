@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.drivetrain.Drivetrain;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -21,26 +22,26 @@ public class Constants {
             .mass(11)
             .forwardZeroPowerAcceleration((-38.04 + (-32) + (-40.17)) / 3.0)
             .lateralZeroPowerAcceleration(((-70.57) + (-66.93) + (-67.08)) / 3.0)
-            // .predictiveBrakingCoefficients()
+            // TODO: test again with predictive braking
+            //.predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.05, 0.11, 0.0008))
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
             .centripetalScaling(0.0005)
             .holdPointHeadingScaling(0.35)
             .holdPointTranslationalScaling(0.35)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0015, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.02, 0))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.003, 0))
+            .secondaryTranslationalPIDFCoefficients(
+                    new PIDFCoefficients(0.05, 0, 0.003, 0)
+            )
+            .headingPIDFCoefficients(new PIDFCoefficients(2, 0, 0.1, 0))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1.6, 0, 0.08, 0))
             .drivePIDFCoefficients(
                     new FilteredPIDFCoefficients(0.02, 0, 0.0002, 0.6, 0)
             )
-            .secondaryTranslationalPIDFCoefficients(
-                    new PIDFCoefficients(0.07, 0, 0.003, 0)
-            )
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.04, 0))
             .secondaryDrivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.02, 0, 0.0003, 0.6, 0)
+                    new FilteredPIDFCoefficients(0.02, 0, 0.0004, 0.6, 0)
             );
-            //.usePredictiveBraking;
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("front_left_drive")

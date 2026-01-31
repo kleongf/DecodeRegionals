@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.decodeutil;
 
+import android.util.Log;
+
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
@@ -13,7 +15,7 @@ public class SOTM {
     public double constantTimeFactor = 0;
     private double efficiency = 0.73;
     private double MAX_ITERATIONS = 200;
-    private double dt = 0.001;
+    private double dt = 0.01;
     private double g = 9.8;
     private double m = 0.07845;
     private double rho = 1.225;
@@ -28,29 +30,29 @@ public class SOTM {
         this.goal = goal;
 
         thetaLUT = new LUT();
-        thetaLUT.addData(163, Math.toRadians(15));
-        thetaLUT.addData(158, Math.toRadians(15));
-        thetaLUT.addData(153, Math.toRadians(15));
-        thetaLUT.addData(148, Math.toRadians(15));
-        thetaLUT.addData(143, Math.toRadians(15));
-        thetaLUT.addData(138, Math.toRadians(15));
-        thetaLUT.addData(133, Math.toRadians(15));
-        thetaLUT.addData(128, Math.toRadians(15));
-        thetaLUT.addData(123, Math.toRadians(15));
-        thetaLUT.addData(118, Math.toRadians(14.5));
-        thetaLUT.addData(113, Math.toRadians(13.5));
-        thetaLUT.addData(108, Math.toRadians(13));
-        thetaLUT.addData(103, Math.toRadians(12.5));
-        thetaLUT.addData(98, Math.toRadians(12));
-        thetaLUT.addData(93, Math.toRadians(11));
-        thetaLUT.addData(88, Math.toRadians(10));
-        thetaLUT.addData(83, Math.toRadians(9));
-        thetaLUT.addData(78, Math.toRadians(7));
-        thetaLUT.addData(73, Math.toRadians(4));
-        thetaLUT.addData(68, Math.toRadians(2));
-        thetaLUT.addData(63, Math.toRadians(1));
-        thetaLUT.addData(58, Math.toRadians(0));
-        thetaLUT.addData(53, Math.toRadians(0));
+        thetaLUT.addData(163, Math.toRadians(49));
+        thetaLUT.addData(158, Math.toRadians(49));
+        thetaLUT.addData(153, Math.toRadians(49));
+        thetaLUT.addData(148, Math.toRadians(49));
+        thetaLUT.addData(143, Math.toRadians(49));
+        thetaLUT.addData(138, Math.toRadians(49));
+        thetaLUT.addData(133, Math.toRadians(49));
+        thetaLUT.addData(128, Math.toRadians(49));
+        thetaLUT.addData(123, Math.toRadians(49));
+        thetaLUT.addData(118, Math.toRadians(48.5));
+        thetaLUT.addData(113, Math.toRadians(47.5));
+        thetaLUT.addData(108, Math.toRadians(47));
+        thetaLUT.addData(103, Math.toRadians(46.5));
+        thetaLUT.addData(98, Math.toRadians(46));
+        thetaLUT.addData(93, Math.toRadians(45));
+        thetaLUT.addData(88, Math.toRadians(44));
+        thetaLUT.addData(83, Math.toRadians(43));
+        thetaLUT.addData(78, Math.toRadians(41));
+        thetaLUT.addData(73, Math.toRadians(38));
+        thetaLUT.addData(68, Math.toRadians(36));
+        thetaLUT.addData(63, Math.toRadians(35));
+        thetaLUT.addData(58, Math.toRadians(34));
+        thetaLUT.addData(53, Math.toRadians(34));
 
         velocityLUT = new LUT();
         velocityLUT.addData(163, 1490);
@@ -204,7 +206,8 @@ public class SOTM {
         double velocity = velocityLUT.getValue(dist);
 
         // not perfect. timestep is going to overshoot a bit but not tryna use newtons method or do it again. it should be good enough.
-        double timestep = constantTimeFactor + timeScaleFactor * simulateProjectileTOF(0, MathUtil.inToM(dist), theta, velocity);
+        double timestep = constantTimeFactor + timeScaleFactor * simulateProjectileTOF(0, velocity, theta, MathUtil.inToM(dist));
+        Log.d("Timestep" + timestep, "timestep: " + timestep);
         Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent()*timestep);
 
         return calculateAzimuthThetaVelocity(robotPose, virtualGoal);
