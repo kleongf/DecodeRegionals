@@ -122,9 +122,9 @@ public class VisionAlign extends LinearOpMode {
          * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
          * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
          */
-        // TODO: GET THIS POSITION RIGHT. it's also
+        // TODO: GET THIS POSITION RIGHT. it's also wrong
         Position cameraPosition = new Position(DistanceUnit.INCH,
-                -4, 6, -5, 0);
+                -4, 5, 6, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 0, -90, 0, 0);
 
@@ -158,6 +158,7 @@ public class VisionAlign extends LinearOpMode {
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCameraResolution(new Size(640, 480));
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {

@@ -317,8 +317,6 @@ public class BlueClose24ExtraGate extends OpMode {
                         .onEnter(() -> {
                             follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
-//                        .minTime(600)
-//                        .transition(new Transition(() -> robot.intake.intakeFull()))
                         .maxTime(1000),
                 new State()
                         .onEnter(() -> {
