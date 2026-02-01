@@ -54,32 +54,34 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
     2. it follows path back when gate intaking is done
     3. it tries to sotm
  */
-@Autonomous(name="Blue Close 24 Extra Gate, SOTM + optimized pathing (no break beam)", group="!")
-public class BlueClose24ExtraGate extends OpMode {
+@Autonomous(name="Blue Close 24 Extra Gate, optimized pathing and predictive", group="!")
+public class BlueClose24ExtraGateV2 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
+    private final Pose startPose = PoseConstants.BLUE_CORNER_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private PathChain shootPreloadIntakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
+    private PathChain shootPreload, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
 
     public void buildPaths() {
-        shootPreloadIntakeSecond = follower.pathBuilder().addPath(
+        intakeSecond = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(60.000, 84.000),
+                                new Pose(50.000, 58.000),
+                                new Pose(15.000, 60.000)
+                        )
+                ).setTangentHeadingInterpolation()
+                .build();
+
+        shootPreload = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
-                                new Pose(54.000, 90.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(-110))
-                // TODO: MAKE IT SHOOT
-                .addPath(
-                        new BezierCurve(
-                                new Pose(54, 90),
-                                new Pose(40, 60),
-                                new Pose(15, 60)
+                                new Pose(60, 84)
                         )
                 )
-                .setTangentHeadingInterpolation()
+                // this interpolates it so that we are at the correct heading already at t=0
+                .setLinearHeadingInterpolation(startPose.getHeading(), intakeSecond.getHeadingGoal(new PathChain.PathT(0, 0)))
                 .build();
 
         shootSecond = follower.pathBuilder()
@@ -87,7 +89,6 @@ public class BlueClose24ExtraGate extends OpMode {
                         // Path 2
                         new BezierCurve(
                                 new Pose(15.000, 60.000),
-                                new Pose(30, 50),
                                 PoseConstants.BLUE_SHOOT_AUTO_POSE
                         )
                 )
@@ -98,11 +99,11 @@ public class BlueClose24ExtraGate extends OpMode {
         HeadingInterpolator toFirstGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
-                        0.8,
+                        0.7,
                         HeadingInterpolator.linear(shootSecond.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 ),
                 new HeadingInterpolator.PiecewiseNode(
-                        0.8,
+                        0.7,
                         1,
                         HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 )
@@ -118,6 +119,8 @@ public class BlueClose24ExtraGate extends OpMode {
                 )
                 .setConstantHeadingInterpolation(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 .setHeadingInterpolation(toFirstGate)
+                // TODO: see if this is good
+                .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -135,11 +138,11 @@ public class BlueClose24ExtraGate extends OpMode {
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
-                        0.8,
+                        0.7,
                         HeadingInterpolator.linear(shootGate1.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 ),
                 new HeadingInterpolator.PiecewiseNode(
-                        0.8,
+                        0.7,
                         1,
                         HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 )
@@ -153,8 +156,8 @@ public class BlueClose24ExtraGate extends OpMode {
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
-                .setConstantHeadingInterpolation(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 .setHeadingInterpolation(toGate)
+                .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -178,6 +181,7 @@ public class BlueClose24ExtraGate extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
+                .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -201,6 +205,7 @@ public class BlueClose24ExtraGate extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
+                .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -224,6 +229,7 @@ public class BlueClose24ExtraGate extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
+                .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -265,16 +271,23 @@ public class BlueClose24ExtraGate extends OpMode {
         buildPaths();
 
         stateMachine = new StateMachine(
-                // preload + second
+                // preload
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(shootPreloadIntakeSecond, false);
+                            follower.followPath(shootPreload, true);
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
-                        .maxTime(1000),
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                // intake second
+                new State()
+                        .onEnter(() -> {
+                            follower.followPath(intakeSecond, true);
+                            robot.intakeCommand.start();
+                        })
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 // second
                 new State()
                         .onEnter(() -> {
@@ -350,7 +363,7 @@ public class BlueClose24ExtraGate extends OpMode {
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
-                
+
                 // gate cycle 4
                 new State()
                         .onEnter(() -> {
@@ -446,7 +459,6 @@ public class BlueClose24ExtraGate extends OpMode {
     @Override
     public void start() {
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
-        robot.shooter.setTargetVelocity(1000);
         stateMachine.start();
         robot.start();
     }
@@ -456,4 +468,3 @@ public class BlueClose24ExtraGate extends OpMode {
         blackboard.put(RobotConstants.END_POSE_KEY, follower.getPose());
     }
 }
-

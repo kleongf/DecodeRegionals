@@ -32,7 +32,7 @@ public class MainTeleop {
     private TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
     private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.4;
-    private TeleopRobot robot;
+    public TeleopRobot robot;
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;

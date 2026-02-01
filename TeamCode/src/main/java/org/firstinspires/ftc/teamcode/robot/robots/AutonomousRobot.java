@@ -59,14 +59,15 @@ public class AutonomousRobot {
         commands.add(intakeCommand);
 
         shootCommand = new StateMachine(
+//                new State()
+//                        .onEnter(() -> {
+//                            intake.state = Intake.IntakeState.INTAKE_OFF;
+//                            shooter.openLatch();
+//                        })
+//                        .maxTime(10),
                 new State()
                         .onEnter(() -> {
-                            intake.state = Intake.IntakeState.INTAKE_OFF;
                             shooter.openLatch();
-                        })
-                        .maxTime(10),
-                new State()
-                        .onEnter(() -> {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                         })
                         // TODO: .transition(new Transition(() -> !intake.intakeFull()))

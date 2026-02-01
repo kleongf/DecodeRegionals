@@ -5,6 +5,9 @@ import com.pedropathing.geometry.Pose;
 public class PoseConstants {
     // Teleop Poses
     public static double DISTANCE_IN = 10; // if it is not holding/correcting can increase this number
+    public static double ROBOT_CENTER_TO_FRONT_LENGTH = 9; // center of drivetrain to front of robot
+    public static double ROBOT_WIDTH = 15.1/2d;
+    public static Pose BLUE_CORNER_AUTO_POSE = new Pose(27.649656674163825, 132.53866930748939, Math.toRadians(144));
     public static Pose BLUE_GOAL_POSE = new Pose(0, 144, Math.toRadians(135));
     public static Pose RED_GOAL_POSE = new Pose(144, 144, Math.toRadians(45));
     public static Pose BLUE_FAR_POSE =  new Pose(54, 12, Math.toRadians(180));
