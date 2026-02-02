@@ -39,36 +39,22 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
-
-// say with new transfer it takes us 0.3s less per shot.
-// not sotming 1st shot: 0.3 * 7 = 2.1s
-// maybe we save 0.3s on 4 gate intakes = 1.2s
-// better tuning+pathing saves us maybe 0.3s per cycle = 1.2s
-// it is def possible to get under that time. maybe use turtle pathing as well but honestly i dont like it much
-// would rather sotm first shot when conditions right
-// for other shots idk just edge the pathing as close as possible, try diff paths to maximize speed
-
-// this auto is different in a few ways:
-/*
-    1. it uses partially tangential paths for gate cycle
-    2. it follows path back when gate intaking is done
-    3. it tries to sotm
- */
-@Autonomous(name="Blue Close 24 Extra Gate, good pathing and predictive", group="!")
-public class BlueClose24ExtraGateV2 extends OpMode {
+@Autonomous(name="Blue Close 24 Extra Gate, v3 optimized pathing and predictive", group="!")
+public class BlueClose24ExtraGateV3 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private final Pose startPose = PoseConstants.BLUE_CORNER_AUTO_POSE;
+    // Mathematically the correct pose based on the robot's length and width.
+    private final Pose startPose = new Pose(29.4664028463, 133.308918506, Math.toRadians(144));
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
     private PathChain shootPreload, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
 
     public void buildPaths() {
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(60.000, 84.000),
-                                new Pose(50.000, 58.000),
+                                new Pose(60.000, 75.000),
+                                new Pose(50.000, 48.000),
                                 new Pose(15.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
@@ -77,158 +63,132 @@ public class BlueClose24ExtraGateV2 extends OpMode {
         shootPreload = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
-                                new Pose(60, 84)
+                                new Pose(60, 75)
                         )
                 )
                 // this interpolates it so that we are at the correct heading already at t=0
                 .setLinearHeadingInterpolation(startPose.getHeading(), intakeSecond.getHeadingGoal(new PathChain.PathT(0, 0)))
                 .build();
 
-        shootSecond = follower.pathBuilder()
-                .addPath(
-                        // Path 2
+        // Mathematically proven to end at the correct angle
+        intakeGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(15.000, 60.000),
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
-                )
-                .setTangentHeadingInterpolation()
+                ).setTangentHeadingInterpolation()
+                .build();
+
+        // TODO: make linear heading interpolation so we don't jolt at the start of next path
+        shootSecond = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(15.000, 60.000),
+                                new Pose(60.000, 75.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), intakeGate1.getHeadingGoal(new PathChain.PathT(0, 0)))
                 .setReversed()
                 .build();
 
-        HeadingInterpolator toFirstGate = HeadingInterpolator.piecewise(
-                new HeadingInterpolator.PiecewiseNode(
-                        0,
-                        0.7,
-                        HeadingInterpolator.linear(shootSecond.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
-                ),
-                new HeadingInterpolator.PiecewiseNode(
-                        0.7,
-                        1,
-                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
-                )
-        );
-
-        intakeGate1 = follower.pathBuilder()
-                .addPath(
+        intakeGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE,
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
-                )
-                .setConstantHeadingInterpolation(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
-                .setHeadingInterpolation(toFirstGate)
-                // TODO: see if this is good
+                ).setTangentHeadingInterpolation()
                 .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
         shootGate1 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE
+                        new BezierCurve(
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        HeadingInterpolator toGate = HeadingInterpolator.piecewise(
-                new HeadingInterpolator.PiecewiseNode(
-                        0,
-                        0.7,
-                        HeadingInterpolator.linear(shootGate1.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
-                ),
-                new HeadingInterpolator.PiecewiseNode(
-                        0.7,
-                        1,
-                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
-                )
-        );
-
-        intakeGate2 = follower.pathBuilder()
-                .addPath(
+        intakeGate2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE,
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
-                )
-                .setHeadingInterpolation(toGate)
+                ).setTangentHeadingInterpolation()
                 .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
         shootGate2 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE
+                        new BezierCurve(
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        intakeGate3 = follower.pathBuilder()
-                .addPath(
+        intakeGate3 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE,
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
-                )
-                .setHeadingInterpolation(toGate)
+                ).setTangentHeadingInterpolation()
                 .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
         shootGate3 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE
+                        new BezierCurve(
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        intakeGate4 = follower.pathBuilder()
-                .addPath(
+        intakeGate4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE,
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
-                )
-                .setHeadingInterpolation(toGate)
+                ).setTangentHeadingInterpolation()
                 .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
         shootGate4 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE
+                        new BezierCurve(
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        intakeGate5 = follower.pathBuilder()
-                .addPath(
+        intakeGate5 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_SHOOT_AUTO_POSE,
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
                         )
-                )
-                .setHeadingInterpolation(toGate)
+                ).setTangentHeadingInterpolation()
                 .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
@@ -236,7 +196,19 @@ public class BlueClose24ExtraGateV2 extends OpMode {
         shootGate5 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                new Pose(60.000, 75.000),
+                                new Pose(24.721, 52.051),
+                                new Pose(12.000, 60.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .setReversed()
+                .build();
+
+        shootGate5 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(12.000, 60.000),
                                 new Pose(50,60),
                                 new Pose(54, 84)
                         )

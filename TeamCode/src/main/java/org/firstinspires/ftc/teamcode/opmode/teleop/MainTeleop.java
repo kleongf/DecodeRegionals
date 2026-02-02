@@ -28,6 +28,8 @@ public class MainTeleop {
         IDLE,
         SHOOTING
     }
+    // TODO: also have it so when driver 2 has a trigger down then go slow
+    // also side quest kalman filter stuff
     private RobotState robotState;
     private TeleopDrivetrain drivetrain;
     private double turretOffset = 0;

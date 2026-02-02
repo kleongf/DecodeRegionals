@@ -96,14 +96,14 @@ public class SOTM {
     private double calculateShooterVelocity(double dist, double vRadial) {
         double x = dist;
         double y = vRadial;
-        return 1112.391 + -296.545*x + -18.056*y + 171.496*x*x + -54.964*x*y + 15.887*y*y + -17.141*x*x*x + 7.496*x*x*y + -4.187*x*y*y + 1.525*y*y*y;
+        return 970.001 + -252.482*x + -10.648*y + 148.175*x*x + -52.159*x*y + 18.779*y*y + -14.778*x*x*x + 7.288*x*x*y + -5.063*x*y*y + 1.249*y*y*y;
     }
 
     // assumes units meters, meters/s
     private double calculateShooterAngle(double dist, double vRadial) {
         double x = dist;
         double y = vRadial;
-        return 6.729 + 16.503*x + -10.538*y + -1.039*x*x + 0.842*x*y + 0.019*y*y + -0.125*x*x*x + 0.286*x*x*y + -0.337*x*y*y + 0.102*y*y*y;
+        return 7.622 + 15.306*x + -10.840*y + -0.581*x*x + 1.017*x*y + 0.267*y*y + -0.179*x*x*x + 0.252*x*x*y + -0.422*x*y*y + 0.154*y*y*y;
     }
 
     public double[] calculateAzimuthThetaVelocity(Pose robotPose, Vector robotVelocity) {
