@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.tuning;
 
 import android.util.Size;
+
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -123,8 +125,9 @@ public class VisionAlign extends LinearOpMode {
          * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
          */
         // TODO: GET THIS POSITION RIGHT. it's also wrong
-        Position cameraPosition = new Position(DistanceUnit.INCH,
-                -4, 5, 6, 0);
+        // 314mm to the left, 142mm to the front, and 230mm from the ground
+        Position cameraPosition = new Position(DistanceUnit.MM,
+                -314, 142, 230, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 0, -90, 0, 0);
 
@@ -146,6 +149,8 @@ public class VisionAlign extends LinearOpMode {
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
+
+        aprilTag.setDecimation(2);
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
@@ -196,6 +201,9 @@ public class VisionAlign extends LinearOpMode {
     /**
      * Add telemetry about AprilTag detections.
      */
+    private Pose toPinpointPose(Pose webcamPose) {
+        return new Pose(72 + webcamPose.getY(), 72 - webcamPose.getX(), webcamPose.getHeading());
+    }
     private void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -207,9 +215,9 @@ public class VisionAlign extends LinearOpMode {
                 // TODO: use the degree output to power the pid
                 // say when we have the trigger pressed down, we turn on the turret pid thingy
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+//                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+//                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+//                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 if (!detection.metadata.name.contains("Obelisk")) {
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
                             detection.robotPose.getPosition().x,
@@ -219,6 +227,8 @@ public class VisionAlign extends LinearOpMode {
                             detection.robotPose.getOrientation().getPitch(AngleUnit.DEGREES),
                             detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
                             detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
+                    Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+                    telemetry.addLine("Pinpoint Pose: x: " + ppPose.toString());
                 }
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));

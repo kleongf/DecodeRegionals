@@ -38,7 +38,7 @@ public class MainTeleop {
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;
-    private boolean automateRobot = true;
+    private boolean automateRobot = false;
     private Telemetry telemetry;
     private Alliance alliance;
     private PathBuilder pathBuilder;
@@ -103,11 +103,11 @@ public class MainTeleop {
 
         // TODO: WILL BE USED LATER. CAN BE OPTIMIZED: STOP INTAKE WHEN 3 BALLS.
 
-        if (robotState == RobotState.IDLE && robot.intake.intakeFull()) {
-            robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
-        } else if (robotState == RobotState.IDLE && !robot.intake.intakeFull()) {
-            robot.intake.state = Intake.IntakeState.INTAKE_FAST;
-        }
+//        if (robotState == RobotState.IDLE && robot.intake.intakeFull()) {
+//            robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
+//        } else if (robotState == RobotState.IDLE && !robot.intake.intakeFull()) {
+//            robot.intake.state = Intake.IntakeState.INTAKE_FAST;
+//        }
 
         if (automateRobot) {
             // robot not in shooting zone, intake is full, drivetrain not busy, and not shooting
