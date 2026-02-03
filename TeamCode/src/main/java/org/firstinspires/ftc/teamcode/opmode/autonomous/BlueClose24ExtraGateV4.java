@@ -100,7 +100,7 @@ public class BlueClose24ExtraGateV4 extends OpMode {
                                 new Pose(12.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
-                .setBrakingStart(2)
+                // .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -123,7 +123,7 @@ public class BlueClose24ExtraGateV4 extends OpMode {
                                 new Pose(12.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
-                .setBrakingStart(2)
+                // .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -146,7 +146,7 @@ public class BlueClose24ExtraGateV4 extends OpMode {
                                 new Pose(12.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
-                .setBrakingStart(2)
+                // .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -169,7 +169,7 @@ public class BlueClose24ExtraGateV4 extends OpMode {
                                 new Pose(12.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
-                .setBrakingStart(2)
+                // .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -192,7 +192,7 @@ public class BlueClose24ExtraGateV4 extends OpMode {
                                 new Pose(12.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
-                .setBrakingStart(2)
+                // .setBrakingStart(2)
                 .setTValueConstraint(0.99)
                 .build();
 
