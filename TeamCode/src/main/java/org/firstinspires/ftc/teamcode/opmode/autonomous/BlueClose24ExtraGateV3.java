@@ -82,12 +82,12 @@ public class BlueClose24ExtraGateV3 extends OpMode {
 
         // TODO: make linear heading interpolation so we don't jolt at the start of next path
         shootSecond = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 new Pose(15.000, 60.000),
+                                new Pose(35.000, 55.000),
                                 new Pose(60.000, 75.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), intakeGate1.getHeadingGoal(new PathChain.PathT(0, 0)))
-                .setReversed()
                 .build();
 
         intakeGate1 = follower.pathBuilder().addPath(
