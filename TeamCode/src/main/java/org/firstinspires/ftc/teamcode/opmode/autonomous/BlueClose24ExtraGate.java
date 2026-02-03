@@ -279,6 +279,7 @@ public class BlueClose24ExtraGate extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
+                            robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()

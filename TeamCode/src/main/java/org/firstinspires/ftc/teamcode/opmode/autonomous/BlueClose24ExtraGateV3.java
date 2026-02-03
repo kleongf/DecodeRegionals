@@ -1,20 +1,4 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
-// try the custom heading interpolator to move tangentially to and from the goal.
-// alternatively just be straight until a point then turn
-
-// this should increase speed.
-// leave goal when 3 balls
-// sotm last shot (and use a better point)
-
-// sotm on all the time?
-// maybe use the zoneutil? when in zone, shoot, start next path right away? maybe too risky
-// just remove all shooting time with sotm
-
-// todo:
-// make shoot at beginning
-// better linear pathing to and from gate
-// add back the hold point
-// calculate the tangent point derivative so that we know the linear pathing
 
 import static java.lang.Thread.sleep;
 
@@ -51,15 +35,7 @@ public class BlueClose24ExtraGateV3 extends OpMode {
     private PathChain shootPreload, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
 
     public void buildPaths() {
-        intakeSecond = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(60.000, 75.000),
-                                new Pose(50.000, 48.000),
-                                new Pose(15.000, 60.000)
-                        )
-                ).setTangentHeadingInterpolation()
-                .build();
-
+        // TODO: put actual headings instead of stupid pathT thing, it seems to be bugging
         shootPreload = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
@@ -70,17 +46,15 @@ public class BlueClose24ExtraGateV3 extends OpMode {
                 .setLinearHeadingInterpolation(startPose.getHeading(), intakeSecond.getHeadingGoal(new PathChain.PathT(0, 0)))
                 .build();
 
-        // Mathematically proven to end at the correct angle
-        intakeGate1 = follower.pathBuilder().addPath(
+        intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 75.000),
-                                new Pose(24.721, 52.051),
-                                new Pose(12.000, 60.000)
+                                new Pose(50.000, 48.000),
+                                new Pose(15.000, 60.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .build();
 
-        // TODO: make linear heading interpolation so we don't jolt at the start of next path
         shootSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(15.000, 60.000),
@@ -90,6 +64,7 @@ public class BlueClose24ExtraGateV3 extends OpMode {
                 ).setLinearHeadingInterpolation(Math.toRadians(180), intakeGate1.getHeadingGoal(new PathChain.PathT(0, 0)))
                 .build();
 
+        // Mathematically proven to end at the correct angle
         intakeGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 75.000),
@@ -104,9 +79,9 @@ public class BlueClose24ExtraGateV3 extends OpMode {
         shootGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 75.000),
+                                new Pose(12.000, 60.000),
                                 new Pose(24.721, 52.051),
-                                new Pose(12.000, 60.000)
+                                new Pose(60.000, 75.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -127,9 +102,9 @@ public class BlueClose24ExtraGateV3 extends OpMode {
         shootGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 75.000),
+                                new Pose(12.000, 60.000),
                                 new Pose(24.721, 52.051),
-                                new Pose(12.000, 60.000)
+                                new Pose(60.000, 75.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -150,9 +125,9 @@ public class BlueClose24ExtraGateV3 extends OpMode {
         shootGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 75.000),
+                                new Pose(12.000, 60.000),
                                 new Pose(24.721, 52.051),
-                                new Pose(12.000, 60.000)
+                                new Pose(60.000, 75.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -173,9 +148,9 @@ public class BlueClose24ExtraGateV3 extends OpMode {
         shootGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 75.000),
+                                new Pose(12.000, 60.000),
                                 new Pose(24.721, 52.051),
-                                new Pose(12.000, 60.000)
+                                new Pose(60.000, 75.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
