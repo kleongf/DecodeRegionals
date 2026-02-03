@@ -33,6 +33,7 @@ public class MainTeleop {
     private RobotState robotState;
     private TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
+    private double speedScaler = 1;
     private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.4;
     public TeleopRobot robot;
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
@@ -81,13 +82,13 @@ public class MainTeleop {
     public void loop() {
         if (alliance == Alliance.BLUE) {
             // TODO: no idea, might have to add the 180 offset for red
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
-                    -normalizeInput(gamepad1.left_stick_x*lateralSpeed),
-                    -normalizeInput(gamepad1.right_stick_x*rotationSpeed));
+            drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
+                    speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
+                    speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         } else if (alliance == Alliance.RED) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
-                    -normalizeInput(gamepad1.left_stick_x*lateralSpeed),
-                    -normalizeInput(gamepad1.right_stick_x*rotationSpeed));
+            drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
+                    speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
+                    speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         }
 
         Pose currentPose = drivetrain.getPose();
@@ -212,14 +213,19 @@ public class MainTeleop {
                                     )
                             )
                     )
-                    .setLinearHeadingInterpolation(currentPose.getHeading(), gateIntakePose.getHeading())
+                    .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading())
                     .build();
             drivetrain.park(park);
         }
 
         // GAMEPAD 2 (OPERATOR)
 
-        // TODO: setting which zone
+        // slow mo for good park, 0.3x speed
+        if (Math.abs(gamepad2.left_trigger) > 0.05 || Math.abs(gamepad2.right_trigger) > 0.05) {
+            speedScaler = 0.3;
+        } else {
+            speedScaler = 1;
+        }
 
         // field-centric safety
         if (gamepad2.bWasPressed()) {
@@ -265,7 +271,7 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocity(currentPose, currentVelocity);
+        double[] values = sotm.calculateAzimuthThetaVelocityFRC(currentPose, currentVelocity);
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
         robot.turret.setFeedforward(0);
