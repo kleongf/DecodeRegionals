@@ -7,6 +7,8 @@ public class PoseConstants {
     public static double DISTANCE_IN = 10; // if it is not holding/correcting can increase this number
     public static double ROBOT_CENTER_TO_FRONT_LENGTH = 9; // center of drivetrain to front of robot
     public static double ROBOT_WIDTH = 15.1/2d;
+    public static Pose BLUE_RELOCALIZATION_POSE = new Pose(136.45, 6, Math.toRadians(90));
+    public static Pose RED_RELOCALIZATION_POSE = new Pose(7.55, 6, Math.toRadians(90));
     public static Pose BLUE_CORNER_AUTO_POSE = new Pose(27.649656674163825, 132.53866930748939, Math.toRadians(144));
     public static Pose BLUE_GOAL_POSE = new Pose(0, 144, Math.toRadians(135));
     public static Pose RED_GOAL_POSE = new Pose(144, 144, Math.toRadians(45));
@@ -16,8 +18,8 @@ public class PoseConstants {
 
     public static Pose RED_GATE_POSE = new Pose(144-14, 70, Math.toRadians(270));
 
-    public static Pose RED_PARK_POSE = new Pose(39, 35, Math.toRadians(90));
-    public static Pose BLUE_PARK_POSE = new Pose(144-39, 35, Math.toRadians(90));
+    public static Pose RED_PARK_POSE = new Pose(39, 14, Math.toRadians(270));
+    public static Pose BLUE_PARK_POSE = new Pose(144-39, 14, Math.toRadians(270));
 
     // Autonomous Poses
     public static Pose BLUE_CLOSE_AUTO_POSE = new Pose(31.5, 137.6, Math.toRadians(270));

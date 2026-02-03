@@ -29,7 +29,7 @@ public class Turret extends Subsystem {
 
         //turretController = new PIDFController(0.005, 0, 0.00005, 0);
         // TODO: retune turret. doesn't need to be strong just needs to follow goal
-        turretController = new PIDFController(0.002, 0, 0.00012, 0);
+        turretController = new PIDFController(0.003, 0, 0.00015, 0);
     }
 
     @Override
@@ -46,6 +46,7 @@ public class Turret extends Subsystem {
         if (Math.abs(t-c) > 300 && Math.abs(power) > maxPower) {
             power = Math.signum(power) * maxPower;
         }
+        power += feedforward;
 
 //        if (Math.abs(c-t) > 10) {
 //            double error = t-c;

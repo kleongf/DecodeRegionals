@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Zone;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
 
 
-public class MainTeleop {
+public class MainTeleop2 {
     public enum RobotState {
         IDLE,
         SHOOTING
@@ -46,7 +46,7 @@ public class MainTeleop {
     private Zone currentZone;
     private ZoneUtil zoneUtil;
 
-    public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
+    public MainTeleop2(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
         drivetrain.setStartingPose(startPose);
         pathBuilder = drivetrain.follower.pathBuilder();
@@ -290,10 +290,10 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFRC(currentPose, currentVelocity);
+        double[] values = sotm.calculateAzimuthThetaVelocityFeedforward(currentPose, currentVelocity);
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
-        robot.turret.setFeedforward(0);
+        robot.turret.setFeedforward(values[3]);
         robot.turret.setTarget(values[0]+turretOffset);
 
         robot.update();

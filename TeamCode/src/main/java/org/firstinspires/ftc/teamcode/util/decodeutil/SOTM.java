@@ -10,6 +10,7 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
+    public double kF = 0.1;
     public double timeScaleFactor = 1;
     public double offsetFactor = 0; // think i found it! after doing some algebra. should be 0.05?
     public double constantTimeFactor = 0;
@@ -96,14 +97,14 @@ public class SOTM {
     private double calculateShooterVelocity(double dist, double vRadial) {
         double x = dist;
         double y = vRadial;
-        return 970.001 + -252.482*x + -10.648*y + 148.175*x*x + -52.159*x*y + 18.779*y*y + -14.778*x*x*x + 7.288*x*x*y + -5.063*x*y*y + 1.249*y*y*y;
+        return 1200.191 + -417.181*x + 31.168*y + 223.355*x*x + -98.919*x*y + 22.959*y*y + -24.137*x*x*x + 16.691*x*x*y + -7.561*x*y*y + 1.084*y*y*y;
     }
 
     // assumes units meters, meters/s
     private double calculateShooterAngle(double dist, double vRadial) {
         double x = dist;
         double y = vRadial;
-        return 7.622 + 15.306*x + -10.840*y + -0.581*x*x + 1.017*x*y + 0.267*y*y + -0.179*x*x*x + 0.252*x*x*y + -0.422*x*y*y + 0.154*y*y*y;
+        return 11.035 + 10.821*x + -8.834*y + 1.341*x*x + -0.626*x*y + -0.043*y*y + -0.442*x*x*x + 0.594*x*x*y + -0.321*x*y*y + 0.020*y*y*y;
     }
 
     public double[] calculateAzimuthThetaVelocity(Pose robotPose, Vector robotVelocity) {
@@ -139,6 +140,52 @@ public class SOTM {
         double azimuth = Math.atan2(-(dx - vTangential.getXComponent() * timestep), (dy - vTangential.getYComponent() * timestep)) - robotPose.getHeading() + Math.toRadians(90) + offset;
 
         return new double[]{azimuth, theta, velocity};
+    }
+    // with feedforward
+    public double[] calculateAzimuthThetaVelocityFeedforward(Pose robotPose, Vector robotVelocity) {
+        double dx = goal.getX() - robotPose.getX();
+        double dy = goal.getY() - robotPose.getY();
+        double dist = Math.hypot(dx, dy);
+
+        boolean isBlue = goal.getX() == 0;
+
+        Vector v = MathUtil.subtractVectors(MathUtil.getVector(goal), MathUtil.getVector(robotPose));
+        Vector u = robotVelocity;
+
+        // (u ⋅ v / |v|²) * v
+        Vector projuv = MathUtil.scalarMultiplyVector(v, MathUtil.dotProduct(u, v) / MathUtil.dotProduct(v, v));
+
+        // get the tangential component
+        Vector vTangential = MathUtil.subtractVectors(u, projuv);
+
+        // if the vectors are in the same direction, then we should subtract the radial velocity
+        // vectors are in the same direction if their dot product is positive, so dot it with the goal vector.
+        double vRadial = MathUtil.dotProduct(projuv, v) > 0 ? projuv.getMagnitude() : -projuv.getMagnitude();
+
+        double velocity = calculateShooterVelocity(MathUtil.inToM(dist), MathUtil.inToM(vRadial));
+        double theta = Math.toRadians(calculateShooterAngle(MathUtil.inToM(dist), MathUtil.inToM(vRadial)));
+
+        double timestep = constantTimeFactor + timeScaleFactor * simulateProjectileTOF(MathUtil.inToM(vRadial), MathUtil.inToM(dist), theta, velocity);
+
+        // could possibly be used for offset calculations.
+        // double angleToGoal = Math.atan2(-(dx-vTangential.getXComponent()*timestep), (dy-vTangential.getYComponent()*timestep));
+
+        double offset = isBlue ? offsetFactor : -offsetFactor;
+
+        double azimuth = Math.atan2(-(dx), (dy)) - robotPose.getHeading() + Math.toRadians(90) + offset;
+        // we know that the tangential velocity is perpendicular to the goal vector
+        // the question is: what direction is it in?
+
+        // ok i think i found the better way: if the cross product is positive, then turret goes left = positive.
+        // if cross product is negative, then
+
+        // the only thing: the pid should overpower the feedforward at anglewrap points.
+
+        // TODO: also retune the shooting stuff, max is like 1500
+        double goalCrossTangentialVel = MathUtil.getVector(goal).cross(vTangential.times(timestep));
+        double feedForward = goalCrossTangentialVel > 0 ? kF * Math.atan2(-vTangential.getMagnitude() * timestep, dist) : - kF * Math.atan2(-vTangential.getMagnitude() * timestep, dist);
+
+        return new double[]{azimuth, theta, velocity, feedForward};
     }
 
     // returns the amount of time a projectile will take in air. inputs radial vel (m/s), dist (m), theta (rad), velocity (ticks/s)
