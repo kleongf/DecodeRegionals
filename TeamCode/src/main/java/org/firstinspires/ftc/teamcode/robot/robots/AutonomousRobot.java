@@ -52,6 +52,10 @@ public class AutonomousRobot {
                 new State()
                         .onEnter(() -> {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
+                        })
+                        .maxTime(200),
+                new State()
+                        .onEnter(() -> {
                             shooter.closeLatch();
                         })
                         .maxTime(100)
@@ -72,7 +76,7 @@ public class AutonomousRobot {
                         })
                         // TODO: .transition(new Transition(() -> !intake.intakeFull()))
                         // this does not quite work unless we know exactly how many we have
-                        .maxTime(600));
+                        .maxTime(350)); // new time apparently
         commands.add(shootCommand);
 
         shootCommandSlow = new StateMachine(
