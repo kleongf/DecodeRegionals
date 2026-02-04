@@ -38,7 +38,7 @@ public class BlueClose24ExtraGateV5 extends OpMode {
                                 startPose,
                                 new Pose(60, 75)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(-143))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-143))
                 .build();
 
         intakeSecond = follower.pathBuilder()
@@ -230,6 +230,9 @@ public class BlueClose24ExtraGateV5 extends OpMode {
         buildPaths();
 
         stateMachine = new StateMachine(
+                // TODO: when pathing is finalized, next priority is SOTM and driver automations
+                // i believe we can save at least a second with sotm at beginning.
+
                 // preload
                 new State()
                         .onEnter(() -> {
@@ -419,7 +422,8 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     @Override
     public void start() {
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
-        robot.shooter.setTargetVelocity(1000);
+        double[] values = sotm2.calculateAzimuthThetaVelocity(new Pose(60, 75, Math.toRadians(-143)), new Vector());
+        robot.setAzimuthThetaVelocity(values);
         stateMachine.start();
         robot.start();
     }
