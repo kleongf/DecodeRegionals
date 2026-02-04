@@ -94,6 +94,7 @@ public class MainTeleop2 {
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
         Vector currentVelocity = drivetrain.getVelocity();
+        double currentAngularVelocity = drivetrain.getAngularVelocity();
 
         // SETTING ROBOT STATE
         if (robot.shootCommand.isFinished()) {
@@ -290,7 +291,7 @@ public class MainTeleop2 {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFeedforward(currentPose, currentVelocity);
+        double[] values = sotm.calculateAzimuthThetaVelocityFeedforward(currentPose, currentVelocity, currentAngularVelocity);
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
         robot.turret.setFeedforward(values[3]);

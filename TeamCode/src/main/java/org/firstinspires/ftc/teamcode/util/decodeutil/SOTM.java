@@ -142,7 +142,7 @@ public class SOTM {
         return new double[]{azimuth, theta, velocity};
     }
     // with feedforward
-    public double[] calculateAzimuthThetaVelocityFeedforward(Pose robotPose, Vector robotVelocity) {
+    public double[] calculateAzimuthThetaVelocityFeedforward(Pose robotPose, Vector robotVelocity, double angularVelocity) {
         double dx = goal.getX() - robotPose.getX();
         double dy = goal.getY() - robotPose.getY();
         double dist = Math.hypot(dx, dy);
@@ -196,7 +196,7 @@ public class SOTM {
         // this gives us a good angle to perform feedforward calculations
         double angleBetween = Math.acos(MathUtil.dotProduct(v, vPlusVel) / (v.getMagnitude() * vPlusVel.getMagnitude()));
         // remember that turret always corrects in the opposite direction of velocity, so its negative
-        double feedForward = -kF * angleBetween;
+        double feedForward = -kF * (angleBetween + angularVelocity);
 
         return new double[]{azimuth, theta, velocity, feedForward};
     }
