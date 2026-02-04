@@ -10,7 +10,7 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
-    public double kF = 0.1;
+    public double kF = 0.07905138339;
     public double timeScaleFactor = 1;
     public double offsetFactor = 0; // think i found it! after doing some algebra. should be 0.05?
     public double constantTimeFactor = 0;
@@ -196,6 +196,9 @@ public class SOTM {
         // this gives us a good angle to perform feedforward calculations
         double angleBetween = Math.acos(MathUtil.dotProduct(v, vPlusVel) / (v.getMagnitude() * vPlusVel.getMagnitude()));
         // remember that turret always corrects in the opposite direction of velocity, so its negative
+
+        // 2.01388888889 revs per second = 12.653637077 radians per secon
+        // therefore kF is approximately 1 / 12.653637077
         double feedForward = -kF * (angleBetween + angularVelocity);
 
         return new double[]{azimuth, theta, velocity, feedForward};

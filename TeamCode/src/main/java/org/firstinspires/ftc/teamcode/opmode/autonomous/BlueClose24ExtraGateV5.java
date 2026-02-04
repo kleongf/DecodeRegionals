@@ -420,8 +420,9 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     @Override
     public void loop() {
         double[] values;
-        values = sotm2.calculateAzimuthThetaVelocityFRC(follower.getPose(), new Vector());
-        robot.setAzimuthThetaVelocity(values);
+        values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+        robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
+        robot.turret.setFeedforward(values[3]);
 //        if (follower.getPose() != null && follower.getVelocity() != null) {
 //            values = sotm2.calculateAzimuthThetaVelocity(follower.getPose(), follower.getVelocity());
 //            robot.setAzimuthThetaVelocity(values);
