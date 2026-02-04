@@ -184,7 +184,13 @@ public class SOTM {
         // lets do it the right way
 
         // x plus velocity
-        Vector vPlusVel = v.plus(vTangential.times(timestep));
+
+        // curious idea: do we also need to add a feedforward for rotational velocity?
+        // i would assume that when shooting we are not turning and thus the proportional term should  be good
+
+        // this is the feedforward. this gives us the target angular velocity of the turret using omega  v / r
+        // however, the goal vector and the velocity vector are rotated -  we must do some linalg to get the angular velocity.
+        Vector vPlusVel = v.plus(vTangential);
 
         // dot product: ab cos theta, theta = cos-1 ((a dot b) / |a| |b|)
         // this gives us a good angle to perform feedforward calculations

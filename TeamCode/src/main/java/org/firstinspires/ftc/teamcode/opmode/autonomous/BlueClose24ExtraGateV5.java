@@ -30,9 +30,25 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     private SOTM sotm2;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private PathChain shootPreload, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
+    private PathChain shootPreloadIntakeSecond, shootPreload, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
 
     public void buildPaths() {
+        shootPreloadIntakeSecond = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                startPose,
+                                new Pose(60, 75)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-143))
+                .addPath(
+                        new BezierCurve(
+                                new Pose(60, 75),
+                                new Pose(40, 60),
+                                new Pose(15, 60)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
         shootPreload = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
@@ -233,23 +249,21 @@ public class BlueClose24ExtraGateV5 extends OpMode {
                 // TODO: when pathing is finalized, next priority is SOTM and driver automations
                 // i believe we can save at least a second with sotm at beginning.
 
-                // preload
+                // shoot preload and intake second
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(shootPreload, true);
+                            follower.followPath(shootPreloadIntakeSecond, true);
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .maxTime(800),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
-                // intake second
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(intakeSecond, true);
                             robot.intakeCommand.start();
                         })
-                        .transition(new Transition(() -> follower.atParametricEnd())),
+                        .transition(new Transition(() -> !follower.isBusy())),
                 // second
                 new State()
                         .onEnter(() -> {
