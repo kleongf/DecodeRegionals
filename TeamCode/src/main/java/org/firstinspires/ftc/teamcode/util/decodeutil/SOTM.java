@@ -171,6 +171,7 @@ public class SOTM {
         // double angleToGoal = Math.atan2(-(dx-vTangential.getXComponent()*timestep), (dy-vTangential.getYComponent()*timestep));
 
         double offset = isBlue ? offsetFactor : -offsetFactor;
+        // a derivative component may not even be necessary
 
         double azimuth = Math.atan2(-(dx), (dy)) - robotPose.getHeading() + Math.toRadians(90) + offset;
         // we know that the tangential velocity is perpendicular to the goal vector
@@ -179,11 +180,17 @@ public class SOTM {
         // ok i think i found the better way: if the cross product is positive, then turret goes left = positive.
         // if cross product is negative, then
 
-        // the only thing: the pid should overpower the feedforward at anglewrap points.
+        // i was doing it wrong, this cross product thing is goofy
+        // lets do it the right way
 
-        // TODO: also retune the shooting stuff, max is like 1500
-        double goalCrossTangentialVel = MathUtil.getVector(goal).cross(vTangential.times(timestep));
-        double feedForward = goalCrossTangentialVel > 0 ? kF * Math.atan2(-vTangential.getMagnitude() * timestep, dist) : - kF * Math.atan2(-vTangential.getMagnitude() * timestep, dist);
+        // x plus velocity
+        Vector vPlusVel = v.plus(vTangential.times(timestep));
+
+        // dot product: ab cos theta, theta = cos-1 ((a dot b) / |a| |b|)
+        // this gives us a good angle to perform feedforward calculations
+        double angleBetween = Math.acos(MathUtil.dotProduct(v, vPlusVel) / (v.getMagnitude() * vPlusVel.getMagnitude()));
+        // remember that turret always corrects in the opposite direction of velocity, so its negative
+        double feedForward = -kF * angleBetween;
 
         return new double[]{azimuth, theta, velocity, feedForward};
     }
