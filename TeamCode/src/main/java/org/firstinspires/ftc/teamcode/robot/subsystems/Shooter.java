@@ -27,6 +27,7 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooterMotor2;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
+    private boolean isShooting = false;
     private double nominalVoltage = 12.4; // i would say that it's usually 12.4 when tuning.
     public Shooter(HardwareMap hardwareMap) {
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
@@ -48,8 +49,17 @@ public class Shooter extends Subsystem {
     public void update() {
         switch (state) {
             case SHOOTER_ON:
+//                if (isShooting) {
+//                    if (shooterMotor.getVelocity() < targetVelocity) {
+//                        shooterMotor.setPower(1);
+//                    }
+//                }
                 double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
                 power *= (nominalVoltage / voltageSensor.getVoltage());
+
+                // new idea that i saw online:
+                // this controller is good at getting up to speed but not as good at maintining when shooting
+                // TODO: if it ever becomes a problem, switch to bang bang controller when shooting
                 shooterMotor.setPower(power);
                 shooterMotor2.setPower(power);
         }
@@ -80,6 +90,7 @@ public class Shooter extends Subsystem {
         return shooterMotor.getVelocity();
     }
     public double getPower() {return shooterMotor.getPower();}
+    public void setIsShooting(boolean x) {isShooting = x;}
 
 
     // useful trust

@@ -72,6 +72,8 @@ public class AutonomousRobot {
                 new State()
                         .onEnter(() -> {
                             shooter.openLatch();
+                            // for example here is where we would tell it to be bang bang
+                            // onExit set it back
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                         })
                         // TODO: .transition(new Transition(() -> !intake.intakeFull()))
