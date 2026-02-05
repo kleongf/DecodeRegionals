@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robot.robots.AutonomousRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
@@ -420,7 +421,12 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     @Override
     public void loop() {
         double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
-        robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
+        // at the start, make sure we have enough velocity
+        if (MathUtil.distance(follower.getPose(), goalPose) < 60) {
+            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], 1100});
+        } else {
+            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
+        }
         robot.turret.setFeedforward(values[3]);
 //        if (follower.getPose() != null && follower.getVelocity() != null) {
 //            values = sotm2.calculateAzimuthThetaVelocity(follower.getPose(), follower.getVelocity());
