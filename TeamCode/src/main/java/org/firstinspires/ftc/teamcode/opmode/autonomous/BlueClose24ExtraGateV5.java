@@ -401,14 +401,17 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     }
     @Override
     public void loop() {
-        double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
-        // at the start, make sure we have enough velocity
-        if (MathUtil.distance(follower.getPose(), goalPose) < 60) {
-            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], 1100});
-        } else {
-            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
-        }
-        robot.turret.setFeedforward(values[3]);
+        double[] values = sotm2.calculateAzimuthThetaVelocityFRC(follower.getPose(), follower.getVelocity());
+        robot.setAzimuthThetaVelocity(values);
+
+//        double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+//        // at the start, make sure we have enough velocity
+//        if (MathUtil.distance(follower.getPose(), goalPose) < 60) {
+//            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], 1100});
+//        } else {
+//            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
+//        }
+//        robot.turret.setFeedforward(values[3]);
 //        if (follower.getPose() != null && follower.getVelocity() != null) {
 //            values = sotm2.calculateAzimuthThetaVelocity(follower.getPose(), follower.getVelocity());
 //            robot.setAzimuthThetaVelocity(values);
