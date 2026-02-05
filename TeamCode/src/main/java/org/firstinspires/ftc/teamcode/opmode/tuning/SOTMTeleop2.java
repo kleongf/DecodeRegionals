@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 public class SOTMTeleop2 extends OpMode {
     private MainTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
-    public static double p = 0.004; // tune
-    public static double d = 0.0001; // tune
+    public static double p = 0.005; // tune
+    public static double d = 0.0003; // tune
 
     @Override
     public void init() {
