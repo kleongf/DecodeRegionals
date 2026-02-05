@@ -199,7 +199,7 @@ public class SOTM {
 
         // 2.01388888889 revs per second = 12.653637077 radians per secon
         // therefore kF is approximately 1 / 12.653637077
-        double feedForward = -kF * (angleBetween + angularVelocity);
+        double feedForward = kF * (angleBetween + angularVelocity);
 
         return new double[]{azimuth, theta, velocity, feedForward};
     }
