@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
 // this one drives to a good point to "scout" for balls before driving to them. it seems that cam has not enough fov, so we are going to drive closer.
 // TODO: maybe add a "safety" path: if not over two balls were collected, make a new path to drive to corner?
-@Autonomous(name="Blue Far 30 new testing", group="!")
+@Autonomous(name="Blue Far 30 new testing", group="?")
 public class BlueFar30Better extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;

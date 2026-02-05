@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
     2. it follows path back when gate intaking is done
     3. it tries to sotm
  */
-@Autonomous(name="Blue Close 24 Extra Gate, SOTM + optimized pathing (no break beam)", group="!")
+@Autonomous(name="Blue Close 24 Extra Gate, SOTM + optimized pathing (no break beam)", group="?")
 public class BlueClose24ExtraGate extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;

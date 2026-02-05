@@ -255,7 +255,7 @@ public class BlueClose24ExtraGateV5 extends OpMode {
                             follower.followPath(shootPreloadIntakeSecond, true);
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
-                        .maxTime(800),
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -419,8 +419,7 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     }
     @Override
     public void loop() {
-        double[] values;
-        values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+        double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
         robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
         robot.turret.setFeedforward(values[3]);
 //        if (follower.getPose() != null && follower.getVelocity() != null) {

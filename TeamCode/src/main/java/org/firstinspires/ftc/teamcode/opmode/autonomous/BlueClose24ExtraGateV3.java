@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
-@Autonomous(name="Blue Close 24 Extra Gate, v3 optimized pathing and predictive", group="!")
+@Autonomous(name="Blue Close 24 Extra Gate, v3 optimized pathing and predictive", group="?")
 public class BlueClose24ExtraGateV3 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;

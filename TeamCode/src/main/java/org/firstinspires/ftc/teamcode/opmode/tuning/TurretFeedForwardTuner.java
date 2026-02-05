@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 public class TurretFeedForwardTuner extends OpMode {
     private MainTeleop2 teleop;
     private Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
-    public static double p = 0.005; // tune
-    public static double d = 0.0003; // tune
+    public static double p = 0.004; // tune
+    public static double d = 0.0004; // tune
     public static double offset = 0;
     public static double kF = 0.07905138339;
 
