@@ -290,7 +290,7 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFRC(currentPose, currentVelocity);
+        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, currentVelocity);
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
         robot.turret.setFeedforward(0);

@@ -12,12 +12,14 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="SOTM teleop tuning turret pid: make it follow goal!", group="!")
-public class SOTMTeleop2 extends OpMode {
+@TeleOp(name="SOTM teleop tuning turret pid: make it follow goal BETTER! TUNE THIS TOMORROW", group="!")
+public class SOTMTeleop3 extends OpMode {
     private MainTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
     public static double p = 0.005; // tune
     public static double d = 0.0003; // tune
+    public static double offset = 0.0; // tune, offset for the turret itself
+    public static double latencyScaleFactor = 0; // small number prob between 0 and 1
 
     @Override
     public void init() {
@@ -28,6 +30,8 @@ public class SOTMTeleop2 extends OpMode {
     @Override
     public void loop() {
         teleop.robot.turret.setPDCoefficients(p, d);
+        teleop.sotm.latencyScaleFactor = latencyScaleFactor;
+        teleop.sotm.offsetFactor = offset;
         teleop.loop();
         telemetry.update();
     }

@@ -11,6 +11,7 @@ public class SOTM {
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
     public double kF = 0.07905138339;
+    public double latencyScaleFactor = 0.15;
     public double timeScaleFactor = 1;
     public double offsetFactor = 0; // think i found it! after doing some algebra. should be 0.05?
     public double constantTimeFactor = 0;
@@ -334,6 +335,38 @@ public class SOTM {
         Log.d("Timestep", "timestep: " + timestep);
         Log.d("angular velocity", String.valueOf(angularVelocity));
         Log.d("angular velocity toward goal", String.valueOf(angleBetween));
+
+        return calculateAzimuthThetaVelocity(robotPose, virtualGoal);
+    }
+
+    // new idea: same as the frc version where u multiply by a timestep * offset for correction
+    // see https://blog.eeshwark.com/robotblog/shooting-on-the-fly
+
+    public double[] calculateAzimuthThetaVelocityFRCBetter(Pose robotPose, Vector robotVelocity) {
+        double dx = goal.getX() - robotPose.getX();
+        double dy = goal.getY() - robotPose.getY();
+        double dist = Math.hypot(dx, dy);
+
+        double theta = thetaLUT.getValue(dist);
+        double velocity = velocityLUT.getValue(dist);
+
+        Vector v = MathUtil.subtractVectors(MathUtil.getVector(goal), MathUtil.getVector(robotPose));
+        // double dist = v.getMagnitude();
+        // latency scale factor: accounts for system response times, as according to the article.
+        Vector u = MathUtil.addVectors(robotVelocity, MathUtil.scalarMultiplyVector(robotVelocity, latencyScaleFactor));
+
+        // (u ⋅ v / |v|²) * v
+        Vector projuv = MathUtil.scalarMultiplyVector(v, MathUtil.dotProduct(u, v) / MathUtil.dotProduct(v, v));
+
+        // if the vectors are in the same direction, then we should subtract the radial velocity
+        // vectors are in the same direction if their dot product is positive, so dot it with the goal vector.
+        double vRadial = MathUtil.dotProduct(projuv, v) > 0 ? projuv.getMagnitude() : -projuv.getMagnitude();
+
+        // more accurate timestep
+        double timestep = simulateProjectileTOF(MathUtil.inToM(vRadial), velocity, theta, MathUtil.inToM(dist));
+        Log.d("Timestep", "timestep: " + timestep);
+
+        Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent()*timestep);
 
         return calculateAzimuthThetaVelocity(robotPose, virtualGoal);
     }
