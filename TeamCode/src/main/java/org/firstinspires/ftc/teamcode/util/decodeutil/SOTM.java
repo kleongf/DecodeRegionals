@@ -14,7 +14,7 @@ public class SOTM {
     public double timeScaleFactor = 1;
     public double offsetFactor = 0; // think i found it! after doing some algebra. should be 0.05?
     public double constantTimeFactor = 0;
-    private double efficiency = 0.67;
+    private double efficiency = 0.73;
     private double MAX_ITERATIONS = 200;
     private double dt = 0.01;
     private double g = 9.8;
