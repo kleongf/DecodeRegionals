@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="SOTM teleop tuning turret pid: make it follow goal")
+@TeleOp(name="SOTM teleop tuning turret pid: make it follow goal! TUNE THIS TOMORROW", group="!")
 public class SOTMTeleop2 extends OpMode {
     private MainTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
