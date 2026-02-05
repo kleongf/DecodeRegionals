@@ -31,37 +31,18 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     private SOTM sotm2;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private PathChain shootPreloadIntakeSecond, shootPreload, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
+    private PathChain shootPreloadIntakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
 
     public void buildPaths() {
         shootPreloadIntakeSecond = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
-                                new Pose(60, 75)
+                                new Pose(54.000, 90.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-143))
+                ).setConstantHeadingInterpolation(Math.toRadians(-114.4))
                 .addPath(
                         new BezierCurve(
-                                new Pose(60, 75),
-                                new Pose(40, 60),
-                                new Pose(15, 60)
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        shootPreload = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                startPose,
-                                new Pose(60, 75)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-143))
-                .build();
-
-        intakeSecond = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(60, 75),
+                                new Pose(54, 90),
                                 new Pose(40, 60),
                                 new Pose(15, 60)
                         )
@@ -442,8 +423,8 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     @Override
     public void start() {
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
-        double[] values = sotm2.calculateAzimuthThetaVelocity(new Pose(60, 75, Math.toRadians(-143)), new Vector());
-        robot.setAzimuthThetaVelocity(values);
+//        double[] values = sotm2.calculateAzimuthThetaVelocity(new Pose(60, 75, Math.toRadians(-143)), new Vector());
+//        robot.setAzimuthThetaVelocity(values);
         stateMachine.start();
         robot.start();
     }
