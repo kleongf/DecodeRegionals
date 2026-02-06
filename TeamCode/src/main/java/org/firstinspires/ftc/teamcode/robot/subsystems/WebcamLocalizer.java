@@ -28,7 +28,7 @@ public class WebcamLocalizer extends Subsystem {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private Position cameraPosition = new Position(DistanceUnit.MM,
-            -314, 142, 230, 0);
+            -122, 142, 230, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -90, 0, 0);
     public static Pose toPinpointPose(Pose webcamPose) {

@@ -5,6 +5,8 @@ import android.util.Size;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.vision.ArtifactProcessor;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
@@ -57,7 +59,7 @@ public class ArtifactVision extends Subsystem {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
 
-        // portal.setProcessorEnabled(colorLocator, true); ok cool beans
+        // portal.setProcessorEnabled(colorLocator, true); ok cool beans WAIT WTF I DIDNT WRITE THIS
 
         double[][] homographyBlue = {
                 { -4.98885709e-02, 2.91967072e-02, 9.88258249e+00 },
@@ -70,15 +72,19 @@ public class ArtifactVision extends Subsystem {
                 { 3.79738251e-03,  2.79198165e-02, -1.59729952e+01},
                 { 9.16521855e-05, -4.75490455e-03,  1.00000000e+00}
         };
+
+//        private Position cameraPosition = new Position(DistanceUnit.MM,
+//                -122, 142, 230, 0);
+
         if (alliance == Alliance.BLUE) {
              C = new Matrix(new double[][] {
-                    {-4, 6, 0} // for blue it's to the left for red idk
+                    {-4.80315, 9.05512, 0} // for blue it's to the left for red idk
             }).transpose();
         }
 
         if (alliance == Alliance.RED) {
              C = new Matrix(new double[][] {
-                    {4, 6, 0} // for blue it's to the left for red idk
+                    {4.80315, 9.05512, 0} // for blue it's to the left for red idk
             }).transpose();
         }
 

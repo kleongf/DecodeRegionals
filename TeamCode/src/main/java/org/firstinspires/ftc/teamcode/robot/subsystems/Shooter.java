@@ -26,6 +26,7 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
     private double epsilon = 100;
+    private double shootingEpsilon = 40;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
     private boolean isShooting = false;
@@ -50,6 +51,7 @@ public class Shooter extends Subsystem {
     public void update() {
         switch (state) {
             case SHOOTER_ON:
+                // || (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > shootingEpsilon && isShooting)
                 if (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > epsilon) {
                     shooterMotor.setPower(1);
                     shooterMotor2.setPower(1);
