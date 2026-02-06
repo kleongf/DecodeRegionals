@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
 import static java.lang.Thread.sleep;
+
+import android.util.Log;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -423,6 +426,10 @@ public class BlueClose24ExtraGateV5 extends OpMode {
 //            robot.setAzimuthThetaVelocity(values);
 //        }
 
+        // I am starting to believe that the turret is off because it's not reaching its target
+        // let's confirm, the p and d values are really low
+        Log.d("turret current pos", "" + robot.turret.getCurrent());
+        Log.d("turret target pos", "" + robot.turret.getTarget());
         stateMachine.update();
         follower.update();
         robot.update();
