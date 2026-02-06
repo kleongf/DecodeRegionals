@@ -290,16 +290,17 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, currentVelocity);
+        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, currentVelocity, drivetrain.getAngularVelocity());
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
-        robot.turret.setFeedforward(0);
+        robot.turret.setFeedforward(values[3]);
         robot.turret.setTarget(values[0]+turretOffset);
 
         robot.update();
 
         telemetry.addData("Pose", currentPose );
         telemetry.addData("Current state", drivetrain.getState());
+        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
         telemetry.addLine("Robot in shooting zone: " + zoneUtil.inZone(currentPose, currentZone));
         telemetry.addLine("Intake full: " + robot.intake.intakeFull());
         telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());

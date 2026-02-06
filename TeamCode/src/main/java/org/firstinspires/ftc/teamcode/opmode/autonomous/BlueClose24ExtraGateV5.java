@@ -28,6 +28,7 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
+    private boolean isSOTMing = true;
     private SOTM sotm2;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
@@ -48,6 +49,7 @@ public class BlueClose24ExtraGateV5 extends OpMode {
                         )
                 )
                 .setTangentHeadingInterpolation()
+                .setNoDeceleration()
                 .build();
 
         shootSecond = follower.pathBuilder().addPath(
@@ -234,7 +236,8 @@ public class BlueClose24ExtraGateV5 extends OpMode {
                 // shoot preload and intake second
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(shootPreloadIntakeSecond, true);
+                            follower.setMaxPower(0.75);
+                            follower.followPath(shootPreloadIntakeSecond, false);
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
                         .maxTime(1200),
@@ -243,12 +246,14 @@ public class BlueClose24ExtraGateV5 extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
+                            follower.setMaxPower(1);
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 // second
                 new State()
                         .onEnter(() -> {
+                            isSOTMing = false;
                             follower.followPath(shootSecond, true);
                             robot.intakeCommand.start();
                         })
@@ -401,8 +406,9 @@ public class BlueClose24ExtraGateV5 extends OpMode {
     }
     @Override
     public void loop() {
-        double[] values = sotm2.calculateAzimuthThetaVelocityFRC(follower.getPose(), follower.getVelocity());
-        robot.setAzimuthThetaVelocity(values);
+        double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+        robot.setAzimuthThetaVelocity(new double[] {values[0]-0.15, values[1], values[2]});
+        robot.turret.setFeedforward(values[3]);
 
 //        double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
 //        // at the start, make sure we have enough velocity

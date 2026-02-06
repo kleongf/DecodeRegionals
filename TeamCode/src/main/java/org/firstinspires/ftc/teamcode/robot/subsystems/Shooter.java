@@ -25,6 +25,7 @@ public class Shooter extends Subsystem {
     private Servo pitchServo;
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
+    private double epsilon = 100;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
     private boolean isShooting = false;
@@ -49,19 +50,29 @@ public class Shooter extends Subsystem {
     public void update() {
         switch (state) {
             case SHOOTER_ON:
+                if (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > epsilon) {
+                    shooterMotor.setPower(1);
+                    shooterMotor2.setPower(1);
+                } else {
+                    double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
+                    power *= (nominalVoltage / voltageSensor.getVoltage());
+                    shooterMotor.setPower(power);
+                    shooterMotor2.setPower(power);
+                }
 //                if (isShooting) {
 //                    if (shooterMotor.getVelocity() < targetVelocity) {
 //                        shooterMotor.setPower(1);
+//                        shooterMotor2.setPower(1);
 //                    }
 //                }
-                double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
-                power *= (nominalVoltage / voltageSensor.getVoltage());
-
-                // new idea that i saw online:
-                // this controller is good at getting up to speed but not as good at maintining when shooting
-                // TODO: if it ever becomes a problem, switch to bang bang controller when shooting
-                shooterMotor.setPower(power);
-                shooterMotor2.setPower(power);
+//                double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
+//                power *= (nominalVoltage / voltageSensor.getVoltage());
+//
+//                // new idea that i saw online:
+//                // this controller is good at getting up to speed but not as good at maintining when shooting
+//                // TODO: if it ever becomes a problem, switch to bang bang controller when shooting
+//                shooterMotor.setPower(power);
+//                shooterMotor2.setPower(power);
         }
     }
 
