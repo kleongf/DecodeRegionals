@@ -26,7 +26,7 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
     private double epsilon = 100;
-    private double shootingEpsilon = 40;
+    private double shootingEpsilon = 60;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
     private boolean isShooting = false;
@@ -52,15 +52,29 @@ public class Shooter extends Subsystem {
         switch (state) {
             case SHOOTER_ON:
                 // || (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > shootingEpsilon && isShooting)
-                if (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > epsilon) {
+                if (shooterMotor.getVelocity()+shootingEpsilon < targetVelocity) {
                     shooterMotor.setPower(1);
                     shooterMotor2.setPower(1);
+                } else if (shooterMotor.getVelocity()-shootingEpsilon > targetVelocity) {
+                    shooterMotor.setPower(0);
+                    shooterMotor2.setPower(0);
                 } else {
                     double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
                     power *= (nominalVoltage / voltageSensor.getVoltage());
                     shooterMotor.setPower(power);
                     shooterMotor2.setPower(power);
                 }
+
+                // if (shooterMotor.getVelocity())
+
+//                if (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > epsilon) {
+//                    shooterMotor.setPower(1);
+//                    shooterMotor2.setPower(1);
+//                } else {
+//                    shooterMotor.setPower(0);
+//                    shooterMotor2.setPower(0);
+//
+//                }
 //                if (isShooting) {
 //                    if (shooterMotor.getVelocity() < targetVelocity) {
 //                        shooterMotor.setPower(1);

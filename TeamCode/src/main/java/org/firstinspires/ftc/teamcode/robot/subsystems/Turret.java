@@ -18,7 +18,7 @@ public class Turret extends Subsystem {
 
     private double offset = 0;
     private double maxPower = 0.7;
-    private double kS = 0.035;
+    private double kS = 0.02;
 
 
     public Turret(HardwareMap hardwareMap) {
