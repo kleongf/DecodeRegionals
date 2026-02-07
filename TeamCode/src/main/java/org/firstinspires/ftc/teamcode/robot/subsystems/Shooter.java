@@ -91,7 +91,9 @@ public class Shooter extends Subsystem {
         double adjustedAngle = angle - PITCH_I;
         double pos = PITCH_SERVO_MIN + adjustedAngle * ticksPerRadian;
         if (!Double.isNaN(pos)) {
-            pitchServo.setPosition(MathUtil.clamp(pos, PITCH_SERVO_I, PITCH_SERVO_F));
+            double lower = Math.min(PITCH_SERVO_I, PITCH_SERVO_F);
+            double upper = Math.max(PITCH_SERVO_I, PITCH_SERVO_F);
+            pitchServo.setPosition(MathUtil.clamp(pos, lower, upper));
         }
     }
 

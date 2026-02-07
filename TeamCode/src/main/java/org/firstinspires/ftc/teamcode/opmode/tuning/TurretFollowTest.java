@@ -20,6 +20,7 @@ public class TurretFollowTest extends OpMode {
     private Turret turret;
     public static double shooterSpeed;
     public static double shooterPitch;
+    public static double offset = 0;
     private Follower follower;
     private Intake intake;
     private SOTM sotm2;
@@ -33,9 +34,12 @@ public class TurretFollowTest extends OpMode {
         shooter.setTargetVelocity(shooterSpeed);
         // TODO: fix degree/radian disputes across shooter opmodes
         shooter.setShooterPitch(Math.toRadians(shooterPitch));
-        double[] target = sotm2.calculateAzimuthThetaVelocity(follower.getPose(), new Vector());
+        sotm2.offsetFactor = offset; // in case we get off
+        double[] target = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), new Vector(), follower.getAngularVelocity());
         // set azimuth
         turret.setTarget(target[0]);
+        turret.setFeedforward(target[3]);
+
 
         double dx = goalPose.getX()-follower.getPose().getX();
         double dy = goalPose.getY()-follower.getPose().getY();
