@@ -118,6 +118,8 @@ public class Shooter extends Subsystem {
     public double getCurrentVelocity() {
         return shooterMotor.getVelocity();
     }
+    public double getCurrentVelocity2() {return shooterMotor2.getVelocity();}
+    public double getVelocityDiff() {return Math.abs(shooterMotor.getVelocity() - shooterMotor2.getVelocity());}
     public double getPower() {return shooterMotor.getPower();}
     public void setIsShooting(boolean x) {isShooting = x;}
 

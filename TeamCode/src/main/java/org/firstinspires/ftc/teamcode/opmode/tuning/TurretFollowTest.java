@@ -53,8 +53,10 @@ public class TurretFollowTest extends OpMode {
 
         telemetry.addData("distance", dist);
         telemetry.addData("shooter speed", shooter.getCurrentVelocity());
-        telemetry.addData("shooter power", shooter.getPower());
-        telemetry.addData("turret at target? 1.5% error", turret.atTarget(20));
+        telemetry.addData("shooter motor 2 speed", shooter.getCurrentVelocity2());
+        telemetry.addData("encoder velocity diff", shooter.getVelocityDiff());
+        // telemetry.addData("shooter power", shooter.getPower());
+        // telemetry.addData("turret at target? 1.5% error", turret.atTarget(20));
         telemetry.update();
     }
 
