@@ -113,6 +113,15 @@ public class MainTeleop {
         if (automateRobot) {
             // TODO: implement with new functions and stuff, with an enum of 1, 2, 3 cases
             // robot not in shooting zone, intake is full, drivetrain not busy, and not shooting
+
+            // TODO: there's also a possible bug with this, that we get blocked from the zone but it keeps trying to drive
+            // in that case we may want a cooldown timer so that we don't keep trying to do it.
+            // like maybe we keep track of the last time we kicked to the zone, wait at least 5 seconds before kicking again
+            // i guess since it's only really used for seeing if you have three, it makes sense to reset detections
+            // but that wouldn't do anything, after like 0.2s it would try again
+
+            // so i suppose we just have a cooldown
+
             if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.intakeFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE) {
                 // case 1: the current pose is close to the closestPose, in this case no heading change is best. say it's 20 inches idk
                 if (getDistance(currentPose, closestPose) < 20) {

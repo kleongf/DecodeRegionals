@@ -32,6 +32,26 @@ public class Turret extends Subsystem {
         turretController = new PIDFController(0.002, 0, 0.0002, 0);
     }
 
+    // the turret does not tend to drift too much
+    // how can we tell what rotation the encoder is on?
+
+    // if the turret says 180 deg for example, encoder would have turned (90/25)/2 times
+    // we can take the floormod of this number: 90/50 = 1, know it has rotated once
+    // recalculate the error by using the rest of the encoder value
+
+    // basically, turns made = floorMod(#ticks/383.6) + externalencoder to ticks
+    // problem is when turns made is between a number, say 1 and 2, and
+    // external encoder is about the same because the turret encoder drifted
+
+    // we could calculate a value and take the value between ticks. if the error is
+    // very large (values are very different) then ignore it
+
+    // problem is that during this time, sotm and normal shooting would not work
+
+    // is this foolproof?
+
+    //
+
     @Override
     public void update() {
 
