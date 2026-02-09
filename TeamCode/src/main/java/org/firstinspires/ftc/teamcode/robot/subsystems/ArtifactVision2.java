@@ -28,8 +28,8 @@ public class ArtifactVision2 extends Subsystem {
     private double cameraAngle = Math.toRadians(0); // if angled down, -10 degrees or something
     // camera intrinsic matrix. since focusing the new lens it may need some retuning.
     private Matrix K = new Matrix(new double[][] {
-            {214.1037056, 0, 313},
-            {0, 212.72822576, 254.488},
+            {214.1037056, 0, 320},
+            {0, 212.72822576, 240},
             {0, 0, 1}
     });
     // R0: permutation matrix to convert camera coordinates into real-life ones.
