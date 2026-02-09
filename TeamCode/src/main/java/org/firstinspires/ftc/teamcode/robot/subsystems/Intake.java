@@ -33,7 +33,8 @@ public class Intake extends Subsystem {
     private double detectionTime = 0.2;
 
     public IntakeState state = IntakeState.INTAKE_OFF;
-    private DetectionState detectionState = DetectionState.EMPTY;
+    public DetectionState detectionState = DetectionState.EMPTY;
+    // 1 when not broken and 0 when broken?
     public DcMotorEx intakeMotor;
     private DigitalChannel top, middle, bottom;
     public Intake(HardwareMap hardwareMap) {

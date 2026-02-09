@@ -48,6 +48,8 @@ public class AutonomousRobot {
 
         commands = new ArrayList<>();
 
+        // putting it here because why not. prob should go after shooting but whatever, this gives us more time
+        // besides intake is always called right after shoot
         intakeCommand = new StateMachine(
                 new State()
                         .onEnter(() -> {
@@ -56,6 +58,7 @@ public class AutonomousRobot {
                         .maxTime(200),
                 new State()
                         .onEnter(() -> {
+                            intake.resetDetection();
                             shooter.closeLatch();
                         })
                         .maxTime(100)

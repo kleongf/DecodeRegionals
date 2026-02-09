@@ -51,19 +51,25 @@ public class Shooter extends Subsystem {
     public void update() {
         switch (state) {
             case SHOOTER_ON:
+                double velocity = shooterMotor.getVelocity();
+                // double velocityAvg = (shooterMotor.getVelocity() + shooterMotor2.getVelocity()) / 2;
                 // || (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > shootingEpsilon && isShooting)
-                if (shooterMotor.getVelocity()+shootingEpsilon < targetVelocity) {
+                if (velocity+shootingEpsilon < targetVelocity) {
                     shooterMotor.setPower(1);
                     shooterMotor2.setPower(1);
-                } else if (shooterMotor.getVelocity()-shootingEpsilon > targetVelocity) {
+                } else if (velocity-shootingEpsilon > targetVelocity) {
                     shooterMotor.setPower(0);
                     shooterMotor2.setPower(0);
                 } else {
-                    double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
+                    double power = controller.calculate(velocity, targetVelocity);
                     power *= (nominalVoltage / voltageSensor.getVoltage());
                     shooterMotor.setPower(power);
                     shooterMotor2.setPower(power);
                 }
+//                double power = controller.calculate(velocityAvg, targetVelocity);
+//                power *= (nominalVoltage / voltageSensor.getVoltage());
+//                shooterMotor.setPower(power);
+//                shooterMotor2.setPower(power);
 
                 // if (shooterMotor.getVelocity())
 

@@ -31,6 +31,7 @@ public class MainTeleop {
     // TODO: also have it so when driver 2 has a trigger down then go slow
     // also side quest kalman filter stuff
     private RobotState robotState;
+    private Intake.DetectionState prevDetectState;
     private TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
     private double speedScaler = 1;
@@ -70,6 +71,8 @@ public class MainTeleop {
         this.sotm = new SOTM(goalPose);
         this.currentZone = Zone.CLOSE;
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
+
+        this.prevDetectState = Intake.DetectionState.EMPTY;
     }
     private double normalizeInput(double input) {
         return 1.2 * Math.signum(input) * Math.sqrt(Math.abs(input));
@@ -122,7 +125,11 @@ public class MainTeleop {
 
             // so i suppose we just have a cooldown
 
-            if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.intakeFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE) {
+            // we could also keep track of the previous state. if the prev state was also full then don't kick back again, since shoot did not happen
+            // if prev few states were the same, then we didn't shoot anything, therefore no need to autodrive again
+
+
+            if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.isFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE && prevDetectState != robot.intake.detectionState) {
                 // case 1: the current pose is close to the closestPose, in this case no heading change is best. say it's 20 inches idk
                 if (getDistance(currentPose, closestPose) < 20) {
                     drivetrain.kick(true, false, closestPose);
@@ -290,6 +297,8 @@ public class MainTeleop {
         robot.shooter.setTargetVelocity(values[2]);
         robot.turret.setFeedforward(values[3]);
         robot.turret.setTarget(values[0]+turretOffset);
+
+        prevDetectState = robot.intake.detectionState;
 
         robot.update();
 

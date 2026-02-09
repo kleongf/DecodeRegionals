@@ -73,6 +73,7 @@ public class TeleopRobot {
                         .onEnter(() -> {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                             shooter.closeLatch();
+                            intake.resetDetection();
                         })
                         .maxTime(100)
         );

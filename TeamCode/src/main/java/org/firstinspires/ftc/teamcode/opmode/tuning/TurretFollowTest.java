@@ -37,8 +37,8 @@ public class TurretFollowTest extends OpMode {
         sotm2.offsetFactor = offset; // in case we get off
         double[] target = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), new Vector(), follower.getAngularVelocity());
         // set azimuth
-        turret.setTarget(target[0]);
-        turret.setFeedforward(target[3]);
+        // turret.setTarget(target[0]);
+        // turret.setFeedforward(target[3]);
 
 
         double dx = goalPose.getX()-follower.getPose().getX();
@@ -47,7 +47,7 @@ public class TurretFollowTest extends OpMode {
         double dist = Math.hypot(dx, dy);
 
         follower.update();
-        turret.update();
+        // turret.update();
         shooter.update();
         intake.update();
 
