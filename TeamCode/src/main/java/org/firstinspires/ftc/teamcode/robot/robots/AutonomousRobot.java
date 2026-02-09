@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.robots;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision2;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision;
 import org.firstinspires.ftc.teamcode.robot.subsystems.BulkRead;
@@ -20,7 +21,7 @@ public class AutonomousRobot {
     public final Intake intake;
     public final Shooter shooter;
     public final Turret turret;
-    public final ArtifactVision vision;
+    public final ArtifactVision2 vision;
 
     private final ArrayList<StateMachine> commands;
     public StateMachine intakeCommand;
@@ -43,7 +44,7 @@ public class AutonomousRobot {
         turret.resetEncoder();
         subsystems.add(turret);
 
-        vision = new ArtifactVision(hardwareMap, alliance);
+        vision = new ArtifactVision2(hardwareMap, alliance);
         subsystems.add(vision);
 
         commands = new ArrayList<>();

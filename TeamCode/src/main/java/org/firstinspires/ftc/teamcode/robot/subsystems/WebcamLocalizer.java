@@ -22,6 +22,8 @@ public class WebcamLocalizer extends Subsystem {
     // pp x is cam y
     // pp y is cam -x
 
+    // ok this camera position is also probably wrong
+
     // (72+y), (72-x)
     private Pose currentPose;
     private boolean isGoodDetection = false;
