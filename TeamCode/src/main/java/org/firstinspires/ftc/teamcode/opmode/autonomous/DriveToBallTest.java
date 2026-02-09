@@ -140,6 +140,8 @@ public class DriveToBallTest extends OpMode {
         robot.setAzimuthThetaVelocity(values);
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
         robot.start();
+        follower.usePredictiveBraking = true;
+        follower.breakFollowing();
     }
 
     @Override

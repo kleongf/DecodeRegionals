@@ -8,7 +8,7 @@ public class PoseFollower {
     private Pose goalPose;
     private double kPDrive = 0.05;
     private double kPStrafe = 0.1;
-    private double kPHeading = 1.5;
+    private double kPHeading = 0.5; // pedro already emphasizes heading
     private double kDDrive;
     private double kDStrafe;
     private double kDHeading;
