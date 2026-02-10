@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.util.controllers.PIDFController;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
 
-public class Turret extends Subsystem {
+public class TurretV2 extends Subsystem {
     public DcMotorEx turretMotor;
     public PIDFController turretController;
     public double target = 0;
@@ -18,13 +19,15 @@ public class Turret extends Subsystem {
 
     private double offset = 0;
     private double maxPower = 0.7;
-    private double kS = 0.02;
+    private double kS = 0.035;
+    public AnalogInput externalEncoder;
 
 
-    public Turret(HardwareMap hardwareMap) {
+    public TurretV2(HardwareMap hardwareMap) {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        externalEncoder = hardwareMap.get(AnalogInput.class, "turretEncoder");
 
 
         //turretController = new PIDFController(0.005, 0, 0.00005, 0);
@@ -32,31 +35,17 @@ public class Turret extends Subsystem {
         turretController = new PIDFController(0.002, 0, 0.0002, 0);
     }
 
-    // the turret does not tend to drift too much
-    // how can we tell what rotation the encoder is on?
-
-    // if the turret says 180 deg for example, encoder would have turned (90/25)/2 times
-    // we can take the floormod of this number: 90/50 = 1, know it has rotated once
-    // recalculate the error by using the rest of the encoder value
-
-    // basically, turns made = floorMod(#ticks/383.6) + externalencoder to ticks
-    // problem is when turns made is between a number, say 1 and 2, and
-    // external encoder is about the same because the turret encoder drifted
-
-    // we could calculate a value and take the value between ticks. if the error is
-    // very large (values are very different) then ignore it
-
-    // problem is that during this time, sotm and normal shooting would not work
-
-    // is this foolproof?
-
-    //
+    private double externalToInternalTicks(double voltageOut) {
+        // convert to revolutions -> radians -> ticks per radian
+        return (voltageOut / 3.3) * Math.PI * 2 * ticksPerRadian;
+    }
 
     @Override
     public void update() {
 
-        double c = turretMotor.getCurrentPosition();
-                // - offset/ticksPerRadian;
+        // double c = turretMotor.getCurrentPosition();
+        double c = externalToInternalTicks(externalEncoder.getVoltage());
+        // - offset/ticksPerRadian;
         double t = weirdAngleWrap(target) * ticksPerRadian;
 
         double power = turretController.calculate(c, t);

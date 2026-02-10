@@ -26,7 +26,7 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
     private double epsilon = 100;
-    private double shootingEpsilon = 40;
+    private double shootingEpsilon = 60;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
     private boolean isShooting = false;
@@ -51,16 +51,36 @@ public class Shooter extends Subsystem {
     public void update() {
         switch (state) {
             case SHOOTER_ON:
+                double velocity = shooterMotor.getVelocity();
+                // double velocityAvg = (shooterMotor.getVelocity() + shooterMotor2.getVelocity()) / 2;
                 // || (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > shootingEpsilon && isShooting)
-                if (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > epsilon) {
+                if (velocity+shootingEpsilon < targetVelocity) {
                     shooterMotor.setPower(1);
                     shooterMotor2.setPower(1);
+                } else if (velocity-shootingEpsilon > targetVelocity) {
+                    shooterMotor.setPower(0);
+                    shooterMotor2.setPower(0);
                 } else {
-                    double power = controller.calculate(shooterMotor.getVelocity(), targetVelocity);
+                    double power = controller.calculate(velocity, targetVelocity);
                     power *= (nominalVoltage / voltageSensor.getVoltage());
                     shooterMotor.setPower(power);
                     shooterMotor2.setPower(power);
                 }
+//                double power = controller.calculate(velocityAvg, targetVelocity);
+//                power *= (nominalVoltage / voltageSensor.getVoltage());
+//                shooterMotor.setPower(power);
+//                shooterMotor2.setPower(power);
+
+                // if (shooterMotor.getVelocity())
+
+//                if (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > epsilon) {
+//                    shooterMotor.setPower(1);
+//                    shooterMotor2.setPower(1);
+//                } else {
+//                    shooterMotor.setPower(0);
+//                    shooterMotor2.setPower(0);
+//
+//                }
 //                if (isShooting) {
 //                    if (shooterMotor.getVelocity() < targetVelocity) {
 //                        shooterMotor.setPower(1);
@@ -91,7 +111,9 @@ public class Shooter extends Subsystem {
         double adjustedAngle = angle - PITCH_I;
         double pos = PITCH_SERVO_MIN + adjustedAngle * ticksPerRadian;
         if (!Double.isNaN(pos)) {
-            pitchServo.setPosition(MathUtil.clamp(pos, PITCH_SERVO_I, PITCH_SERVO_F));
+            double lower = Math.min(PITCH_SERVO_I, PITCH_SERVO_F);
+            double upper = Math.max(PITCH_SERVO_I, PITCH_SERVO_F);
+            pitchServo.setPosition(MathUtil.clamp(pos, lower, upper));
         }
     }
 
@@ -102,6 +124,8 @@ public class Shooter extends Subsystem {
     public double getCurrentVelocity() {
         return shooterMotor.getVelocity();
     }
+    public double getCurrentVelocity2() {return shooterMotor2.getVelocity();}
+    public double getVelocityDiff() {return Math.abs(shooterMotor.getVelocity() - shooterMotor2.getVelocity());}
     public double getPower() {return shooterMotor.getPower();}
     public void setIsShooting(boolean x) {isShooting = x;}
 

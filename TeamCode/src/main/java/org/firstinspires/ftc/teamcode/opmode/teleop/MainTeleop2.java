@@ -114,35 +114,20 @@ public class MainTeleop2 {
         if (automateRobot) {
             // robot not in shooting zone, intake is full, drivetrain not busy, and not shooting
             if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.intakeFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE) {
-                PathChain kickToClosest;
-
                 // case 1: the current pose is close to the closestPose, in this case no heading change is best. say it's 20 inches idk
                 if (getDistance(currentPose, closestPose) < 20) {
-                    kickToClosest = pathBuilder.addPath(
-                            new Path(
-                                    new BezierLine(currentPose, closestPose)
-                            )
-                    ).setConstantHeadingInterpolation(currentPose.getHeading()).build();
+                    drivetrain.kick(true, false, closestPose);
                 } else {
                     // case 2: the current pose is NOT close to the closestPose, in which case we need to find the closest angle
                     double targetAngle = Math.atan2(closestPose.getY()- currentPose.getY(), closestPose.getX()- currentPose.getX());
                     double currentAngle = currentPose.getHeading();
                     // case 2a: tangential is closer, so we need to turn less
                     if (Math.abs(MathUtil.normalizeAngle(targetAngle-currentAngle)) < Math.abs(MathUtil.normalizeAngle(Math.PI-(targetAngle-currentAngle)))) {
-                        kickToClosest = pathBuilder.addPath(
-                                new Path(
-                                        new BezierLine(currentPose, closestPose)
-                                )
-                        ).setTangentHeadingInterpolation().build();
+                        drivetrain.kick(false, false, closestPose);
                     } else {
-                        kickToClosest = pathBuilder.addPath(
-                                new Path(
-                                        new BezierLine(currentPose, closestPose)
-                                )
-                        ).setTangentHeadingInterpolation().setReversed().build();
+                        drivetrain.kick(false, true, closestPose);
                     }
                 }
-                drivetrain.kick(kickToClosest);
             }
         }
 
@@ -175,7 +160,7 @@ public class MainTeleop2 {
                     )
                     .setConstantHeadingInterpolation(gateIntakePose.getHeading())
                     .build();
-            drivetrain.intakeGate(intakeGate);
+            drivetrain.intakeGate();
         }
 
         // gate open: y
@@ -200,7 +185,7 @@ public class MainTeleop2 {
                     )
                     .setConstantHeadingInterpolation(gatePose.getHeading())
                     .build();
-            drivetrain.openGate(openGate);
+            drivetrain.openGate();
         }
 
         // we don't want to park blindly. want to park either up or down, based on where we currently are.
@@ -221,7 +206,7 @@ public class MainTeleop2 {
                         )
                         .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading())
                         .build();
-                drivetrain.park(park);
+                drivetrain.park();
             } else { // y coord is high so go on top
                 PathChain park = pathBuilder
                         .addPath(
@@ -234,7 +219,7 @@ public class MainTeleop2 {
                         )
                         .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading()+Math.toRadians(180))
                         .build();
-                drivetrain.park(park);
+                drivetrain.park();
             }
         }
 

@@ -20,9 +20,21 @@ public class Intake extends Subsystem {
         INTAKE_SLOW,
         INTAKE_OFF
     }
+
+    public enum DetectionState {
+        EMPTY,
+        FIRST_TRIGGERED,
+        SECOND_TRIGGERED,
+        THIRD_TRIGGERED
+    }
+
+    private ElapsedTime detectionTimer;
     public double CURRENT_LIMIT = 6.0; // 6 amps
+    private double detectionTime = 0.2;
 
     public IntakeState state = IntakeState.INTAKE_OFF;
+    public DetectionState detectionState = DetectionState.EMPTY;
+    // 1 when not broken and 0 when broken?
     public DcMotorEx intakeMotor;
     private DigitalChannel top, middle, bottom;
     public Intake(HardwareMap hardwareMap) {
@@ -38,6 +50,7 @@ public class Intake extends Subsystem {
 //        bottom.setMode(DigitalChannel.Mode.INPUT);
 
         startTimer = new ElapsedTime();
+        detectionTimer = new ElapsedTime();
         rollingCurrents = new ArrayList<>();
     }
 
@@ -58,6 +71,29 @@ public class Intake extends Subsystem {
                 break;
             case INTAKE_OFF:
                 intakeMotor.setPower(0);
+                break;
+        }
+
+        switch (detectionState) {
+            case EMPTY:
+                // TODO: maybe don't use method calls
+                // anyways: we check first, once first triggered check second, once second triggered wait 0.2s and then check 3rd
+                if (getTopBeam()) {
+                    detectionState = DetectionState.FIRST_TRIGGERED;
+                }
+                break;
+            case FIRST_TRIGGERED:
+                if (getMiddleBeam()) {
+                    detectionState = DetectionState.SECOND_TRIGGERED;
+                    detectionTimer.reset();
+                }
+                break;
+            case SECOND_TRIGGERED:
+                if (getBottomBeam() && detectionTimer.seconds() > 0.2) {
+                    detectionState = DetectionState.THIRD_TRIGGERED;
+                }
+                break;
+            case THIRD_TRIGGERED:
                 break;
         }
     }
@@ -81,7 +117,14 @@ public class Intake extends Subsystem {
         }
         return false;
     }
-    // TODO:
+
+    public void resetDetection() { // call this method at the end of every time we shoot
+        detectionState = DetectionState.EMPTY;
+    }
+
+    public boolean isFull() {
+        return detectionState == DetectionState.THIRD_TRIGGERED;
+    }
 
     public boolean getBottomBeam() {
         return false;

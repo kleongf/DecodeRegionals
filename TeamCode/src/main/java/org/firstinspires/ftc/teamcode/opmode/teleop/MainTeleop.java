@@ -31,10 +31,11 @@ public class MainTeleop {
     // TODO: also have it so when driver 2 has a trigger down then go slow
     // also side quest kalman filter stuff
     private RobotState robotState;
+    private Intake.DetectionState prevDetectState;
     private TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
     private double speedScaler = 1;
-    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.4;
+    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.2;
     public TeleopRobot robot;
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
@@ -70,6 +71,8 @@ public class MainTeleop {
         this.sotm = new SOTM(goalPose);
         this.currentZone = Zone.CLOSE;
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
+
+        this.prevDetectState = Intake.DetectionState.EMPTY;
     }
     private double normalizeInput(double input) {
         return 1.2 * Math.signum(input) * Math.sqrt(Math.abs(input));
@@ -111,37 +114,36 @@ public class MainTeleop {
 //        }
 
         if (automateRobot) {
+            // TODO: implement with new functions and stuff, with an enum of 1, 2, 3 cases
             // robot not in shooting zone, intake is full, drivetrain not busy, and not shooting
-            if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.intakeFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE) {
-                PathChain kickToClosest;
 
+            // TODO: there's also a possible bug with this, that we get blocked from the zone but it keeps trying to drive
+            // in that case we may want a cooldown timer so that we don't keep trying to do it.
+            // like maybe we keep track of the last time we kicked to the zone, wait at least 5 seconds before kicking again
+            // i guess since it's only really used for seeing if you have three, it makes sense to reset detections
+            // but that wouldn't do anything, after like 0.2s it would try again
+
+            // so i suppose we just have a cooldown
+
+            // we could also keep track of the previous state. if the prev state was also full then don't kick back again, since shoot did not happen
+            // if prev few states were the same, then we didn't shoot anything, therefore no need to autodrive again
+
+
+            if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.isFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE && prevDetectState != robot.intake.detectionState) {
                 // case 1: the current pose is close to the closestPose, in this case no heading change is best. say it's 20 inches idk
                 if (getDistance(currentPose, closestPose) < 20) {
-                    kickToClosest = pathBuilder.addPath(
-                            new Path(
-                                    new BezierLine(currentPose, closestPose)
-                            )
-                    ).setConstantHeadingInterpolation(currentPose.getHeading()).build();
+                    drivetrain.kick(true, false, closestPose);
                 } else {
                     // case 2: the current pose is NOT close to the closestPose, in which case we need to find the closest angle
                     double targetAngle = Math.atan2(closestPose.getY()- currentPose.getY(), closestPose.getX()- currentPose.getX());
                     double currentAngle = currentPose.getHeading();
                     // case 2a: tangential is closer, so we need to turn less
                     if (Math.abs(MathUtil.normalizeAngle(targetAngle-currentAngle)) < Math.abs(MathUtil.normalizeAngle(Math.PI-(targetAngle-currentAngle)))) {
-                        kickToClosest = pathBuilder.addPath(
-                                new Path(
-                                        new BezierLine(currentPose, closestPose)
-                                )
-                        ).setTangentHeadingInterpolation().build();
+                        drivetrain.kick(false, false, closestPose);
                     } else {
-                        kickToClosest = pathBuilder.addPath(
-                                new Path(
-                                        new BezierLine(currentPose, closestPose)
-                                )
-                        ).setTangentHeadingInterpolation().setReversed().build();
+                        drivetrain.kick(false, true, closestPose);
                     }
                 }
-                drivetrain.kick(kickToClosest);
             }
         }
 
@@ -154,52 +156,52 @@ public class MainTeleop {
 
         // gate intake: x
         if (gamepad1.xWasPressed()) {
-            PathChain intakeGate = pathBuilder
-                    .addPath(
-                            new Path(
-                                    new BezierLine(
-                                            currentPose,
-                                            new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY())
-                                    )
-                            )
-                    )
-                    .setLinearHeadingInterpolation(currentPose.getHeading(), gateIntakePose.getHeading())
-                    .addPath(
-                            new Path(
-                                    new BezierLine(
-                                            new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY()),
-                                            gateIntakePose
-                                    )
-                            )
-                    )
-                    .setConstantHeadingInterpolation(gateIntakePose.getHeading())
-                    .build();
-            drivetrain.intakeGate(intakeGate);
+//            PathChain intakeGate = pathBuilder
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(
+//                                            currentPose,
+//                                            new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY())
+//                                    )
+//                            )
+//                    )
+//                    .setLinearHeadingInterpolation(currentPose.getHeading(), gateIntakePose.getHeading())
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(
+//                                            new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY()),
+//                                            gateIntakePose
+//                                    )
+//                            )
+//                    )
+//                    .setConstantHeadingInterpolation(gateIntakePose.getHeading())
+//                    .build();
+            drivetrain.intakeGate();
         }
 
         // gate open: y
         if (gamepad1.yWasPressed()) {
-            PathChain openGate = pathBuilder
-                    .addPath(
-                            new Path(
-                                    new BezierLine(
-                                            currentPose,
-                                            new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
-                                    )
-                            )
-                    )
-                    .setLinearHeadingInterpolation(currentPose.getHeading(), gatePose.getHeading())
-                    .addPath(
-                            new Path(
-                                    new BezierLine(
-                                            new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
-                                            gatePose
-                                    )
-                            )
-                    )
-                    .setConstantHeadingInterpolation(gatePose.getHeading())
-                    .build();
-            drivetrain.openGate(openGate);
+//            PathChain openGate = pathBuilder
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(
+//                                            currentPose,
+//                                            new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
+//                                    )
+//                            )
+//                    )
+//                    .setLinearHeadingInterpolation(currentPose.getHeading(), gatePose.getHeading())
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(
+//                                            new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
+//                                            gatePose
+//                                    )
+//                            )
+//                    )
+//                    .setConstantHeadingInterpolation(gatePose.getHeading())
+//                    .build();
+            drivetrain.openGate();
         }
 
         // we don't want to park blindly. want to park either up or down, based on where we currently are.
@@ -220,7 +222,7 @@ public class MainTeleop {
                         )
                         .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading())
                         .build();
-                drivetrain.park(park);
+                drivetrain.park();
             } else { // y coord is high so go on top
                 PathChain park = pathBuilder
                         .addPath(
@@ -233,7 +235,7 @@ public class MainTeleop {
                         )
                         .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading()+Math.toRadians(180))
                         .build();
-                drivetrain.park(park);
+                drivetrain.park();
             }
         }
 
@@ -295,6 +297,8 @@ public class MainTeleop {
         robot.shooter.setTargetVelocity(values[2]);
         robot.turret.setFeedforward(values[3]);
         robot.turret.setTarget(values[0]+turretOffset);
+
+        prevDetectState = robot.intake.detectionState;
 
         robot.update();
 

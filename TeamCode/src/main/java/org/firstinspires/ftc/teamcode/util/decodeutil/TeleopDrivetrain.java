@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.util.decodeutil;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
+import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
+
+import java.util.function.Supplier;
 
 public class TeleopDrivetrain {
     public enum DrivetrainState {
@@ -19,6 +24,7 @@ public class TeleopDrivetrain {
         OPEN_GATE,
         PARK
     }
+    private Supplier<PathChain> currentPathChain;
 
     private ElapsedTime kickTimer;
     private ElapsedTime holdPointTimer;
@@ -35,11 +41,15 @@ public class TeleopDrivetrain {
     private double HOLD_TIME = 1.0;
     private boolean holdingPoint = false;
     private Alliance alliance;
+    private Pose gatePose;
+    private Pose gateIntakePose;
+    private Pose parkPose;
 
     public TeleopDrivetrain(HardwareMap hardwareMap, Alliance alliance) {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
         follower.startTeleopDrive(true);
+        follower.usePredictiveBraking = true;
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
@@ -47,6 +57,15 @@ public class TeleopDrivetrain {
 
         this.alliance = alliance;
         state = DrivetrainState.TELEOP_DRIVE;
+
+        this.parkPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_PARK_POSE :  PoseConstants.RED_PARK_POSE;
+        this.gatePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_POSE : PoseConstants.RED_GATE_POSE;
+        this.gateIntakePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE : PoseConstants.RED_GATE_AUTO_POSE;
+
+        currentPathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
+                .build();
     }
 
     public void setStartingPose(Pose p) {
@@ -63,7 +82,8 @@ public class TeleopDrivetrain {
     }
 
     public void breakFollowing() {
-        follower.breakFollowing();
+        // follower.breakFollowing();
+        // follower.
         follower.startTeleopDrive(true);
         state = DrivetrainState.TELEOP_DRIVE;
         holdingPoint = false;
@@ -81,25 +101,116 @@ public class TeleopDrivetrain {
         return follower.poseTracker.getAngularVelocity();
     }
 
-    public void kick(PathChain kickPath) {
+    public void kick(boolean isClose, boolean isReversed, Pose closestPose) {
+        if (isClose) {
+            currentPathChain = () -> follower.pathBuilder()
+                    .addPath(
+                        new Path(
+                                new BezierLine(follower.getPose(), closestPose)
+                        )
+                    )
+                    .setConstantHeadingInterpolation(follower.getPose().getHeading()).build();
+        } else {
+            if (isReversed) {
+                currentPathChain = () -> follower.pathBuilder()
+                    .addPath(
+                            new Path(
+                                    new BezierLine(follower.getPose(), closestPose)
+                            )
+                    ).setTangentHeadingInterpolation().setReversed().build();
+            } else {
+                currentPathChain = () -> follower.pathBuilder()
+                        .addPath(
+                                new Path(
+                                        new BezierLine(follower.getPose(), closestPose)
+                                )
+                        ).setTangentHeadingInterpolation().build();
+            }
+        }
         state = DrivetrainState.KICK;
-        follower.followPath(kickPath, true);
+        follower.followPath(currentPathChain.get(), true);
         kickTimer.reset();
     }
 
-    public void park(PathChain parkPath) {
+    public void park() {
+        if (follower.getPose().getY() < 32) {
+            currentPathChain = () -> follower.pathBuilder()
+                    .addPath(
+                            new Path(
+                                    new BezierLine(
+                                            follower.getPose(),
+                                            parkPose
+                                    )
+                            )
+                    )
+                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading())
+                    .build();
+        } else { // y coord is high so go on top
+            currentPathChain = () -> follower.pathBuilder()
+                    .addPath(
+                            new Path(
+                                    new BezierLine(
+                                            follower.getPose(),
+                                            new Pose(parkPose.getX(), parkPose.getY() + 36)
+                                    )
+                            )
+                    )
+                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading()+Math.toRadians(180))
+                    .build();
+        }
         state = DrivetrainState.PARK;
-        follower.followPath(parkPath, true);
+        follower.followPath(currentPathChain.get(), true);
     }
 
-    public void intakeGate(PathChain intakePath) {
+    public void intakeGate() {
+        currentPathChain = () -> follower.pathBuilder()
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        follower.getPose(),
+                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
+                                )
+                        )
+                )
+                .setLinearHeadingInterpolation(follower.getPose().getHeading(), gatePose.getHeading())
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
+                                        gatePose
+                                )
+                        )
+                )
+                .setConstantHeadingInterpolation(gatePose.getHeading())
+                .build();
         state = DrivetrainState.INTAKE_GATE;
-        follower.followPath(intakePath, true);
+        follower.followPath(currentPathChain.get(), true);
+        // follower.followPath(intakePath, true);
     }
 
-    public void openGate(PathChain openPath) {
+    public void openGate() {
+        currentPathChain = () -> follower.pathBuilder()
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        follower.getPose(),
+                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY())
+                                )
+                        )
+                )
+                .setLinearHeadingInterpolation(follower.getPose().getHeading(), gateIntakePose.getHeading())
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY()),
+                                        gateIntakePose
+                                )
+                        )
+                )
+                .setConstantHeadingInterpolation(gateIntakePose.getHeading())
+                .build();
         state = DrivetrainState.OPEN_GATE;
-        follower.followPath(openPath, true);
+        follower.followPath(currentPathChain.get(), true);
     }
 
     public boolean isBusy() {

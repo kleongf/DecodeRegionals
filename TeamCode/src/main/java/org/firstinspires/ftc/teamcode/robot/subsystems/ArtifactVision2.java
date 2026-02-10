@@ -20,35 +20,36 @@ import org.opencv.core.RotatedRect;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class ArtifactVision extends Subsystem {
+// RAY projection but better
+public class ArtifactVision2 extends Subsystem {
     private VisionPortal portal;
     private ArtifactProcessor colorLocator;
     private double bestX = -19;
-    private Mat H;
+    private double cameraAngle = Math.toRadians(0); // if angled down, -10 degrees or something
+    // camera intrinsic matrix. since focusing the new lens it may need some retuning.
     private Matrix K = new Matrix(new double[][] {
-            {214.1037056, 0, 313},
-            {0, 212.72822576, 254.488},
+            {214.1037056, 0, 320},
+            {0, 212.72822576, 240},
             {0, 0, 1}
     });
-    /*
-    [[214.1037056    0.         313.19451923]
- [  0.         212.72822576 254.48870311]
- [  0.           0.           1.        ]]
-     */
-    private Matrix R = new Matrix(new double[][] {
-        {1, 0, 0},
-        {0, -1, 0},
-        {0, 0, 1}
+    // R0: permutation matrix to convert camera coordinates into real-life ones.
+    private Matrix R0 = new Matrix(new double[][] {
+            {-1, 0, 0},
+            {0, 0, 1},
+            {0, -1, 0}
     });
+    // R: rotation matrix to rotate if we choose to pitch camera down
+    private Matrix R = new Matrix(new double[][] {
+            {Math.cos(cameraAngle), 0, Math.sin(cameraAngle)},
+            {0, 1, 0},
+            {-Math.sin(cameraAngle), 0, Math.cos(cameraAngle)}
+    });
+    private Matrix RCombined = R0.multiply(R);
 
-    private Matrix C = new Matrix(new double[][] {
-        {-4, 6, 0} // for blue it's to the left for red idk
+    private Matrix T = new Matrix(new double[][] {
+            {-4.80315, -9.05512, 5.59055} // x: +right, y: +down, z: +forward
     }).transpose();
-
-    private double planeY = 1.0;
-
-    public ArtifactVision(HardwareMap hardwareMap, Alliance alliance) {
+    public ArtifactVision2(HardwareMap hardwareMap, Alliance alliance) {
         colorLocator = new ArtifactProcessor.Builder()
                 .build();
 
@@ -60,70 +61,59 @@ public class ArtifactVision extends Subsystem {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
 
-        // portal.setProcessorEnabled(colorLocator, true); ok cool beans WAIT WTF I DIDNT WRITE THIS
-
-        double[][] homographyBlue = {
-                { -4.98885709e-02, 2.91967072e-02, 9.88258249e+00 },
-                { 3.80623143e-03,  5.18877858e-02, -2.55240985e+01 },
-                { -6.01290894e-05, -4.77537046e-03,  1.00000000e+00 }
-        };
-
-        double[][] homographyRed = {
-                { 3.56423511e-02, -3.54066283e-02, -3.46991136e+00},
-                { 3.79738251e-03,  2.79198165e-02, -1.59729952e+01},
-                { 9.16521855e-05, -4.75490455e-03,  1.00000000e+00}
-        };
-
 //        private Position cameraPosition = new Position(DistanceUnit.MM,
 //                -122, 142, 230, 0);
 
         if (alliance == Alliance.BLUE) {
-             C = new Matrix(new double[][] {
-                    {-4.80315, 9.05512, 0} // for blue it's to the left for red idk
+            T = new Matrix(new double[][] {
+                    {-4.80315, -9.05512, 5.59055}
             }).transpose();
+
         }
 
         if (alliance == Alliance.RED) {
-             C = new Matrix(new double[][] {
-                    {4.80315, 9.05512, 0} // for blue it's to the left for red idk
+            T = new Matrix(new double[][] {
+                    {4.80315, -9.05512, 5.59055} // TODO: invert the x position
             }).transpose();
         }
-
-        if (alliance == Alliance.BLUE) {
-            this.H = new Mat(3, 3, CvType.CV_64F);
-            for (int r = 0; r < 3; r++) {
-                for (int c = 0; c < 3; c++) {
-                    H.put(r, c, homographyBlue[r][c]);
-                }
-            }
-        } else {
-            this.H = new Mat(3, 3, CvType.CV_64F);
-            for (int r = 0; r < 3; r++) {
-                for (int c = 0; c < 3; c++) {
-                    H.put(r, c, homographyRed[r][c]);
-                }
-            }
-        }
-
     }
 
-    private Point imageToWorld(double x, double y) {
-        Matrix pt = new Matrix(new double[][] {
-                {x, y, 1.0}
+    private Point imageToWorld(double u, double v) {
+        double fx = K.get(0, 0);
+        double fy = K.get(1, 1);
+        double cx = K.get(0, 2);
+        double cy = K.get(1, 2);
+
+        // camera ray
+        Matrix dc = new Matrix(new double[][] {
+                {(u-cx)/fx, (v-cy)/fy, 1}
         }).transpose();
 
-        Matrix ray_cam = K.inverse().multiply(pt).normalize();
-        Matrix dir = R.multiply(ray_cam);
+        // rotate ray into world frame
+        Matrix dw = RCombined.transpose().multiply(dc);
 
-        double t = -1 * C.get(1, 0) / dir.get(1, 0);
-        // i was too lazy to add scalar multiplication, so i made it a matrix. ez way to multiply by scalar
-        Matrix t_scaled =  new Matrix(new double[][] {
-                {t, 0, 0},
-                {0, t, 0},
-                {0, 0, t}
+        Matrix negativeOne = new Matrix(new double[][] {
+                {-1, 0, 0},
+                {0, -1, 0},
+                {0, 0, -1}
         });
-        Matrix X = C.add(t_scaled.multiply(dir));
-        return new Point(X.get(0, 0), X.get(2, 0));
+
+        // camera pose in world coordinates
+        Matrix C = RCombined.transpose().multiply(negativeOne).multiply(T);
+
+        // solve for lambda
+        double lambda = -C.get(2, 0) / dw.get(2, 0);
+
+        // so i can multiply
+        Matrix lambdaMatrix = new Matrix(new double[][] {
+                {lambda, 0, 0},
+                {0, lambda, 0},
+                {0, 0, lambda}
+        });
+        // C + lambda * dw
+        Matrix pt = C.add(lambdaMatrix.multiply(dw));
+
+        return new Point(pt.get(0, 0), pt.get(1, 0));
     }
 
     @Override
@@ -151,7 +141,8 @@ public class ArtifactVision extends Subsystem {
             // filtering out any blobs that are too high, as they might be a person's clothes. this works with opencv coord system.
             // idk if this is good anymore tho now that we detect from other spots
             if (boxFit != null) {
-                if (boxFit.center.y > 200) {
+                // making sure it's not in the center
+                if (boxFit.center.y + boxFit.size.height / 2 > 254.488) {
                     // just x dist
                     // for the ray algorithm, we want the BOTTOM of the ball. therefore we add height/2.
                     distances.add(imageToWorld(boxFit.center.x, boxFit.center.y + boxFit.size.height / 2).x);
