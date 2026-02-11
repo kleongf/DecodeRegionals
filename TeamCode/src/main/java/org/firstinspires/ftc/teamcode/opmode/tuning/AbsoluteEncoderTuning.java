@@ -25,11 +25,12 @@ public class AbsoluteEncoderTuning extends OpMode {
     private Turret turret;
     private double ticksPerRevolution = 1381; // 383.6*5
     private double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
+    private double encoderGearRatio = 17/14d;
     private AnalogInput encoder;
 
     private double calculatePositionTicks(double voltage) {
         double directionFactor = isReversed ? -1 : 1;
-        return directionFactor * turret.weirdAngleWrap((voltage / maxVoltage) * 2 * Math.PI + Math.toRadians(encoderOffsetDegrees)) * ticksPerRadian;
+        return directionFactor * turret.weirdAngleWrap((voltage / maxVoltage) * encoderGearRatio * 2 * Math.PI + Math.toRadians(encoderOffsetDegrees)) * ticksPerRadian;
     }
 
     @Override
@@ -37,9 +38,9 @@ public class AbsoluteEncoderTuning extends OpMode {
         double voltage = encoder.getVoltage();
         turret.update();
         telemetry.addLine("Turn the turret to 1381 ticks (or -1381 ticks i forgot) to make one revolution, and observe the external encoder conversion. they should be similar.");
-        telemetry.addLine("Also, replace the maxVoltage value with the largest voltage you can get before angle wrapping. You may repeat multiple times and average them");
+        telemetry.addLine("Also, replace the maxVoltage value with the largest voltage you can get by turning the turret (as far as possible). You may repeat multiple times and average them");
         telemetry.addLine("If there is a physical discrepancy between the encoder value and external encoder value, you can add an offset in degrees.");
-        telemetry.addLine("Tune this until the encoder position and the external encoder position are the same. also reset if position is just off.");
+        telemetry.addLine("Tune this until the encoder position and the external encoder position are the same. also restart program if turret position is just off.");
         telemetry.addLine("If the positions are moving in opposite directions then check the box saying 'isReversed' and keep going.");
         telemetry.addData("Turret encoder position", turret.turretMotor.getCurrentPosition());
         telemetry.addData("External encoder position", calculatePositionTicks(voltage));
