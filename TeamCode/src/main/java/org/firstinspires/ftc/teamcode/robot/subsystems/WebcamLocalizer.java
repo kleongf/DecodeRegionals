@@ -30,7 +30,7 @@ public class WebcamLocalizer extends Subsystem {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private Position cameraPosition = new Position(DistanceUnit.MM,
-            -122, 142, 230, 0);
+            -122, -230, 142, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -90, 0, 0);
     public static Pose toPinpointPose(Pose webcamPose) {
@@ -40,7 +40,8 @@ public class WebcamLocalizer extends Subsystem {
     public WebcamLocalizer(HardwareMap hardwareMap) {
         currentPose = new Pose();
         aprilTag = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(214.1037056, 212.72822576, 313, 254.488)
+                // theres no way its off by that much bruh
+                .setLensIntrinsics(214.1037056, 212.72822576, 320, 240)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
