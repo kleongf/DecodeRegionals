@@ -27,6 +27,8 @@ public class ArtifactVision2 extends Subsystem {
     private double bestX = -19;
     private double cameraAngle = Math.toRadians(0); // if angled down, -10 degrees or something
     // camera intrinsic matrix. since focusing the new lens it may need some retuning.
+    private ArrayList<Double> movingAverages = new ArrayList<>();
+    private double numMovingAvgPoints = 3;
     private Matrix K = new Matrix(new double[][] {
             {214.1037056, 0, 320},
             {0, 212.72822576, 240},
@@ -173,6 +175,15 @@ public class ArtifactVision2 extends Subsystem {
         if (maxAreaLoc < -24) { maxAreaLoc = -24; }
 
         bestX = maxAreaLoc;
+
+        if (movingAverages.isEmpty()) {
+            for (int i = 0; i < numMovingAvgPoints; i++) {
+                movingAverages.add(bestX);
+            }
+        } else {
+            movingAverages.add(bestX);
+            movingAverages.remove(0);
+        }
     }
 
     @Override
@@ -192,5 +203,12 @@ public class ArtifactVision2 extends Subsystem {
             }
         }
         return totalArea;
+    }
+
+    public double getBestXMovingAverage() {
+        if (movingAverages.isEmpty()) {
+            return 0;
+        }
+        return movingAverages.stream().mapToDouble(Double::doubleValue).sum() / movingAverages.size();
     }
 }

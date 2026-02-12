@@ -41,9 +41,15 @@ public class BlueClose24ExtraGateV7 extends OpMode {
     private SOTM sotm2;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
+    private final Pose shootPose = new Pose(60, 72, Math.toRadians(-144));
     private PathChain shootPreloadIntakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
 
     public void buildPaths() {
+        double k1 = 10; // i actually forgot what these were check desmos
+        double k2 = 20;
+        // idk abt this just check it again and do for control point 2
+        Pose controlPoint1 = new Pose(shootPose.getX() + k1 * Math.cos(shootPose.getHeading()), shootPose.getY() + k1 * Math.sin(shootPose.getHeading()));
+        Pose controlPoint2 = new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX() - k2 * Math.cos(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()), PoseConstants.BLUE_GATE_AUTO_POSE.getY() - k2 * Math.sin(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()));
         shootPreloadIntakeSecond = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
@@ -66,15 +72,15 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                                 new Pose(48.436, 63.638),
                                 new Pose(60.000, 72.000)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setTangentHeadingInterpolation() // -144 deg or something, imma check again
                 .setReversed()
                 .build();
 
         intakeGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                new Pose(51.910, 66.122),
-                                new Pose(29.761, 50.102),
+                                controlPoint1,
+                                controlPoint2,
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 ).setTangentHeadingInterpolation()
@@ -85,8 +91,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         shootGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(29.7609619231, 50.1016147153),
-                                new Pose(51.9098300563, 66.1221474771),
+                                controlPoint2,
+                                controlPoint1,
                                 new Pose(60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
@@ -96,8 +102,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         intakeGate2 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                new Pose(51.910, 66.122),
-                                new Pose(29.761, 50.102),
+                                controlPoint1,
+                                controlPoint2,
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 ).setTangentHeadingInterpolation()
@@ -108,8 +114,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         shootGate2 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(29.7609619231, 50.1016147153),
-                                new Pose(51.9098300563, 66.1221474771),
+                                controlPoint2,
+                                controlPoint1,
                                 new Pose(60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
@@ -119,8 +125,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         intakeGate3 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                new Pose(51.910, 66.122),
-                                new Pose(29.761, 50.102),
+                                controlPoint1,
+                                controlPoint2,
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 ).setTangentHeadingInterpolation()
@@ -131,8 +137,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         shootGate3 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(29.7609619231, 50.1016147153),
-                                new Pose(51.9098300563, 66.1221474771),
+                                controlPoint2,
+                                controlPoint1,
                                 new Pose(60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
@@ -142,8 +148,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         intakeGate4 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                new Pose(51.910, 66.122),
-                                new Pose(29.761, 50.102),
+                                controlPoint1,
+                                controlPoint2,
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 ).setTangentHeadingInterpolation()
@@ -154,18 +160,19 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         shootGate4 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(29.7609619231, 50.1016147153),
-                                new Pose(51.9098300563, 66.1221474771),
+                                controlPoint2,
+                                controlPoint1,
                                 new Pose(60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
+
         intakeGate5 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                new Pose(51.910, 66.122),
-                                new Pose(29.761, 50.102),
+                                controlPoint1,
+                                controlPoint2,
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 ).setTangentHeadingInterpolation()
