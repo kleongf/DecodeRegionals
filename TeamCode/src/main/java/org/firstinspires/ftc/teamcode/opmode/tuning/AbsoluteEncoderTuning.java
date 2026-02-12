@@ -30,7 +30,7 @@ public class AbsoluteEncoderTuning extends OpMode {
 
     private double calculatePositionTicks(double voltage) {
         double directionFactor = isReversed ? -1 : 1;
-        return directionFactor * turret.weirdAngleWrap((voltage / maxVoltage) * encoderGearRatio * 2 * Math.PI + Math.toRadians(encoderOffsetDegrees)) * ticksPerRadian;
+        return directionFactor * turret.weirdAngleWrap((voltage / maxVoltage) * (1/encoderGearRatio) * 2 * Math.PI + Math.toRadians(encoderOffsetDegrees)) * ticksPerRadian;
     }
 
     @Override
@@ -51,6 +51,8 @@ public class AbsoluteEncoderTuning extends OpMode {
     @Override
     public void init() {
         turret = new Turret(hardwareMap);
+        turret.setPDCoefficients(0, 0);
+        turret.setFeedforward(0);
         turret.resetEncoder();
         encoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
