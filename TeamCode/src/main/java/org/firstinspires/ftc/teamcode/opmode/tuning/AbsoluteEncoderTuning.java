@@ -32,7 +32,7 @@ public class AbsoluteEncoderTuning extends OpMode {
     private double calculatePositionTicks(double voltage) {
         double directionFactor = isReversed ? -1 : 1;
         // we need to convert the offset from ticks to degrees, then turn to radians: 1 tick = 360/1381 degrees.
-        return directionFactor * (turret.weirdAngleWrap((voltage / maxVoltage) * (encoderGearRatio) * 2 * Math.PI) + Math.toRadians(encoderOffsetTicks/degreesPerTick)) * ticksPerRadian;
+        return turret.weirdAngleWrap(directionFactor * (voltage / maxVoltage) * (encoderGearRatio) * 2 * Math.PI + Math.toRadians(encoderOffsetTicks/degreesPerTick)) * ticksPerRadian;
     }
 
     @Override
