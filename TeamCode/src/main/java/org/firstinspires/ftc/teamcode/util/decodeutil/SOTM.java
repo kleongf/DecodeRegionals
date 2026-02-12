@@ -11,9 +11,10 @@ public class SOTM {
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
     public double kF = -0.1;
+    // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
     public double latencyScaleFactor = 1.4;
     public double timeScaleFactor = 1;
-    public double offsetFactor = 0; // think i found it! after doing some algebra. should be 0.05?
+    public double offsetFactor = 0; // offset in inches to goal, i would prob set to 10
     public double constantTimeFactor = 0;
     private double efficiency = 0.73;
     private double MAX_ITERATIONS = 200;
@@ -26,7 +27,7 @@ public class SOTM {
     private double Cd = 1.6;
     private double c = 0.5 * Cd * rho * A;
     private double Cl = 0.1;
-    private double radiusBall =0.0635;
+    private double radiusBall = 0.0635;
 
     public SOTM(Pose goal) {
         this.goal = goal;
@@ -92,6 +93,11 @@ public class SOTM {
 
     private double calculateLinearVelocityMeters(double ticksPerSecond) {
         return (ticksPerSecond * 2 * Math.PI / 28.0) * radius;
+    }
+
+    private double caluclateOffset(boolean isBlue, double angleToGoal, double dist) {
+        double k0 = isBlue ? (angleToGoal - Math.PI/4) * (4/Math.PI) * offsetFactor : (angleToGoal + Math.PI/4) * (4/Math.PI) * offsetFactor;
+        return k0 / dist;
     }
 
     // assumes units meters, meters/s
@@ -253,7 +259,8 @@ public class SOTM {
         double dist = Math.hypot(dx, dy);
 
         boolean isBlue = goal.getX() == 0;
-        double offset = isBlue ? offsetFactor : -offsetFactor;
+        double angleToGoal = Math.atan2(-dx, dy);
+        double offset = caluclateOffset(isBlue, angleToGoal, dist);
 
         double azimuth = Math.atan2(-dx, dy) - robotPose.getHeading() + Math.toRadians(90) + offset;
         double theta = thetaLUT.getValue(dist);
@@ -291,6 +298,7 @@ public class SOTM {
     // new idea: same as the frc version where u multiply by a timestep * offset for correction
     // see https://blog.eeshwark.com/robotblog/shooting-on-the-fly
 
+    // THIS IS THE ONE WE ARE CURRENTLY USING
     public double[] calculateAzimuthThetaVelocityFRCBetter(Pose robotPose, Vector robotVelocity, double angularVelocity) {
         double dx = goal.getX() - robotPose.getX();
         double dy = goal.getY() - robotPose.getY();
