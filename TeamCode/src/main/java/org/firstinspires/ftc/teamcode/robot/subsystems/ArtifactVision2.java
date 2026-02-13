@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.vision.ArtifactProcessor;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Matrix;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
