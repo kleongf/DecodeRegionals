@@ -143,7 +143,7 @@ public class DriveToBallTest extends OpMode {
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
         robot.start();
         follower.usePredictiveBraking = true;
-        follower.breakFollowing();
+        // follower.breakFollowing();
     }
 
     @Override

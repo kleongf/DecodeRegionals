@@ -131,7 +131,7 @@ public class MainTeleop {
 
             if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.isFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE && prevDetectState != robot.intake.detectionState) {
                 // case 1: the current pose is close to the closestPose, in this case no heading change is best. say it's 20 inches idk
-                if (getDistance(currentPose, closestPose) < 20) {
+                if (getDistance(currentPose, closestPose) < 50) {
                     drivetrain.kick(true, false, closestPose);
                 } else {
                     // case 2: the current pose is NOT close to the closestPose, in which case we need to find the closest angle

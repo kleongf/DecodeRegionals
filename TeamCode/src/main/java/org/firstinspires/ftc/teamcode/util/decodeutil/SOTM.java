@@ -10,7 +10,7 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
-    public double kF = -0.0; //0.08
+    public double kF = -0.08; //0.08
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
     public double latencyScaleFactor = 1.4;
     public double timeScaleFactor = 1;
