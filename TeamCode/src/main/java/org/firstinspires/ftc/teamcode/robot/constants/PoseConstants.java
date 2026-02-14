@@ -10,7 +10,7 @@ public class PoseConstants {
     public static double FIELD_WIDTH = 141; // not 144 inches, i feel betrayed bruh
     // 296 mm long + 304 mm total, so 148mm + (304-296) mm = 156 mm total
     public static double ROBOT_BOTTOM_TO_CENTER = 6.14173; // inches
-    public static double BLUE_WALL_LEFT_DISTANCE = 47; // TODO: measure
+    public static double BLUE_WALL_LEFT_DISTANCE = 47.5; // TODO: measure
     public static Pose BLUE_STANDARD_START_POSE = new Pose(BLUE_WALL_LEFT_DISTANCE + ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose RED_STANDARD_START_POSE = new Pose(FIELD_WIDTH - BLUE_STANDARD_START_POSE.getX(), ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));

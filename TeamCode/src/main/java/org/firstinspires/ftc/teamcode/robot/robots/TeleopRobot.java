@@ -58,24 +58,23 @@ public class TeleopRobot {
         shootCommand = new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            intake.state = Intake.IntakeState.INTAKE_OFF;
-                            shooter.openLatch();
-                        })
-                        .maxTime(10),
-                new State()
-                        .onEnter(() -> {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
+                            shooter.openLatch();
                         })
                         // TODO: .transition(new Transition(() -> !intake.intakeFull()))
                         // this does not quite work unless we know exactly how many we have
-                        .maxTime(800),
-                new State()
-                        .onEnter(() -> {
-                            intake.state = Intake.IntakeState.INTAKE_FAST;
+                        .onExit(() -> {
                             shooter.closeLatch();
                             intake.resetDetection();
                         })
-                        .maxTime(100)
+                        .maxTime(800)
+//                new State()
+//                        .onEnter(() -> {
+//                            intake.state = Intake.IntakeState.INTAKE_FAST;
+//                            shooter.closeLatch();
+//                            intake.resetDetection();
+//                        })
+//                        .maxTime(100)
         );
         commands.add(shootCommand);
 

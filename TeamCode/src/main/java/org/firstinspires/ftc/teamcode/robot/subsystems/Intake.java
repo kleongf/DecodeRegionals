@@ -42,12 +42,12 @@ public class Intake extends Subsystem {
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        top = hardwareMap.get(DigitalChannel.class, "topSensor");
-//        middle = hardwareMap.get(DigitalChannel.class, "middleSensor");
-//        bottom = hardwareMap.get(DigitalChannel.class, "bottomSensor");
-//        top.setMode(DigitalChannel.Mode.INPUT);
-//        middle.setMode(DigitalChannel.Mode.INPUT);
-//        bottom.setMode(DigitalChannel.Mode.INPUT);
+        top = hardwareMap.get(DigitalChannel.class, "topSensor");
+        middle = hardwareMap.get(DigitalChannel.class, "middleSensor");
+        bottom = hardwareMap.get(DigitalChannel.class, "bottomSensor");
+        top.setMode(DigitalChannel.Mode.INPUT);
+        middle.setMode(DigitalChannel.Mode.INPUT);
+        bottom.setMode(DigitalChannel.Mode.INPUT);
 
         startTimer = new ElapsedTime();
         detectionTimer = new ElapsedTime();
@@ -67,7 +67,7 @@ public class Intake extends Subsystem {
                 intakeMotor.setPower(1);
                 break;
             case INTAKE_SLOW:
-                intakeMotor.setPower(0.75);
+                intakeMotor.setPower(0.3);
                 break;
             case INTAKE_OFF:
                 intakeMotor.setPower(0);
@@ -80,10 +80,11 @@ public class Intake extends Subsystem {
                 // anyways: we check first, once first triggered check second, once second triggered wait 0.2s and then check 3rd
                 if (getTopBeam()) {
                     detectionState = DetectionState.FIRST_TRIGGERED;
+                    detectionTimer.reset();
                 }
                 break;
             case FIRST_TRIGGERED:
-                if (getMiddleBeam()) {
+                if (getMiddleBeam() && detectionTimer.seconds() > 0.1) {
                     detectionState = DetectionState.SECOND_TRIGGERED;
                     detectionTimer.reset();
                 }
@@ -111,11 +112,12 @@ public class Intake extends Subsystem {
         // ah yes don't you just love my naming conventions?
         // we are checking this first, because there has to be a certain number of currents first
 
-        if (rollingCurrents.size() >= 6) {
-            boolean rollingCurrentIsHigh = rollingCurrents.stream().allMatch(n -> n > CURRENT_LIMIT);
-            return rollingCurrentIsHigh;
-        }
-        return false;
+//        if (rollingCurrents.size() >= 6) {
+//            boolean rollingCurrentIsHigh = rollingCurrents.stream().allMatch(n -> n > CURRENT_LIMIT);
+//            return rollingCurrentIsHigh;
+//        }
+//        return false;
+        return detectionState == DetectionState.THIRD_TRIGGERED;
     }
 
     public void resetDetection() { // call this method at the end of every time we shoot
@@ -127,15 +129,30 @@ public class Intake extends Subsystem {
     }
 
     public boolean getBottomBeam() {
-        return false;
+        return !bottom.getState();
+        // return false;
     }
 
     public boolean getMiddleBeam() {
-        return false;
+        return !middle.getState();
+        // return false;
     }
 
     public boolean getTopBeam() {
-        // !top.getState()
-        return false;
+        return !top.getState();
+        // return false;
+    }
+
+    public String getState() {
+        if (detectionState == DetectionState.EMPTY) {
+            return "EMPTY";
+        } else if (detectionState == DetectionState.FIRST_TRIGGERED) {
+            return "FIRST TRIGGERED";
+        } else if (detectionState == DetectionState.SECOND_TRIGGERED) {
+            return "SECOND TRIGGERED";
+        } else if (detectionState == DetectionState.THIRD_TRIGGERED) {
+            return "THIRD TRIGGERED";
+        }
+        return "IDK WHAT STATE THIS IS";
     }
 }

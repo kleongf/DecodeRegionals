@@ -64,7 +64,7 @@ public class DriveToBallTest extends OpMode {
                         .onEnter(() -> {
                             PathChain finishPath = follower.pathBuilder()
                                     .addPath(
-                                            new BezierCurve(
+                                            new BezierLine(
                                                     follower.getPose(),
                                                     new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
                                             )
@@ -118,7 +118,7 @@ public class DriveToBallTest extends OpMode {
             robot.turret.setFeedforward(values[3]);
         }
         if (isTrackingBall) {
-            optimalX = robot.vision.getLargestClusterX();
+            optimalX = robot.vision.getBestXMovingAverage();
             Pose targetPose = new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40), Math.toRadians(180));
             double[] powers = poseFollower.calculate(follower.getPose(), targetPose);
             follower.setTeleOpDrive(powers[0], powers[1], powers[2], true);
@@ -127,6 +127,8 @@ public class DriveToBallTest extends OpMode {
         if (gamepad1.leftBumperWasPressed()) {
             followBall.start();
         }
+
+        telemetry.addData("Pose", follower.getPose());
 
         followBall.update();
         follower.update();

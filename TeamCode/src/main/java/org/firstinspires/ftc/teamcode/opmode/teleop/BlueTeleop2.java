@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.tuning;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="SOTM teleop tuning turret pid: make it follow goal BETTER! TUNE THIS TOMORROW", group="!")
-public class SOTMTeleop3 extends OpMode {
+@TeleOp(name="Blue Teleop Scrim", group="!")
+public class BlueTeleop2 extends OpMode {
     // steps in order:
     // tune the pid first, so that we can track a moving target.
     // to do this set the latency scale factor to -1
@@ -24,11 +24,6 @@ public class SOTMTeleop3 extends OpMode {
     // lastly tune the latency scale factor so that the turret and shooter update
     private MainTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
-    public static double p = 0.005; // tune
-    public static double d = 0.000; // tune
-    public static double offset = 0; // tune, offset for the turret itself
-    public static double latencyScaleFactor = 1.4; // small number prob between 0 and 1
-    public static double kF = -0.1;
 
     @Override
     public void init() {
@@ -38,10 +33,6 @@ public class SOTMTeleop3 extends OpMode {
 
     @Override
     public void loop() {
-        teleop.robot.turret.setPDCoefficients(p, d);
-        teleop.sotm.latencyScaleFactor = latencyScaleFactor;
-        teleop.sotm.offsetFactor = offset;
-        teleop.sotm.kF = kF;
         teleop.loop();
         telemetry.update();
     }

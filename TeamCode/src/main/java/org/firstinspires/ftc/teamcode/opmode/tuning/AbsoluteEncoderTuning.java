@@ -14,29 +14,44 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 @Config
 @TeleOp(name="Absolute Encoder Tuner")
 public class AbsoluteEncoderTuning extends OpMode {
     // TODO: i also have no idea if it's reversed or not. might need to negate to calculate position
-    public static double encoderOffsetTicks = -343;
-    public static double maxVoltage = 3.24; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
+    public static double encoderOffsetDegrees = 0;
+    public static double maxVoltage = 3.239; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
     public static boolean isReversed = false;
     private Turret turret;
     private double ticksPerRevolution = 1381; // 383.6*5
     private double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
     private double degreesPerTick = 360d / ticksPerRevolution;
-    private double encoderGearRatio = 17/14d;
+    public static double goofyScaleFactor = 17;
+    private double encoderGearRatio = goofyScaleFactor/14d;
     private AnalogInput encoder;
 
     private double calculatePositionTicks(double voltage) {
+        double realOffset = Math.toRadians(encoderOffsetDegrees + 360);
+        // double offset = -123.4 + 360;
+        // offsetPosition = (encoder.getVoltage() / 3.2 * 360 + offset) % 360;
         double directionFactor = isReversed ? -1 : 1;
         // we need to convert the offset from ticks to degrees, then turn to radians: 1 tick = 360/1381 degrees.
-        return turret.weirdAngleWrap(directionFactor * (voltage / maxVoltage) * (encoderGearRatio) * 2 * Math.PI + Math.toRadians(encoderOffsetTicks/degreesPerTick)) * ticksPerRadian;
+
+        double anglePreGear = MathUtil.normalizeAngle(directionFactor * (voltage / maxVoltage) * 2 * Math.PI);
+        double encoderGearRatio = goofyScaleFactor/14d;
+        double anglePostGear = anglePreGear * encoderGearRatio;
+
+        double angleWithOffset = anglePostGear + realOffset;
+        return turret.weirdAngleWrap(angleWithOffset) * ticksPerRadian;
+
+        // return turret.weirdAngleWrap(directionFactor * (voltage / maxVoltage) * (encoderGearRatio) * 2 * Math.PI + realOffset) * ticksPerRadian;
     }
 
     @Override
     public void loop() {
+        double realOffset = Math.toRadians(encoderOffsetDegrees + 360);
+        double directionFactor = isReversed ? -1 : 1;
         double voltage = encoder.getVoltage();
         turret.update();
         telemetry.addLine("Turn the turret to 1381 ticks (or -1381 ticks i forgot) to make one revolution, and observe the external encoder conversion. they should be similar.");
@@ -47,6 +62,9 @@ public class AbsoluteEncoderTuning extends OpMode {
         telemetry.addData("Turret encoder position", turret.turretMotor.getCurrentPosition());
         telemetry.addData("External encoder position", calculatePositionTicks(voltage));
         telemetry.addData("External encoder voltage", voltage);
+        telemetry.addData("angle pre gear ratio", MathUtil.angleWrap(directionFactor * (voltage / maxVoltage) * 2 * Math.PI));
+        telemetry.addData("angle post gear ratio", MathUtil.angleWrap(directionFactor * (voltage / maxVoltage) * 2 * Math.PI) * encoderGearRatio);
+        telemetry.addData("angle wrapped weird and offset", turret.weirdAngleWrap(directionFactor * (voltage / maxVoltage) * (encoderGearRatio) * 2 * Math.PI + realOffset));
         telemetry.update();
     }
 

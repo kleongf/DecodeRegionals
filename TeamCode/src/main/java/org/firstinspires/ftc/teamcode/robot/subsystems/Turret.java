@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.controllers.PIDFController;
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
 
 public class Turret extends Subsystem {
@@ -17,19 +19,24 @@ public class Turret extends Subsystem {
     private double feedforward = 0;
 
     private double offset = 0;
-    private double maxPower = 0.7;
-    private double kS = 0.02;
+    private double maxPower = 0.5;
+    private double kS = 0.01;
+    public static double encoderOffsetDegrees = -64.4;
+    public static double maxVoltage = 3.29;
+    private double encoderGearRatio = 17/14d;
+    private AnalogInput externalEncoder;
 
 
     public Turret(HardwareMap hardwareMap) {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        externalEncoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
 
 
         //turretController = new PIDFController(0.005, 0, 0.00005, 0);
         // TODO: retune turret. doesn't need to be strong just needs to follow goal
-        turretController = new PIDFController(0.002, 0, 0.0002, 0);
+        turretController = new PIDFController(0.005, 0, 0.0002, 0);
     }
 
     // the turret does not tend to drift too much
@@ -52,8 +59,17 @@ public class Turret extends Subsystem {
 
     //
 
+    public double calculateExternalEncoderPosition(double voltage) {
+        double realOffset = Math.toRadians(encoderOffsetDegrees + 360);
+        double anglePreGear = MathUtil.normalizeAngle((voltage / maxVoltage) * 2 * Math.PI);
+        double anglePostGear = anglePreGear * encoderGearRatio;
+        double angleWithOffset = anglePostGear + realOffset;
+        return weirdAngleWrap(angleWithOffset) * ticksPerRadian;
+    }
+
     @Override
     public void update() {
+        // double c = calculateExternalEncoderPosition(externalEncoder.getVoltage());
 
         double c = turretMotor.getCurrentPosition();
                 // - offset/ticksPerRadian;
@@ -73,9 +89,9 @@ public class Turret extends Subsystem {
 //            power += 0.01 * Math.signum(error);
 //        }
 
-//        if (Math.abs(power) > maxPower) {
-//            power = maxPower * Math.signum(power);
-//        }
+        if (Math.abs(power) > maxPower) {
+            power = maxPower * Math.signum(power);
+        }
 
         // power += feedforward;
         turretMotor.setPower(power);

@@ -26,7 +26,7 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
     private double epsilon = 100;
-    private double shootingEpsilon = 60;
+    private double shootingEpsilon = 100;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
     private boolean isShooting = false;
@@ -44,8 +44,9 @@ public class Shooter extends Subsystem {
 
         latchServo = hardwareMap.get(Servo.class, "latchServo");
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
+        // (1.0/2000)
 
-        controller = new FeedForwardController((1.0/2180), 0, 0.003);
+        controller = new FeedForwardController(0.00036, 0, 0.003);
     }
     @Override
     public void update() {

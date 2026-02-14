@@ -40,7 +40,7 @@ public class MainTeleop {
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;
-    private boolean automateRobot = false;
+    private boolean automateRobot = true;
     private Telemetry telemetry;
     private Alliance alliance;
     private PathBuilder pathBuilder;
@@ -69,7 +69,7 @@ public class MainTeleop {
         this.alliance = alliance;
 
         this.sotm = new SOTM(goalPose);
-        this.currentZone = Zone.CLOSE;
+        this.currentZone = Zone.FAR;
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
 
         this.prevDetectState = Intake.DetectionState.EMPTY;
@@ -107,9 +107,9 @@ public class MainTeleop {
 
         // TODO: WILL BE USED LATER. CAN BE OPTIMIZED: STOP INTAKE WHEN 3 BALLS.
 
-//        if (robotState == RobotState.IDLE && robot.intake.intakeFull()) {
+//        if (robotState == RobotState.IDLE && robot.intake.isFull()) {
 //            robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
-//        } else if (robotState == RobotState.IDLE && !robot.intake.intakeFull()) {
+//        } else if (robotState == RobotState.IDLE && !robot.intake.isFull()) {
 //            robot.intake.state = Intake.IntakeState.INTAKE_FAST;
 //        }
 
@@ -152,6 +152,12 @@ public class MainTeleop {
         // shoot: right bumper
         if (gamepad1.rightBumperWasPressed()) {
             robot.shootCommand.start();
+        }
+
+        // added just for this
+
+        if (gamepad1.dpad_up) {
+            automateRobot = !automateRobot;
         }
 
         // gate intake: x
@@ -307,6 +313,7 @@ public class MainTeleop {
         telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
         telemetry.addLine("Robot in shooting zone: " + zoneUtil.inZone(currentPose, currentZone));
         telemetry.addLine("Intake full: " + robot.intake.intakeFull());
+        telemetry.addLine("Intake state: "+ robot.intake.getState());
         telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());
         telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
         telemetry.addLine("Current turret pos: " + robot.turret.getCurrent());
