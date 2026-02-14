@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 public class AbsoluteEncoderTuning extends OpMode {
     // TODO: i also have no idea if it's reversed or not. might need to negate to calculate position
     public static double encoderOffsetDegrees = 0;
-    public static double maxVoltage = 3.239; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
+    public static double maxVoltage = 3.29; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
     public static boolean isReversed = false;
     private Turret turret;
     private double ticksPerRevolution = 1381; // 383.6*5
@@ -31,19 +31,28 @@ public class AbsoluteEncoderTuning extends OpMode {
     private double encoderGearRatio = goofyScaleFactor/14d;
     private AnalogInput encoder;
 
+    // idea: convert to radians -> ticks first before encoder gear ratio, then multiply ticks
+
     private double calculatePositionTicks(double voltage) {
-        double realOffset = Math.toRadians(encoderOffsetDegrees + 360);
+        double realOffset = Math.toRadians(encoderOffsetDegrees + 360); // added to final
+
+        double position = ((voltage /  maxVoltage) * 2 * Math.PI + realOffset) % (2 * Math.PI);
+        double posToTicksGeared = position * ticksPerRadian * encoderGearRatio;
+
+        return posToTicksGeared;
+
+
         // double offset = -123.4 + 360;
         // offsetPosition = (encoder.getVoltage() / 3.2 * 360 + offset) % 360;
-        double directionFactor = isReversed ? -1 : 1;
+        // double directionFactor = isReversed ? -1 : 1;
         // we need to convert the offset from ticks to degrees, then turn to radians: 1 tick = 360/1381 degrees.
 
-        double anglePreGear = MathUtil.normalizeAngle(directionFactor * (voltage / maxVoltage) * 2 * Math.PI);
-        double encoderGearRatio = goofyScaleFactor/14d;
-        double anglePostGear = anglePreGear * encoderGearRatio;
-
-        double angleWithOffset = anglePostGear + realOffset;
-        return turret.weirdAngleWrap(angleWithOffset) * ticksPerRadian;
+//        double anglePreGear = MathUtil.normalizeAngle(directionFactor * (voltage / maxVoltage) * 2 * Math.PI);
+//        double encoderGearRatio = goofyScaleFactor/14d;
+//        double anglePostGear = anglePreGear * encoderGearRatio;
+//
+//        double angleWithOffset = anglePostGear + realOffset;
+//        return turret.weirdAngleWrap(angleWithOffset) * ticksPerRadian;
 
         // return turret.weirdAngleWrap(directionFactor * (voltage / maxVoltage) * (encoderGearRatio) * 2 * Math.PI + realOffset) * ticksPerRadian;
     }
