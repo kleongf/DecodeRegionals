@@ -10,7 +10,7 @@ public class PoseConstants {
     public static double FIELD_WIDTH = 141; // not 144 inches, i feel betrayed bruh
     // 296 mm long + 304 mm total, so 148mm + (304-296) mm = 156 mm total
     public static double ROBOT_BOTTOM_TO_CENTER = 6.14173; // inches
-    public static double BLUE_WALL_LEFT_DISTANCE = 47.5; // TODO: measure
+    public static double BLUE_WALL_LEFT_DISTANCE = 47.5; // TODO: measure -> measured to be 47.5
     public static Pose BLUE_STANDARD_START_POSE = new Pose(BLUE_WALL_LEFT_DISTANCE + ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose RED_STANDARD_START_POSE = new Pose(FIELD_WIDTH - BLUE_STANDARD_START_POSE.getX(), ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
@@ -20,7 +20,7 @@ public class PoseConstants {
     public static Pose RED_GOAL_POSE = new Pose(FIELD_WIDTH, FIELD_WIDTH, Math.toRadians(45));
     public static Pose BLUE_FAR_POSE =  new Pose(54, 12, Math.toRadians(180));
     public static Pose RED_FAR_POSE =  new Pose(144-54, 12, Math.toRadians(0));
-    public static Pose BLUE_GATE_POSE = new Pose(14, 70, Math.toRadians(270));
+    public static Pose BLUE_GATE_POSE = new Pose(15, 70, Math.toRadians(270));
 
     public static Pose RED_GATE_POSE = new Pose(FIELD_WIDTH-14, 70, Math.toRadians(270));
 
@@ -28,7 +28,7 @@ public class PoseConstants {
     public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-39, 14, Math.toRadians(270));
 
     // Autonomous Poses
-    public static Pose BLUE_CLOSE_AUTO_POSE = new Pose(31.5, 137.6, Math.toRadians(270));
+    public static Pose BLUE_CLOSE_AUTO_POSE = new Pose(30, 135.5, Math.toRadians(270));
     public static Pose RED_CLOSE_AUTO_POSE = new Pose(FIELD_WIDTH-31.5, 137.6, Math.toRadians(270));
     // TODO: rename to blue far auto start pose
     // TODO: these poses are a bit off. change them to what they should be based on limelight pose test.
@@ -50,7 +50,7 @@ public class PoseConstants {
     public static Pose BLUE_FAR_GATE_AUTO_POSE_IN = new Pose(BLUE_FAR_GATE_AUTO_POSE.getX()+Math.cos(BLUE_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_FAR_GATE_AUTO_POSE.getY()+Math.sin(BLUE_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_FAR_GATE_AUTO_POSE.getHeading());
     public static Pose RED_FAR_GATE_AUTO_POSE_IN = new Pose(RED_FAR_GATE_AUTO_POSE.getX()+Math.cos(RED_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_FAR_GATE_AUTO_POSE.getY()+Math.sin(RED_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_FAR_GATE_AUTO_POSE.getHeading());
 
-    public static Pose BLUE_GATE_AUTO_POSE =  new Pose(12.8, 60.7, Math.toRadians(148));
+    public static Pose BLUE_GATE_AUTO_POSE =  new Pose(13.1, 55.7, Math.toRadians(148));
     //public static Pose RED_GATE_AUTO_POSE = new Pose(144-12.4, 60, Math.toRadians(180-148));
     public static Pose RED_GATE_AUTO_POSE = new Pose(129.5, 60, Math.toRadians(180-148));
     public static Pose BLUE_GATE_AUTO_POSE_IN =  new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY()+Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getHeading());

@@ -26,9 +26,9 @@ public class SOTMTeleop3 extends OpMode {
     private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
     public static double p = 0.005; // tune
     public static double d = 0.000; // tune
-    public static double offset = 0; // tune, offset for the turret itself
-    public static double latencyScaleFactor = 1.4; // small number prob between 0 and 1
-    public static double kF = -0.1;
+    public static double offset = 10; // tune, offset for the turret itself
+    public static double latencyScaleFactor = 1; // small number prob between 0 and 1
+    public static double kF = 0.001; // could set to something lower given that we have a p controller maybe like 0.05
 
     @Override
     public void init() {
@@ -43,6 +43,9 @@ public class SOTMTeleop3 extends OpMode {
         teleop.sotm.offsetFactor = offset;
         teleop.sotm.kF = kF;
         teleop.loop();
+        // graphing these could make it a lot easier to tune.
+        telemetry.addData("current pos", teleop.robot.turret.getCurrent());
+        telemetry.addData("target pos", teleop.robot.turret.getTarget());
         telemetry.update();
     }
 

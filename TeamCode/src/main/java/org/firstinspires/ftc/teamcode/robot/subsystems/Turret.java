@@ -21,7 +21,7 @@ public class Turret extends Subsystem {
     private double offset = 0;
     private double maxPower = 0.5;
     private double kS = 0.01;
-    public static double encoderOffsetDegrees = -64.4;
+    public static double encoderOffsetDegrees = -120;
     public static double maxVoltage = 3.29;
     private double encoderGearRatio = 17/14d;
     private AnalogInput externalEncoder;
@@ -36,7 +36,7 @@ public class Turret extends Subsystem {
 
         //turretController = new PIDFController(0.005, 0, 0.00005, 0);
         // TODO: retune turret. doesn't need to be strong just needs to follow goal
-        turretController = new PIDFController(0.005, 0, 0.0002, 0);
+        turretController = new PIDFController(0.005, 0, 0.000, 0);
     }
 
     // the turret does not tend to drift too much
@@ -58,20 +58,28 @@ public class Turret extends Subsystem {
     // is this foolproof?
 
     //
+    // ehhh this might not be as good but it should be fine
 
-    public double calculateExternalEncoderPosition(double voltage) {
-        double realOffset = Math.toRadians(encoderOffsetDegrees + 360);
-        double anglePreGear = MathUtil.normalizeAngle((voltage / maxVoltage) * 2 * Math.PI);
-        double anglePostGear = anglePreGear * encoderGearRatio;
-        double angleWithOffset = anglePostGear + realOffset;
-        return weirdAngleWrap(angleWithOffset) * ticksPerRadian;
+    private double calculatePositionTicks(double voltage) {
+        double realOffset = Math.toRadians(encoderOffsetDegrees + 360); // added to final
+
+        // if it's reversed
+
+        double position = ((voltage /  maxVoltage) * 2 * Math.PI) % (2 * Math.PI) + realOffset;
+        double posToTicksGeared = position * ticksPerRadian * encoderGearRatio;
+
+        return posToTicksGeared - 2 * ticksPerRevolution; // + ticksPerRevolution * rotations;
     }
+
+    // 13.1, 59.7, 148
+    // 16, 70
+    // 30, 135.5
 
     @Override
     public void update() {
-        // double c = calculateExternalEncoderPosition(externalEncoder.getVoltage());
+        double c = calculatePositionTicks(externalEncoder.getVoltage());
 
-        double c = turretMotor.getCurrentPosition();
+        // double c = turretMotor.getCurrentPosition();
                 // - offset/ticksPerRadian;
         double t = weirdAngleWrap(target) * ticksPerRadian;
 

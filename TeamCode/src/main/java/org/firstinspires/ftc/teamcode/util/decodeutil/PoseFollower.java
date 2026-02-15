@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PoseFollower {
     // i am lazy and this is for proof of concept only so no d component. yes its gonna overshoot but idgaf
     private Pose goalPose;
-    private double kPDrive = 0.05;
-    private double kPStrafe = 0.1;
+    private double kPDrive = 0.015;
+    private double kPStrafe = 0.03;
     private double kPHeading = 0.5; // pedro already emphasizes heading
     private double kDDrive;
     private double kDStrafe;
@@ -38,14 +38,14 @@ public class PoseFollower {
         }
         double dy = goalPose.getY()-currentPose.getY();
         double dx = goalPose.getX()-currentPose.getX();
-        double dTheta = MathUtil.normalizeAngle(goalPose.getHeading()-currentPose.getHeading());
+        double dTheta = MathUtil.angleWrap(goalPose.getHeading()-currentPose.getHeading());
 
         // Convert GLOBAL outputs to ROBOT-LOCAL frame using current heading
         double cosH = Math.cos(currentPose.getHeading());
         double sinH = Math.sin(currentPose.getHeading());
 
-        double xPower =  (sinH * dx  -  cosH * dy) * kPDrive;
-        double yPower =  (cosH * dx  +  sinH * dy) * kPStrafe;
+        double xPower =  (sinH * dx  -  cosH * dy) * kPStrafe;
+        double yPower =  (cosH * dx  +  sinH * dy) * kPDrive;
         double thetaPower = kPHeading * dTheta; // rotation is already body-centric sign
 
         // normalize powers
@@ -56,6 +56,6 @@ public class PoseFollower {
             thetaPower /= total;
         }
 
-        return new double[] {xPower, yPower, -thetaPower};
+        return new double[] {yPower, xPower, 0};
     }
 }

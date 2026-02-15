@@ -14,14 +14,6 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 @Config
 @TeleOp(name="Blue Teleop Scrim", group="!")
 public class BlueTeleop2 extends OpMode {
-    // steps in order:
-    // tune the pid first, so that we can track a moving target.
-    // to do this set the latency scale factor to -1
-    // when we stop moving, the turret should also stop. it should track the goal well.
-    // when we have a good pid, then we know that offset is next
-    // tune offset for various distances on the field while recording the angle to the goal
-    // find some function (if it is a function) to calculate offset
-    // lastly tune the latency scale factor so that the turret and shooter update
     private MainTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
 

@@ -7,24 +7,25 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision;
+import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
 @TeleOp(name="Vision Distance Test")
 public class VisionDistanceTest extends OpMode {
-    private ArtifactVision vision;
+    private ArtifactVision2 vision;
     @Override
     public void loop() {
         vision.update();
-        telemetry.addData("best X pos", vision.getLargestClusterX());
+        telemetry.addData("best X pos", vision.getBestXMovingAverage());
         telemetry.update();
 
     }
 
     @Override
     public void init() {
-        vision = new ArtifactVision(hardwareMap, Alliance.BLUE);
+        vision = new ArtifactVision2(hardwareMap, Alliance.BLUE);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 

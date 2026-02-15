@@ -10,11 +10,12 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
-    public double kF = -0.08; //0.08
+    public double kF = 0.001; //0.08
+    public double kFAngular = -0.08;
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
-    public double latencyScaleFactor = 1.4;
+    public double latencyScaleFactor = 1;
     public double timeScaleFactor = 1;
-    public double offsetFactor = 15; // offset in inches to goal, i would prob set to 10
+    public double offsetFactor = 10; // offset in inches to goal, i would prob set to 10
     public double constantTimeFactor = 0;
     private double efficiency = 0.5; // more accurate now bc no c-roller
     private double MAX_ITERATIONS = 200;
@@ -53,14 +54,14 @@ public class SOTM {
         velocityLUT.addData(145, 2080);
         velocityLUT.addData(138, 1980);
         velocityLUT.addData(130, 1900);
-        velocityLUT.addData(118, 1750-40);
-        velocityLUT.addData(108, 1700-40);
-        velocityLUT.addData(98, 1650-40);
-        velocityLUT.addData(88, 1600-40);
-        velocityLUT.addData(78, 1550-40);
-        velocityLUT.addData(68, 1500-40);
-        velocityLUT.addData(58, 1420-40);
-        velocityLUT.addData(48, 1300-40);
+        velocityLUT.addData(118, 1750);
+        velocityLUT.addData(108, 1700);
+        velocityLUT.addData(98, 1650);
+        velocityLUT.addData(88, 1600);
+        velocityLUT.addData(78, 1550);
+        velocityLUT.addData(68, 1500);
+        velocityLUT.addData(58, 1420);
+        velocityLUT.addData(48, 1300);
 
     }
 
@@ -296,6 +297,25 @@ public class SOTM {
         // (u ⋅ v / |v|²) * v
         Vector projuv = MathUtil.scalarMultiplyVector(v, MathUtil.dotProduct(u, v) / MathUtil.dotProduct(v, v));
 
+        // can find feedforward by dividing tangential velocity by distance
+        Vector vTangential = MathUtil.subtractVectors(u, projuv);
+
+        double crossProduct = v.cross(vTangential);
+        double dotProduct = v.dot(vTangential);
+        Log.d("cross product", "" + crossProduct);
+
+        // Vector vPlusVel = v.plus(vTangential);
+
+        // get the direction of angle change
+        // double angleBetween = Math.atan2();
+
+        // theta = atan2(cross / dot)
+
+        // double feedforward = Math.signum(crossProduct) * (vTangential.getMagnitude() / dist);
+        // tangent = sine over cosine, magnitudes cancel out
+        double feedforward = Math.atan2(crossProduct, dotProduct);
+        Log.d("feedforward dir", "" + feedforward);
+
         // if the vectors are in the same direction, then we should subtract the radial velocity
         // vectors are in the same direction if their dot product is positive, so dot it with the goal vector.
         double vRadial = MathUtil.dotProduct(projuv, v) > 0 ? projuv.getMagnitude() : -projuv.getMagnitude();
@@ -305,9 +325,12 @@ public class SOTM {
         Log.d("Timestep", "timestep: " + timestep);
 
         Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent()*timestep);
+        Log.d("virtual goal", virtualGoal.toString());
 
         double[] values = calculateAzimuthThetaVelocity(robotPose, virtualGoal);
 
-        return new double[] {values[0], values[1], values[2], kF * angularVelocity};
+        // +kFAngular * angularVelocity
+
+        return new double[] {values[0], values[1], values[2], kF * feedforward};
     }
 }

@@ -18,9 +18,13 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.TeleopDrivetrain;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import com.pedropathing.paths.Path;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Zone;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
+
+import java.util.ArrayList;
 
 
 public class MainTeleop {
@@ -31,6 +35,8 @@ public class MainTeleop {
     // TODO: also have it so when driver 2 has a trigger down then go slow
     // also side quest kalman filter stuff
     private RobotState robotState;
+    private ArrayList<Vector> rollingVelocities;
+    private double numVelocities = 4;
     private Intake.DetectionState prevDetectState;
     private TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
@@ -45,6 +51,8 @@ public class MainTeleop {
     private Alliance alliance;
     private PathBuilder pathBuilder;
     private Zone currentZone;
+    private Pose prevPose;
+    private ElapsedTime elapsedTime;
     private ZoneUtil zoneUtil;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
@@ -73,6 +81,9 @@ public class MainTeleop {
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
 
         this.prevDetectState = Intake.DetectionState.EMPTY;
+        this.rollingVelocities = new ArrayList<>();
+        this.elapsedTime = new ElapsedTime();
+        this.prevPose = startPose;
     }
     private double normalizeInput(double input) {
         return 1.2 * Math.signum(input) * Math.sqrt(Math.abs(input));
@@ -80,6 +91,18 @@ public class MainTeleop {
 
     private double getDistance(Pose a, Pose b) {
         return Math.hypot(a.getX()-b.getX(), a.getY()-b.getY());
+    }
+
+    private Vector getRollingVelocity() {
+        Vector currentSum = new Vector();
+        if (rollingVelocities.isEmpty()) {
+            return currentSum;
+        }
+        for (Vector v: rollingVelocities) {
+            currentSum = MathUtil.addVectors(currentSum, v);
+        }
+        Vector movingAverage = MathUtil.scalarMultiplyVector(currentSum, 1d / rollingVelocities.size());
+        return movingAverage;
     }
 
     public void loop() {
@@ -93,10 +116,27 @@ public class MainTeleop {
                     speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
                     speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         }
+        double dt = elapsedTime.seconds();
 
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
-        Vector currentVelocity = drivetrain.getVelocity();
+
+        // Vector currentVelocityPose = drivetrain.getPose().minus(prevPose).div(dt).getAsVector();
+        Vector currentVelocity;
+        if (dt > 0) {
+            currentVelocity = drivetrain.getPose().minus(prevPose).div(dt).getAsVector();
+        } else {
+            currentVelocity = drivetrain.getVelocity();
+        }
+
+        if (rollingVelocities.size() < numVelocities) {
+            for (int i = 0; i < numVelocities; i++) {
+                rollingVelocities.add(currentVelocity);
+            }
+        } else {
+            rollingVelocities.add(currentVelocity);
+            rollingVelocities.remove(0);
+        }
 
         // SETTING ROBOT STATE
         if (robot.shootCommand.isFinished()) {
@@ -298,13 +338,15 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, currentVelocity, drivetrain.getAngularVelocity());
+        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, getRollingVelocity(), drivetrain.getAngularVelocity());
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
         robot.turret.setFeedforward(values[3]);
         robot.turret.setTarget(values[0]+turretOffset);
 
         prevDetectState = robot.intake.detectionState;
+        prevPose = currentPose;
+        elapsedTime.reset();
 
         robot.update();
 
@@ -325,6 +367,7 @@ public class MainTeleop {
     public void start() {
         robot.initPositions();
         robot.start();
+        elapsedTime.reset();
     }
 
     public void stop() {

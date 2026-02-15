@@ -21,6 +21,8 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
@@ -33,6 +35,9 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
+
+import java.util.ArrayList;
+
 @Autonomous(name="Blue Close 24 Extra Gate V7 not corner start + all tangential", group="!")
 public class BlueClose24ExtraGateV7 extends OpMode {
     private Follower follower;
@@ -42,7 +47,25 @@ public class BlueClose24ExtraGateV7 extends OpMode {
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
     private final Pose shootPose = new Pose(60, 72, Math.toRadians(-144));
+    private Pose currentShootPose = new Pose(60, 72, Math.toRadians(-144));
     private PathChain shootPreloadIntakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
+    private ArrayList<Vector> rollingVelocities;
+    private ElapsedTime elapsedTime;
+    private Pose prevPose;
+    private int numVelocities = 4;
+    private boolean isSOTMing = true;
+
+    private Vector getRollingVelocity() {
+        Vector currentSum = new Vector();
+        if (rollingVelocities.isEmpty()) {
+            return currentSum;
+        }
+        for (Vector v: rollingVelocities) {
+            currentSum = MathUtil.addVectors(currentSum, v);
+        }
+        Vector movingAverage = MathUtil.scalarMultiplyVector(currentSum, 1d / rollingVelocities.size());
+        return movingAverage;
+    }
 
     public void buildPaths() {
         double k1 = 10; // i actually forgot what these were check desmos
@@ -50,20 +73,23 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         // idk abt this just check it again and do for control point 2
         Pose controlPoint1 = new Pose(shootPose.getX() + k1 * Math.cos(shootPose.getHeading()), shootPose.getY() + k1 * Math.sin(shootPose.getHeading()));
         Pose controlPoint2 = new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX() - k2 * Math.cos(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()), PoseConstants.BLUE_GATE_AUTO_POSE.getY() - k2 * Math.sin(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()));
+
+
         shootPreloadIntakeSecond = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
-                                new Pose(60, 72)
+                                new Pose(54.000, 90.000)
                         )
-                ).setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(-124))
+                ).setConstantHeadingInterpolation(Math.toRadians(-110))
+                // TODO: MAKE IT SHOOT
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(51.521, 59.255),
-                                new Pose(41.351, 59.138),
-                                new Pose(15.000, 60.000)
+                                new Pose(54, 90),
+                                new Pose(40, 60),
+                                new Pose(12, 60)
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setTangentHeadingInterpolation()
                 .build();
 
         shootSecond = follower.pathBuilder().addPath(
@@ -76,14 +102,33 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 .setReversed()
                 .build();
 
-        intakeGate1 = follower.pathBuilder().addPath(
+        HeadingInterpolator toGate = HeadingInterpolator.piecewise(
+//                new HeadingInterpolator.PiecewiseNode(
+//                        0,
+//                        1,
+//                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+//                )
+                new HeadingInterpolator.PiecewiseNode(
+                        0,
+                        0.75,
+                        HeadingInterpolator.linear(shootSecond.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                ),
+                new HeadingInterpolator.PiecewiseNode(
+                        0.75,
+                        1,
+                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                )
+        );
+
+        intakeGate1 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                controlPoint1,
-                                controlPoint2,
+                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -99,14 +144,16 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 .setReversed()
                 .build();
 
-        intakeGate2 = follower.pathBuilder().addPath(
+        intakeGate2 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                controlPoint1,
-                                controlPoint2,
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY() + 0.5),
+                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+0.5)
+                                // PoseConstants.BLUE_GATE_AUTO_POSE
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -122,14 +169,16 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 .setReversed()
                 .build();
 
-        intakeGate3 = follower.pathBuilder().addPath(
+        intakeGate3 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                controlPoint1,
-                                controlPoint2,
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY() + 1),
+                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+1)
+                                // PoseConstants.BLUE_GATE_AUTO_POSE
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -145,14 +194,16 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 .setReversed()
                 .build();
 
-        intakeGate4 = follower.pathBuilder().addPath(
+        intakeGate4 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                controlPoint1,
-                                controlPoint2,
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY() + 1.5),
+                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+1.5)
+                                //PoseConstants.BLUE_GATE_AUTO_POSE
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -168,14 +219,16 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 .setReversed()
                 .build();
 
-        intakeGate5 = follower.pathBuilder().addPath(
+        intakeGate5 = follower.pathBuilder()
+                .addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
-                                controlPoint1,
-                                controlPoint2,
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY() + 2),
+                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+2)
+                                // PoseConstants.BLUE_GATE_AUTO_POSE
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.99)
                 .build();
 
@@ -214,6 +267,9 @@ public class BlueClose24ExtraGateV7 extends OpMode {
         follower.setStartingPose(startPose);
         robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
         sotm2 = new SOTM(goalPose);
+        rollingVelocities = new ArrayList<>();
+        elapsedTime = new ElapsedTime();
+        prevPose = startPose;
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -240,6 +296,8 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
+                            isSOTMing = false;
+                            robot.turret.setPDCoefficients(0.005, 0.00025);
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -257,8 +315,10 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         .onEnter(() -> {
                             follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
+                        .minTime(600)
+                        .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1000),
+                        .maxTime(3000),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -279,7 +339,10 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         .onEnter(() -> {
                             follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
-                        .maxTime(1000),
+                        .minTime(600)
+                        .transition(new Transition(() -> robot.intake.intakeFull()))
+                        // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
+                        .maxTime(3000),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -302,7 +365,10 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         })
 //                        .minTime(600)
 //                        .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1000),
+                        .minTime(600)
+                        .transition(new Transition(() -> robot.intake.intakeFull()))
+                        // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
+                        .maxTime(3000),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -326,7 +392,10 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         })
 //                        .minTime(600)
 //                        .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1000),
+                        .minTime(600)
+                        .transition(new Transition(() -> robot.intake.intakeFull()))
+                        // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
+                        .maxTime(3000),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -347,10 +416,14 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            currentShootPose = new Pose(54, 84, Math.toRadians(180));
                         })
 //                        .minTime(600)
 //                        .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1000),
+                        .minTime(600)
+                        .transition(new Transition(() -> robot.intake.intakeFull()))
+                        // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
+                        .maxTime(3000),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -365,6 +438,7 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.followPath(intakeFirst, false);
+                            currentShootPose = new Pose(48, 114, Math.toRadians(-135));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
@@ -391,30 +465,52 @@ public class BlueClose24ExtraGateV7 extends OpMode {
     }
     @Override
     public void loop() {
-        double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
-        robot.setAzimuthThetaVelocity(new double[] {values[0]-0.15, values[1], values[2]});
-        robot.turret.setFeedforward(values[3]);
+        if (isSOTMing) {
+            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), getRollingVelocity(), follower.getAngularVelocity());
+            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
+            robot.turret.setFeedforward(values[3]);
+        } else {
+            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
+            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
+            robot.turret.setFeedforward(0);
+        }
 
-//        double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
-//        // at the start, make sure we have enough velocity
-//        if (MathUtil.distance(follower.getPose(), goalPose) < 60) {
-//            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], 1100});
-//        } else {
-//            robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
-//        }
+//        double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), getRollingVelocity(), follower.getAngularVelocity());
+//        robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
 //        robot.turret.setFeedforward(values[3]);
-//        if (follower.getPose() != null && follower.getVelocity() != null) {
-//            values = sotm2.calculateAzimuthThetaVelocity(follower.getPose(), follower.getVelocity());
-//            robot.setAzimuthThetaVelocity(values);
-//        }
+
 
         // I am starting to believe that the turret is off because it's not reaching its target
         // let's confirm, the p and d values are really low
         Log.d("turret current pos", "" + robot.turret.getCurrent());
         Log.d("turret target pos", "" + robot.turret.getTarget());
+
         stateMachine.update();
         follower.update();
+
+        double dt = elapsedTime.seconds();
+
+        Vector currentVelocity;
+        if (dt > 0) {
+            currentVelocity = follower.getPose().minus(prevPose).div(dt).getAsVector();
+        } else {
+            currentVelocity = follower.getVelocity();
+        }
+
+        if (rollingVelocities.size() < numVelocities) {
+            for (int i = 0; i < numVelocities; i++) {
+                rollingVelocities.add(currentVelocity);
+            }
+        } else {
+            rollingVelocities.add(currentVelocity);
+            rollingVelocities.remove(0);
+        }
+
         robot.update();
+
+        elapsedTime.reset();
+        prevPose = follower.getPose();
+
         telemetry.update();
     }
 

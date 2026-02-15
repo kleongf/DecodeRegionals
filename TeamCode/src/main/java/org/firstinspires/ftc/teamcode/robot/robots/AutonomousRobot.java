@@ -82,7 +82,7 @@ public class AutonomousRobot {
                         })
                         // TODO: .transition(new Transition(() -> !intake.intakeFull()))
                         // this does not quite work unless we know exactly how many we have
-                        .maxTime(350)); // new time apparently
+                        .maxTime(450)); // new time apparently
         commands.add(shootCommand);
 
         shootCommandSlow = new StateMachine(
