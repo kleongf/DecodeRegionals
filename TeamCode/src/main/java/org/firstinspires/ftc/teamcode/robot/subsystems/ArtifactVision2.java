@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.vision.ArtifactProcessor;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Matrix;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -27,6 +29,8 @@ public class ArtifactVision2 extends Subsystem {
     private double bestX = -19;
     private double cameraAngle = Math.toRadians(0); // if angled down, -10 degrees or something
     // camera intrinsic matrix. since focusing the new lens it may need some retuning.
+    private ArrayList<Double> movingAverages = new ArrayList<>();
+    private double numMovingAvgPoints = 3;
     private Matrix K = new Matrix(new double[][] {
             {214.1037056, 0, 320},
             {0, 212.72822576, 240},
@@ -64,18 +68,20 @@ public class ArtifactVision2 extends Subsystem {
 //        private Position cameraPosition = new Position(DistanceUnit.MM,
 //                -122, 142, 230, 0);
 
-        if (alliance == Alliance.BLUE) {
-            T = new Matrix(new double[][] {
-                    {-4.80315, -9.05512, 5.59055}
-            }).transpose();
+//        if (alliance == Alliance.BLUE) {
+//            T = new Matrix(new double[][] {
+//                    {-4.80315, -9.05512, 5.59055}
+//            }).transpose();
+//
+//        }
 
-        }
+        // TODO: i don't actually think inverting is necessary? just subtract the x pos instead
 
-        if (alliance == Alliance.RED) {
-            T = new Matrix(new double[][] {
-                    {4.80315, -9.05512, 5.59055} // TODO: invert the x position
-            }).transpose();
-        }
+//        if (alliance == Alliance.RED) {
+//            T = new Matrix(new double[][] {
+//                    {4.80315, -9.05512, 5.59055} // TODO: invert the x position
+//            }).transpose();
+//        }
     }
 
     private Point imageToWorld(double u, double v) {
@@ -135,30 +141,34 @@ public class ArtifactVision2 extends Subsystem {
 
         List<Double> distances = new ArrayList<>();
         List<Double> areas = new ArrayList<>(); // calculating these first to save on computations
-        for(ArtifactProcessor.Blob b : blobs)
-        {
-            RotatedRect boxFit = b.getBoxFit();
-            // filtering out any blobs that are too high, as they might be a person's clothes. this works with opencv coord system.
-            // idk if this is good anymore tho now that we detect from other spots
-            if (boxFit != null) {
-                // making sure it's not in the center
-                if (boxFit.center.y + boxFit.size.height / 2 > 254.488) {
-                    // just x dist
-                    // for the ray algorithm, we want the BOTTOM of the ball. therefore we add height/2.
-                    distances.add(imageToWorld(boxFit.center.x, boxFit.center.y + boxFit.size.height / 2).x);
-                    // TODO: THIS IS IMPORTANT: IF THE Y COORDINATE IS TOO SMALL, THEN CAP THE MAX AREA (or just ignore)
-                    // Importantly, object size is roughly inversely proportional from distance from camera
-                    // however, because this is size and i measure area, it's about d^2
-                    Point pt = imageToWorld(boxFit.center.x, boxFit.center.y);
-                    // dealing with very close distances
-                    double distance = Math.hypot(pt.x, pt.y) < 8 ? 8 : Math.hypot(pt.x, pt.y);
-                    double proportionalArea = b.getContourArea() * Math.pow(distance, 2);
-                    areas.add(proportionalArea);
+        try {
+
+            for (ArtifactProcessor.Blob b : blobs) {
+                RotatedRect boxFit = b.getBoxFit();
+                // filtering out any blobs that are too high, as they might be a person's clothes. this works with opencv coord system.
+                // idk if this is good anymore tho now that we detect from other spots
+                if (boxFit != null) {
+                    // making sure it's not in the center
+                    if (boxFit.center.y + boxFit.size.height / 2 > 240) {
+                        // just x dist
+                        // for the ray algorithm, we want the BOTTOM of the ball. therefore we add height/2.
+                        distances.add(imageToWorld(boxFit.center.x, boxFit.center.y + boxFit.size.height / 2).x);
+                        // TODO: THIS IS IMPORTANT: IF THE Y COORDINATE IS TOO SMALL, THEN CAP THE MAX AREA (or just ignore)
+                        // Importantly, object size is roughly inversely proportional from distance from camera
+                        // however, because this is size and i measure area, it's about d^2
+                        Point pt = imageToWorld(boxFit.center.x, boxFit.center.y);
+                        // dealing with very close distances
+                        double distance = Math.hypot(pt.x, pt.y) < 8 ? 8 : Math.hypot(pt.x, pt.y);
+                        double proportionalArea = b.getContourArea() * Math.pow(distance, 2);
+                        areas.add(proportionalArea);
+                    }
                 }
             }
+        } catch (NullPointerException e) {
+            Log.d("null pointer exception in vision: ", e.toString());
         }
-
-        double maxAreaLoc = -24;
+        // prob better for now
+        double maxAreaLoc = 0;
         double maxArea = 0;
 
         for (int i = -240; i < 240; i++) {
@@ -173,6 +183,15 @@ public class ArtifactVision2 extends Subsystem {
         if (maxAreaLoc < -24) { maxAreaLoc = -24; }
 
         bestX = maxAreaLoc;
+
+        if (movingAverages.isEmpty()) {
+            for (int i = 0; i < numMovingAvgPoints; i++) {
+                movingAverages.add(bestX);
+            }
+        } else {
+            movingAverages.add(bestX);
+            movingAverages.remove(0);
+        }
     }
 
     @Override
@@ -192,5 +211,12 @@ public class ArtifactVision2 extends Subsystem {
             }
         }
         return totalArea;
+    }
+
+    public double getBestXMovingAverage() {
+        if (movingAverages.isEmpty()) {
+            return 0;
+        }
+        return movingAverages.stream().mapToDouble(Double::doubleValue).sum() / movingAverages.size();
     }
 }

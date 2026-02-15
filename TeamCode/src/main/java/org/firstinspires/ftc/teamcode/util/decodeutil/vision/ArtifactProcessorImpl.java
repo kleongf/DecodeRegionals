@@ -169,10 +169,20 @@ class ArtifactProcessorImpl extends ArtifactProcessor implements VisionProcessor
             Imgproc.GaussianBlur(roiMat_userColorSpace, roiMat_userColorSpace, blurElement, 0);
         }
 
+        // TODO: if we are using the monochrome camera: remove this line.
+
         Imgproc.cvtColor(roiMat, roiMat_userColorSpace, Imgproc.COLOR_RGB2YCrCb);
 
         Mat maskGreen = new Mat();
         Mat maskPurple = new Mat();
+
+//        Mat binaryMatrixGreen = new Mat();
+//        Mat binaryMatrixPurple = new Mat();
+//
+//        Imgproc.threshold(roiMat_userColorSpace, binaryMatrixGreen, 127, 255, Imgproc.THRESH_BINARY);
+//        Imgproc.threshold(roiMat_userColorSpace, binaryMatrixPurple, 127, 255, Imgproc.THRESH_BINARY);
+//
+//        Core.bitwise_or(binaryMatrixGreen, binaryMatrixPurple, mask);
 
         Core.inRange(roiMat_userColorSpace, new Scalar( 32,  50, 118),
                 new Scalar(255, 105, 145), maskGreen);

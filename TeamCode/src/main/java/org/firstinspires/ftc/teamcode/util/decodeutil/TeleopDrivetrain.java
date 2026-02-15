@@ -238,7 +238,12 @@ public class TeleopDrivetrain {
 
         switch (state) {
             case TELEOP_DRIVE:
-                follower.setTeleOpDrive(x, y, rx, robotCentric);
+                if (alliance == Alliance.BLUE) {
+                    follower.setTeleOpDrive(x, y, rx, false, Math.toRadians(180));
+                } else {
+                    follower.setTeleOpDrive(x, y, rx, false);
+                }
+
                 break;
             case OPEN_GATE:
                 if (!follower.isBusy()) {

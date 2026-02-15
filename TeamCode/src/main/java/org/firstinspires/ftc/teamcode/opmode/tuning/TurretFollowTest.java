@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
@@ -25,19 +26,19 @@ public class TurretFollowTest extends OpMode {
     private Intake intake;
     private SOTM sotm2;
     private Shooter shooter;
-    private final Pose startPose = new Pose(55.5, 6, Math.toRadians(90));
+    private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
     // i don't think angle matters here in the sotm calculation
-    private final Pose goalPose = new Pose(0, 144, Math.toRadians(45));
+    private final Pose goalPose = new Pose(0, 141, Math.toRadians(45));
     @Override
     public void loop() {
 
         shooter.setTargetVelocity(shooterSpeed);
-        // TODO: fix degree/radian disputes across shooter opmodes
         shooter.setShooterPitch(Math.toRadians(shooterPitch));
-        sotm2.offsetFactor = offset; // in case we get off
+        // for tuning we are gonna explicitly offset
+        // sotm2.offsetFactor = offset; // in case we get off
         double[] target = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), new Vector(), follower.getAngularVelocity());
         // set azimuth
-        // turret.setTarget(target[0]);
+        turret.setTarget(target[0]+offset);
         // turret.setFeedforward(target[3]);
 
 
@@ -47,7 +48,7 @@ public class TurretFollowTest extends OpMode {
         double dist = Math.hypot(dx, dy);
 
         follower.update();
-        // turret.update();
+        turret.update();
         shooter.update();
         intake.update();
 

@@ -40,6 +40,16 @@ public class MathUtil {
         return angle < (double)0.0F ? angle + (Math.PI * 2D) : angle;
     }
 
+    public static double angleWrap(double radians) {
+        while (radians > Math.PI) {
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI) {
+            radians += 2 * Math.PI;
+        }
+        return radians;
+    }
+
     public static double getSmallestAngleDifference(double one, double two) {
         return Math.min(normalizeAngle(one - two), normalizeAngle(two - one));
     }

@@ -23,12 +23,13 @@ public class SOTMTeleop3 extends OpMode {
     // find some function (if it is a function) to calculate offset
     // lastly tune the latency scale factor so that the turret and shooter update
     private MainTeleop teleop;
-    private Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
-    public static double p = 0.002; // tune
-    public static double d = 0.0002; // tune
-    public static double offset = 0.15; // tune, offset for the turret itself
-    public static double latencyScaleFactor = 1.4; // small number prob between 0 and 1
-    public static double kF = -0.1;
+    private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
+    public static double p = 0.005; // tune
+    public static double d = 0.000; // tune
+    public static double offset = 10; // tune, offset for the turret itself
+    public static double latencyScaleFactor = 1; // small number prob between 0 and 1
+    public static double kF = 0.001; // TODO: still don't know if its going the right direction lol
+    // could set to something lower given that we have a p controller maybe like 0.05
 
     @Override
     public void init() {
@@ -43,6 +44,11 @@ public class SOTMTeleop3 extends OpMode {
         teleop.sotm.offsetFactor = offset;
         teleop.sotm.kF = kF;
         teleop.loop();
+        // graphing these could make it a lot easier to tune.
+        telemetry.addData("robot velocity magnitude unweighted", teleop.drivetrain.getVelocity().getMagnitude());
+        telemetry.addData("robot velocity magnitude weighted", teleop.getRollingVelocity().getMagnitude());
+        telemetry.addData("current pos", teleop.robot.turret.getCurrent());
+        telemetry.addData("target pos", teleop.robot.turret.getTarget());
         telemetry.update();
     }
 

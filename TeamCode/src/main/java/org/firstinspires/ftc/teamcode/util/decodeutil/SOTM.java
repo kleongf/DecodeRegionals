@@ -10,13 +10,14 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
-    public double kF = -0.1;
+    public double kF = 0.001; //0.08
+    public double kFAngular = -0.08;
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
-    public double latencyScaleFactor = 1.4;
+    public double latencyScaleFactor = 1;
     public double timeScaleFactor = 1;
-    public double offsetFactor = 0; // offset in inches to goal, i would prob set to 10
+    public double offsetFactor = 10; // offset in inches to goal, i would prob set to 10
     public double constantTimeFactor = 0;
-    private double efficiency = 0.73;
+    private double efficiency = 0.52; // more accurate now bc no c-roller
     private double MAX_ITERATIONS = 200;
     private double dt = 0.01;
     private double g = 9.8;
@@ -33,53 +34,34 @@ public class SOTM {
         this.goal = goal;
 
         thetaLUT = new LUT();
-        thetaLUT.addData(163, Math.toRadians(49));
-        thetaLUT.addData(158, Math.toRadians(49));
-        thetaLUT.addData(153, Math.toRadians(49));
-        thetaLUT.addData(148, Math.toRadians(49));
-        thetaLUT.addData(143, Math.toRadians(49));
-        thetaLUT.addData(138, Math.toRadians(49));
-        thetaLUT.addData(133, Math.toRadians(49));
-        thetaLUT.addData(128, Math.toRadians(49));
-        thetaLUT.addData(123, Math.toRadians(49));
-        thetaLUT.addData(118, Math.toRadians(48.5));
-        thetaLUT.addData(113, Math.toRadians(47.5));
-        thetaLUT.addData(108, Math.toRadians(47));
-        thetaLUT.addData(103, Math.toRadians(46.5));
-        thetaLUT.addData(98, Math.toRadians(46));
-        thetaLUT.addData(93, Math.toRadians(45));
-        thetaLUT.addData(88, Math.toRadians(44));
-        thetaLUT.addData(83, Math.toRadians(43));
-        thetaLUT.addData(78, Math.toRadians(41));
-        thetaLUT.addData(73, Math.toRadians(38));
-        thetaLUT.addData(68, Math.toRadians(36));
-        thetaLUT.addData(63, Math.toRadians(35));
-        thetaLUT.addData(58, Math.toRadians(34));
-        thetaLUT.addData(53, Math.toRadians(34));
+        thetaLUT.addData(168, Math.toRadians(45));
+        thetaLUT.addData(158, Math.toRadians(45));
+        thetaLUT.addData(145, Math.toRadians(45));
+        thetaLUT.addData(138, Math.toRadians(45));
+        thetaLUT.addData(130, Math.toRadians(45));
+        thetaLUT.addData(118, Math.toRadians(45));
+        thetaLUT.addData(108, Math.toRadians(45));
+        thetaLUT.addData(98, Math.toRadians(45));
+        thetaLUT.addData(88, Math.toRadians(45));
+        thetaLUT.addData(78, Math.toRadians(45));
+        thetaLUT.addData(68, Math.toRadians(45));
+        thetaLUT.addData(58, Math.toRadians(40));
+        thetaLUT.addData(48, Math.toRadians(35));
 
         velocityLUT = new LUT();
-        velocityLUT.addData(163, 1490);
-        velocityLUT.addData(158, 1460);
-        velocityLUT.addData(153, 1440);
-        velocityLUT.addData(148, 1420);
-        velocityLUT.addData(143, 1390);
-        velocityLUT.addData(138, 1360);
-        velocityLUT.addData(133, 1330);
-        velocityLUT.addData(128, 1300);
-        velocityLUT.addData(123, 1270);
-        velocityLUT.addData(118, 1240);
-        velocityLUT.addData(108, 1220);
-        velocityLUT.addData(103, 1180);
-        velocityLUT.addData(98, 1170);
-        velocityLUT.addData(93, 1150);
-        velocityLUT.addData(88, 1130);
-        velocityLUT.addData(83, 1110);
-        velocityLUT.addData(78, 1060);
-        velocityLUT.addData(73, 1010);
-        velocityLUT.addData(68, 990);
-        velocityLUT.addData(63, 980);
-        velocityLUT.addData(58, 960);
-        velocityLUT.addData(53, 960);
+        velocityLUT.addData(168, 2280);
+        velocityLUT.addData(158, 2160);
+        velocityLUT.addData(145, 2080);
+        velocityLUT.addData(138, 1980);
+        velocityLUT.addData(130, 1900);
+        velocityLUT.addData(118, 1750);
+        velocityLUT.addData(108, 1700);
+        velocityLUT.addData(98, 1650);
+        velocityLUT.addData(88, 1600);
+        velocityLUT.addData(78, 1550);
+        velocityLUT.addData(68, 1500);
+        velocityLUT.addData(58, 1420);
+        velocityLUT.addData(48, 1300);
 
     }
 
@@ -315,6 +297,25 @@ public class SOTM {
         // (u ⋅ v / |v|²) * v
         Vector projuv = MathUtil.scalarMultiplyVector(v, MathUtil.dotProduct(u, v) / MathUtil.dotProduct(v, v));
 
+        // can find feedforward by dividing tangential velocity by distance
+        Vector vTangential = MathUtil.subtractVectors(u, projuv);
+
+        double crossProduct = v.cross(vTangential);
+        double dotProduct = v.dot(vTangential);
+        Log.d("cross product", "" + crossProduct);
+
+        // Vector vPlusVel = v.plus(vTangential);
+
+        // get the direction of angle change
+        // double angleBetween = Math.atan2();
+
+        // theta = atan2(cross / dot)
+
+        // double feedforward = Math.signum(crossProduct) * (vTangential.getMagnitude() / dist);
+        // tangent = sine over cosine, magnitudes cancel out
+        double feedforward = Math.atan2(crossProduct, dotProduct);
+        Log.d("feedforward dir", "" + feedforward);
+
         // if the vectors are in the same direction, then we should subtract the radial velocity
         // vectors are in the same direction if their dot product is positive, so dot it with the goal vector.
         double vRadial = MathUtil.dotProduct(projuv, v) > 0 ? projuv.getMagnitude() : -projuv.getMagnitude();
@@ -324,9 +325,12 @@ public class SOTM {
         Log.d("Timestep", "timestep: " + timestep);
 
         Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*timestep, goal.getY()-robotVelocity.getYComponent()*timestep);
+        Log.d("virtual goal", virtualGoal.toString());
 
         double[] values = calculateAzimuthThetaVelocity(robotPose, virtualGoal);
 
-        return new double[] {values[0], values[1], values[2], kF * angularVelocity};
+        // +kFAngular * angularVelocity
+
+        return new double[] {values[0], values[1], values[2], kF * feedforward};
     }
 }

@@ -45,6 +45,7 @@ public class DriveToBallTest extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
+        follower.usePredictiveBraking = true;
         robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
         sotm2 = new SOTM(goalPose);
         poseFollower = new PoseFollower();
@@ -64,7 +65,7 @@ public class DriveToBallTest extends OpMode {
                         .onEnter(() -> {
                             PathChain finishPath = follower.pathBuilder()
                                     .addPath(
-                                            new BezierCurve(
+                                            new BezierLine(
                                                     follower.getPose(),
                                                     new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
                                             )
@@ -79,7 +80,7 @@ public class DriveToBallTest extends OpMode {
                             isTrackingBall = false;
                             PathChain goBack = follower.pathBuilder()
                                     .addPath(
-                                            new BezierCurve(
+                                            new BezierLine(
                                                     follower.getPose(),
                                                     new Pose(50, 16)
                                             )
@@ -111,15 +112,19 @@ public class DriveToBallTest extends OpMode {
     @Override
     public void loop() {
         if (follower.getPose() != null && follower.getVelocity() != null) {
-            double[] values = sotm2.calculateAzimuthThetaVelocityFeedforward(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), new Vector(), follower.getAngularVelocity());
             robot.turret.setTarget(values[0]);
             robot.shooter.setShooterPitch(values[1]);
             robot.shooter.setTargetVelocity(values[2]);
-            robot.turret.setFeedforward(values[3]);
+            robot.turret.setFeedforward(0);
         }
+        optimalX = robot.vision.getBestXMovingAverage();
+        Pose targetPose = new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40), Math.toRadians(180));
+        telemetry.addData("Target Pose", targetPose);
+
         if (isTrackingBall) {
-            optimalX = robot.vision.getLargestClusterX();
-            Pose targetPose = new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40), Math.toRadians(180));
+            optimalX = robot.vision.getBestXMovingAverage();
+            telemetry.addData("Target Pose", targetPose);
             double[] powers = poseFollower.calculate(follower.getPose(), targetPose);
             follower.setTeleOpDrive(powers[0], powers[1], powers[2], true);
         }
@@ -127,6 +132,8 @@ public class DriveToBallTest extends OpMode {
         if (gamepad1.leftBumperWasPressed()) {
             followBall.start();
         }
+
+        telemetry.addData("Pose", follower.getPose());
 
         followBall.update();
         follower.update();
@@ -136,12 +143,9 @@ public class DriveToBallTest extends OpMode {
 
     @Override
     public void start() {
-        double[] values = sotm2.calculateAzimuthThetaVelocity(new Pose(42.65, 9, Math.toRadians(180)), new Vector());
-        robot.setAzimuthThetaVelocity(values);
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
         robot.start();
-        follower.usePredictiveBraking = true;
-        follower.breakFollowing();
+        // follower.breakFollowing();
     }
 
     @Override

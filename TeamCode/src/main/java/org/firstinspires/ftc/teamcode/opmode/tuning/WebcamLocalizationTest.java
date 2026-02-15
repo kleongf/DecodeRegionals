@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.tuning;
 
 import android.util.Size;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -44,8 +47,8 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Vision Align and Relocalization camera test", group = "Concept")
-public class VisionAlign extends LinearOpMode {
+@TeleOp(name = "webcam localization test new camera", group = "Concept")
+public class WebcamLocalizationTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -53,6 +56,7 @@ public class VisionAlign extends LinearOpMode {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
+    private Follower follower;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -63,6 +67,8 @@ public class VisionAlign extends LinearOpMode {
     public void runOpMode() {
 
         initAprilTag();
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(PoseConstants.BLUE_STANDARD_START_POSE);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -72,6 +78,7 @@ public class VisionAlign extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                follower.update();
 
                 telemetryAprilTag();
 
@@ -85,8 +92,8 @@ public class VisionAlign extends LinearOpMode {
                     visionPortal.resumeStreaming();
                 }
 
-                // Share the CPU.
-                sleep(20);
+                // Share the CPU. NO lol
+                // sleep(20);
             }
         }
 
@@ -124,12 +131,13 @@ public class VisionAlign extends LinearOpMode {
          * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
          * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
          */
-        // TODO: GET THIS POSITION RIGHT. it's also wrong
-        // 314mm to the left, 142mm to the front, and 230mm from the ground
+        // TODO: GET THIS POSITION RIGHT
+        // -122, 142, 230, 0); // this camera is on the other side: on the right side
         Position cameraPosition = new Position(DistanceUnit.MM,
-                -122, 142, 230, 0);
+                122, 142, 230, 0);
+        // straight up is zero, so i guess 20 deg up would be -70
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-                0, -90, 0, 0);
+                0, -70, 0, 0);
 
         /*
             private Matrix K = new Matrix(new double[][] {
@@ -141,7 +149,7 @@ public class VisionAlign extends LinearOpMode {
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(214.1037056, 212.72822576, 313, 254.488)
+                .setLensIntrinsics(887.09786188, 890.36782388, 657.83949615, 399.07656148)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
@@ -150,7 +158,7 @@ public class VisionAlign extends LinearOpMode {
 
                 .build();
 
-        aprilTag.setDecimation(2);
+        // aprilTag.setDecimation(2);
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
@@ -163,9 +171,10 @@ public class VisionAlign extends LinearOpMode {
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(1280, 800));
 
         // Set the camera (webcam vs. built-in RC phone camera).
+        // TODO: set to webcam 2 when we get the connector thingy
         if (USE_WEBCAM) {
             builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         } else {
@@ -179,7 +188,7 @@ public class VisionAlign extends LinearOpMode {
         builder.enableLiveView(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
 
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
@@ -202,7 +211,7 @@ public class VisionAlign extends LinearOpMode {
      * Add telemetry about AprilTag detections.
      */
     private Pose toPinpointPose(Pose webcamPose) {
-        return new Pose(72 + webcamPose.getY(), 72 - webcamPose.getX(), webcamPose.getHeading());
+        return new Pose(70.5 + webcamPose.getY(), 70.5 - webcamPose.getX(), webcamPose.getHeading());
     }
     private void telemetryAprilTag() {
 
@@ -228,7 +237,8 @@ public class VisionAlign extends LinearOpMode {
                             detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
                             detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
                     Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
-                    telemetry.addLine("Pinpoint Pose: x: " + ppPose.toString());
+                    telemetry.addLine("Pinpoint Pose: " + ppPose.toString());
+                    telemetry.addLine("Follower pose:" + follower.getPose());
                 }
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -244,4 +254,3 @@ public class VisionAlign extends LinearOpMode {
     }   // end method telemetryAprilTag()
 
 }   // end class
-

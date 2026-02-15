@@ -18,9 +18,13 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.TeleopDrivetrain;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import com.pedropathing.paths.Path;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Zone;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
+
+import java.util.ArrayList;
 
 
 public class MainTeleop {
@@ -28,11 +32,11 @@ public class MainTeleop {
         IDLE,
         SHOOTING
     }
-    // TODO: also have it so when driver 2 has a trigger down then go slow
-    // also side quest kalman filter stuff
     private RobotState robotState;
+    private ArrayList<Vector> rollingVelocities;
+    private double numVelocities = 4;
     private Intake.DetectionState prevDetectState;
-    private TeleopDrivetrain drivetrain;
+    public TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
     private double speedScaler = 1;
     private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.2;
@@ -40,11 +44,14 @@ public class MainTeleop {
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;
-    private boolean automateRobot = false;
+    private boolean automateRobot = true;
     private Telemetry telemetry;
     private Alliance alliance;
     private PathBuilder pathBuilder;
     private Zone currentZone;
+    private Pose prevPose;
+    private ElapsedTime elapsedTime;
+    private ElapsedTime relocalizationTimer;
     private ZoneUtil zoneUtil;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
@@ -69,10 +76,14 @@ public class MainTeleop {
         this.alliance = alliance;
 
         this.sotm = new SOTM(goalPose);
-        this.currentZone = Zone.CLOSE;
+        this.currentZone = Zone.FAR;
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
 
         this.prevDetectState = Intake.DetectionState.EMPTY;
+        this.rollingVelocities = new ArrayList<>();
+        this.elapsedTime = new ElapsedTime();
+        this.relocalizationTimer = new ElapsedTime();
+        this.prevPose = startPose;
     }
     private double normalizeInput(double input) {
         return 1.2 * Math.signum(input) * Math.sqrt(Math.abs(input));
@@ -80,6 +91,27 @@ public class MainTeleop {
 
     private double getDistance(Pose a, Pose b) {
         return Math.hypot(a.getX()-b.getX(), a.getY()-b.getY());
+    }
+
+    private void relocalize(Pose pinpointPose, Pose cameraPose, double velocity, double angularVelocity, double distanceEpsilon) {
+        // normal relocalization: checks velocity, angular velocity, and distance AND the timer to see if its over 10s
+        relocalizationTimer.reset();
+    }
+
+    private void overrideRelocalize(Pose pinpointPose, Pose cameraPose) {
+        // completely overrides the pinpoint with the heading and position.
+    }
+
+    public Vector getRollingVelocity() {
+        Vector currentSum = new Vector();
+        if (rollingVelocities.isEmpty()) {
+            return currentSum;
+        }
+        for (Vector v: rollingVelocities) {
+            currentSum = MathUtil.addVectors(currentSum, v);
+        }
+        Vector movingAverage = MathUtil.scalarMultiplyVector(currentSum, 1d / rollingVelocities.size());
+        return movingAverage;
     }
 
     public void loop() {
@@ -94,9 +126,26 @@ public class MainTeleop {
                     speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         }
 
+        double dt = elapsedTime.seconds();
+
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
-        Vector currentVelocity = drivetrain.getVelocity();
+
+        Vector currentVelocity;
+        if (dt > 0) {
+            currentVelocity = drivetrain.getPose().minus(prevPose).div(dt).getAsVector();
+        } else {
+            currentVelocity = drivetrain.getVelocity();
+        }
+
+        if (rollingVelocities.size() < numVelocities) {
+            for (int i = 0; i < numVelocities; i++) {
+                rollingVelocities.add(currentVelocity);
+            }
+        } else {
+            rollingVelocities.add(currentVelocity);
+            rollingVelocities.remove(0);
+        }
 
         // SETTING ROBOT STATE
         if (robot.shootCommand.isFinished()) {
@@ -106,32 +155,20 @@ public class MainTeleop {
         }
 
         // TODO: WILL BE USED LATER. CAN BE OPTIMIZED: STOP INTAKE WHEN 3 BALLS.
-
-//        if (robotState == RobotState.IDLE && robot.intake.intakeFull()) {
+//        if (robotState == RobotState.IDLE && robot.intake.isFull()) {
 //            robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
-//        } else if (robotState == RobotState.IDLE && !robot.intake.intakeFull()) {
+//        } else if (robotState == RobotState.IDLE && !robot.intake.isFull()) {
 //            robot.intake.state = Intake.IntakeState.INTAKE_FAST;
 //        }
 
         if (automateRobot) {
-            // TODO: implement with new functions and stuff, with an enum of 1, 2, 3 cases
-            // robot not in shooting zone, intake is full, drivetrain not busy, and not shooting
-
-            // TODO: there's also a possible bug with this, that we get blocked from the zone but it keeps trying to drive
-            // in that case we may want a cooldown timer so that we don't keep trying to do it.
-            // like maybe we keep track of the last time we kicked to the zone, wait at least 5 seconds before kicking again
-            // i guess since it's only really used for seeing if you have three, it makes sense to reset detections
-            // but that wouldn't do anything, after like 0.2s it would try again
-
-            // so i suppose we just have a cooldown
-
             // we could also keep track of the previous state. if the prev state was also full then don't kick back again, since shoot did not happen
             // if prev few states were the same, then we didn't shoot anything, therefore no need to autodrive again
 
 
             if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.isFull() && !drivetrain.isBusy() && robotState == RobotState.IDLE && prevDetectState != robot.intake.detectionState) {
                 // case 1: the current pose is close to the closestPose, in this case no heading change is best. say it's 20 inches idk
-                if (getDistance(currentPose, closestPose) < 20) {
+                if (getDistance(currentPose, closestPose) < 50) {
                     drivetrain.kick(true, false, closestPose);
                 } else {
                     // case 2: the current pose is NOT close to the closestPose, in which case we need to find the closest angle
@@ -154,53 +191,19 @@ public class MainTeleop {
             robot.shootCommand.start();
         }
 
+        // added just for this
+
+        if (gamepad1.dpad_up) {
+            automateRobot = !automateRobot;
+        }
+
         // gate intake: x
         if (gamepad1.xWasPressed()) {
-//            PathChain intakeGate = pathBuilder
-//                    .addPath(
-//                            new Path(
-//                                    new BezierLine(
-//                                            currentPose,
-//                                            new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY())
-//                                    )
-//                            )
-//                    )
-//                    .setLinearHeadingInterpolation(currentPose.getHeading(), gateIntakePose.getHeading())
-//                    .addPath(
-//                            new Path(
-//                                    new BezierLine(
-//                                            new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY()),
-//                                            gateIntakePose
-//                                    )
-//                            )
-//                    )
-//                    .setConstantHeadingInterpolation(gateIntakePose.getHeading())
-//                    .build();
             drivetrain.intakeGate();
         }
 
         // gate open: y
         if (gamepad1.yWasPressed()) {
-//            PathChain openGate = pathBuilder
-//                    .addPath(
-//                            new Path(
-//                                    new BezierLine(
-//                                            currentPose,
-//                                            new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
-//                                    )
-//                            )
-//                    )
-//                    .setLinearHeadingInterpolation(currentPose.getHeading(), gatePose.getHeading())
-//                    .addPath(
-//                            new Path(
-//                                    new BezierLine(
-//                                            new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
-//                                            gatePose
-//                                    )
-//                            )
-//                    )
-//                    .setConstantHeadingInterpolation(gatePose.getHeading())
-//                    .build();
             drivetrain.openGate();
         }
 
@@ -292,13 +295,25 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, currentVelocity, drivetrain.getAngularVelocity());
+        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, getRollingVelocity(), drivetrain.getAngularVelocity());
+
+        // new stuff: if we have a large
+        boolean isFar = MathUtil.distance(currentPose, goalPose) > 120; // at 120 or more inches, we switch to the far coefficients so we don't move.
+        if (isFar) {
+            robot.turret.setPDCoefficients(0.01, 0.0005);
+            robot.turret.setFeedforward(0);
+        } else {
+            robot.turret.setPDCoefficients(0.005, 0);
+            robot.turret.setFeedforward(values[3]);
+        }
+
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
-        robot.turret.setFeedforward(values[3]);
         robot.turret.setTarget(values[0]+turretOffset);
 
         prevDetectState = robot.intake.detectionState;
+        prevPose = currentPose;
+        elapsedTime.reset();
 
         robot.update();
 
@@ -307,6 +322,7 @@ public class MainTeleop {
         telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
         telemetry.addLine("Robot in shooting zone: " + zoneUtil.inZone(currentPose, currentZone));
         telemetry.addLine("Intake full: " + robot.intake.intakeFull());
+        telemetry.addLine("Intake state: "+ robot.intake.getState());
         telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());
         telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
         telemetry.addLine("Current turret pos: " + robot.turret.getCurrent());
@@ -318,6 +334,7 @@ public class MainTeleop {
     public void start() {
         robot.initPositions();
         robot.start();
+        elapsedTime.reset();
     }
 
     public void stop() {

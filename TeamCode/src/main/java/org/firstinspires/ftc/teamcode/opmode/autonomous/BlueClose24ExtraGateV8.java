@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
-// hopefully last
-// we also should have a safe auto (no gate)
-// we should also have a 24 normal
 
-// this one is the same as v5 except better starting path and better backwards paths
-// i think it should also compensate for the drift? that is occurring consistently.
-// not sure what is going on with that path.
-// may be better to use !isBusy(). try that instead - i think parametric end is buggy
+// set no decel on first intake so we just take it all in
+// we also need to set up the timer thing, see how long it takes for us to do a gate cycle and finish with the spike mark
+// i will put the states here but this we will have to tune
+
+// also when porting to red: do we do 144- or 141- ?
+// because if it goes to the wrong spot on the vis but its the correct spot irl
+// then we are alright
+
+// upon thinking about if for a little while, we should do 144-
+// this would make our auto alright because the start pose is correct so stuff doesn't matter
+
 import static java.lang.Thread.sleep;
 
 import android.util.Log;
@@ -38,8 +42,8 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Blue Close 24 Extra Gate V7 not corner start + all tangential", group="!")
-public class BlueClose24ExtraGateV7 extends OpMode {
+@Autonomous(name="Blue Close 24 Extra Gate V8: no hard coding stuff, better first intake", group="!")
+public class BlueClose24ExtraGateV8 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
@@ -81,7 +85,6 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                                 new Pose(54.000, 90.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(-110))
-                // TODO: MAKE IT SHOOT
                 .addPath(
                         new BezierCurve(
                                 new Pose(54, 90),
@@ -90,24 +93,20 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         )
                 )
                 .setTangentHeadingInterpolation()
+                .setNoDeceleration()
                 .build();
 
         shootSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(15.000, 60.000),
-                                new Pose(48.436, 63.638),
+                                new Pose(47.8647450844, 63.1832212156), // k = 15: 60+cos-144, 72 + sin 144
                                 new Pose(60.000, 72.000)
                         )
-                ).setTangentHeadingInterpolation() // -144 deg or something, imma check again
+                ).setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
-//                new HeadingInterpolator.PiecewiseNode(
-//                        0,
-//                        1,
-//                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
-//                )
                 new HeadingInterpolator.PiecewiseNode(
                         0,
                         0.75,
@@ -149,8 +148,7 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
                                 new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY() + 0.5),
-                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+0.5)
-                                // PoseConstants.BLUE_GATE_AUTO_POSE
+                                PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -297,7 +295,7 @@ public class BlueClose24ExtraGateV7 extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
                             isSOTMing = false;
-                            robot.turret.setPDCoefficients(0.005, 0.00025);
+                            robot.turret.setPDCoefficients(0.01, 0.0005);
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -475,11 +473,6 @@ public class BlueClose24ExtraGateV7 extends OpMode {
             robot.turret.setFeedforward(0);
         }
 
-//        double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), getRollingVelocity(), follower.getAngularVelocity());
-//        robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
-//        robot.turret.setFeedforward(values[3]);
-
-
         // I am starting to believe that the turret is off because it's not reaching its target
         // let's confirm, the p and d values are really low
         Log.d("turret current pos", "" + robot.turret.getCurrent());
@@ -510,7 +503,6 @@ public class BlueClose24ExtraGateV7 extends OpMode {
 
         elapsedTime.reset();
         prevPose = follower.getPose();
-
         telemetry.update();
     }
 
