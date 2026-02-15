@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -67,18 +68,20 @@ public class ArtifactVision2 extends Subsystem {
 //        private Position cameraPosition = new Position(DistanceUnit.MM,
 //                -122, 142, 230, 0);
 
-        if (alliance == Alliance.BLUE) {
-            T = new Matrix(new double[][] {
-                    {-4.80315, -9.05512, 5.59055}
-            }).transpose();
+//        if (alliance == Alliance.BLUE) {
+//            T = new Matrix(new double[][] {
+//                    {-4.80315, -9.05512, 5.59055}
+//            }).transpose();
+//
+//        }
 
-        }
+        // TODO: i don't actually think inverting is necessary? just subtract the x pos instead
 
-        if (alliance == Alliance.RED) {
-            T = new Matrix(new double[][] {
-                    {4.80315, -9.05512, 5.59055} // TODO: invert the x position
-            }).transpose();
-        }
+//        if (alliance == Alliance.RED) {
+//            T = new Matrix(new double[][] {
+//                    {4.80315, -9.05512, 5.59055} // TODO: invert the x position
+//            }).transpose();
+//        }
     }
 
     private Point imageToWorld(double u, double v) {
@@ -138,30 +141,34 @@ public class ArtifactVision2 extends Subsystem {
 
         List<Double> distances = new ArrayList<>();
         List<Double> areas = new ArrayList<>(); // calculating these first to save on computations
-        for(ArtifactProcessor.Blob b : blobs)
-        {
-            RotatedRect boxFit = b.getBoxFit();
-            // filtering out any blobs that are too high, as they might be a person's clothes. this works with opencv coord system.
-            // idk if this is good anymore tho now that we detect from other spots
-            if (boxFit != null) {
-                // making sure it's not in the center
-                if (boxFit.center.y + boxFit.size.height / 2 > 254.488) {
-                    // just x dist
-                    // for the ray algorithm, we want the BOTTOM of the ball. therefore we add height/2.
-                    distances.add(imageToWorld(boxFit.center.x, boxFit.center.y + boxFit.size.height / 2).x);
-                    // TODO: THIS IS IMPORTANT: IF THE Y COORDINATE IS TOO SMALL, THEN CAP THE MAX AREA (or just ignore)
-                    // Importantly, object size is roughly inversely proportional from distance from camera
-                    // however, because this is size and i measure area, it's about d^2
-                    Point pt = imageToWorld(boxFit.center.x, boxFit.center.y);
-                    // dealing with very close distances
-                    double distance = Math.hypot(pt.x, pt.y) < 8 ? 8 : Math.hypot(pt.x, pt.y);
-                    double proportionalArea = b.getContourArea() * Math.pow(distance, 2);
-                    areas.add(proportionalArea);
+        try {
+
+            for (ArtifactProcessor.Blob b : blobs) {
+                RotatedRect boxFit = b.getBoxFit();
+                // filtering out any blobs that are too high, as they might be a person's clothes. this works with opencv coord system.
+                // idk if this is good anymore tho now that we detect from other spots
+                if (boxFit != null) {
+                    // making sure it's not in the center
+                    if (boxFit.center.y + boxFit.size.height / 2 > 240) {
+                        // just x dist
+                        // for the ray algorithm, we want the BOTTOM of the ball. therefore we add height/2.
+                        distances.add(imageToWorld(boxFit.center.x, boxFit.center.y + boxFit.size.height / 2).x);
+                        // TODO: THIS IS IMPORTANT: IF THE Y COORDINATE IS TOO SMALL, THEN CAP THE MAX AREA (or just ignore)
+                        // Importantly, object size is roughly inversely proportional from distance from camera
+                        // however, because this is size and i measure area, it's about d^2
+                        Point pt = imageToWorld(boxFit.center.x, boxFit.center.y);
+                        // dealing with very close distances
+                        double distance = Math.hypot(pt.x, pt.y) < 8 ? 8 : Math.hypot(pt.x, pt.y);
+                        double proportionalArea = b.getContourArea() * Math.pow(distance, 2);
+                        areas.add(proportionalArea);
+                    }
                 }
             }
+        } catch (NullPointerException e) {
+            Log.d("null pointer exception in vision: ", e.toString());
         }
-
-        double maxAreaLoc = -24;
+        // prob better for now
+        double maxAreaLoc = 0;
         double maxArea = 0;
 
         for (int i = -240; i < 240; i++) {

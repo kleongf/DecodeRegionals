@@ -30,9 +30,9 @@ public class Constants {
             .centripetalScaling(0.0005)
             .holdPointHeadingScaling(0.35)
             .holdPointTranslationalScaling(0.35)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.005, 0.01))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.005, 0.0))
             .secondaryTranslationalPIDFCoefficients(
-                    new PIDFCoefficients(0.07, 0, 0.003, 0.01)
+                    new PIDFCoefficients(0.14, 0, 0.008, 0.0)
             )
             .headingPIDFCoefficients(new PIDFCoefficients(1.6, 0, 0.08, 0))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1.2, 0, 0.08, 0))

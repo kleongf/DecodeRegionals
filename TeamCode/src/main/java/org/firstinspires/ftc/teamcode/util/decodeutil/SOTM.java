@@ -17,7 +17,7 @@ public class SOTM {
     public double timeScaleFactor = 1;
     public double offsetFactor = 10; // offset in inches to goal, i would prob set to 10
     public double constantTimeFactor = 0;
-    private double efficiency = 0.5; // more accurate now bc no c-roller
+    private double efficiency = 0.52; // more accurate now bc no c-roller
     private double MAX_ITERATIONS = 200;
     private double dt = 0.01;
     private double g = 9.8;

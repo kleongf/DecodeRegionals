@@ -57,6 +57,9 @@ public class AbsoluteEncoderTuning extends OpMode {
     // therefore we subtract one rotation
 
     private double calculatePositionTicks(double voltage) {
+        // the problem might be that the min voltage is 0.02, which is kinda a problem.
+        //
+
         double directionFactor = isReversed ? -1 : 1;
         double realOffset = Math.toRadians(encoderOffsetDegrees + 360); // added to final
 
