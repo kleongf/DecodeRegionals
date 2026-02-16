@@ -273,7 +273,7 @@ public class MainTeleop {
         }
 
 
-        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, getRollingVelocity(), drivetrain.getAngularVelocity());
+        double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, drivetrain.getVelocity(), drivetrain.getAngularVelocity());
 
         // new stuff: if we have a large distance then hold it TODO: uncomment later
 //        boolean isFar = MathUtil.distance(currentPose, goalPose) > 120; // at 120 or more inches, we switch to the far coefficients so we don't move.
