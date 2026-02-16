@@ -149,7 +149,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(887.09786188, 890.36782388, 657.83949615, 399.07656148)
+                .setLensIntrinsics(920.46723598, 918.07391093, 653.71790268, 406.18310197)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
@@ -157,6 +157,8 @@ public class WebcamLocalizationTest extends LinearOpMode {
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
+
+        // aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
 
         // aprilTag.setDecimation(2);
 
