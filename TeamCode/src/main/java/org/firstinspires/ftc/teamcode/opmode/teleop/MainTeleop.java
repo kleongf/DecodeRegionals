@@ -193,7 +193,7 @@ public class MainTeleop {
 
         // added just for this
 
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpadUpWasPressed()) {
             automateRobot = !automateRobot;
         }
 
@@ -210,7 +210,7 @@ public class MainTeleop {
         // we don't want to park blindly. want to park either up or down, based on where we currently are.
         // usually we are the second bot to park, so either the top or bottom edge.
 
-        // park: b
+        // park: b TODO: map this to a better button, not really sure which one though
         if (gamepad1.bWasPressed()) {
             drivetrain.park();
         }
@@ -228,13 +228,18 @@ public class MainTeleop {
             speedScaler = 1;
         }
 
-        // field-centric safety
+        // x: field-centric (toggle)
         if (gamepad2.bWasPressed()) {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
-        // relocalization
-        if (gamepad2.xWasPressed()) {
+        // y: reset turret
+        if (gamepad2.yWasPressed()) {
+            robot.resetTurretCommand.start();
+        }
+
+        // relocalization: left stick
+        if (gamepad2.leftStickButtonWasPressed()) { // map to o
             Pose llPose = robot.limelightLocalizer.getCurrentPose(currentPose);
             if (llPose.getX() != currentPose.getX() && llPose.getY() != currentPose.getY()) {
                 gamepad1.rumble(300);
@@ -242,8 +247,8 @@ public class MainTeleop {
             }
         }
 
-        // corner relocalization
-        if (gamepad2.yWasPressed()) {
+        // corner relocalization: right stick
+        if (gamepad2.rightStickButtonWasPressed()) {
             if (alliance == Alliance.BLUE) {
                 drivetrain.follower.setPose(PoseConstants.BLUE_RELOCALIZATION_POSE);
             } else {
@@ -259,17 +264,13 @@ public class MainTeleop {
             turretOffset += Math.toRadians(4);
         }
 
-        // close zone: up
+        // close zone: dpad up
         if (gamepad2.dpadUpWasPressed()) {
             currentZone = Zone.CLOSE;
         }
+        // far zone: dpad down
         if (gamepad2.dpadDownWasPressed()) {
             currentZone = Zone.FAR;
-        }
-
-        // gamepad 2 left or right stick: reset encoder. why? no idea.
-        if (gamepad2.leftStickButtonWasPressed() || gamepad2.rightStickButtonWasPressed()) {
-            robot.resetTurretCommand.start();
         }
 
 
