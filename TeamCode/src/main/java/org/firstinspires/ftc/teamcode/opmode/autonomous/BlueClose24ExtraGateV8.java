@@ -500,6 +500,8 @@ public class BlueClose24ExtraGateV8 extends OpMode {
         }
 
         robot.update();
+        // TODO: BRUH why did i never do this? of course we should update every loop just in case
+        blackboard.put(RobotConstants.END_POSE_KEY, follower.getPose());
 
         elapsedTime.reset();
         prevPose = follower.getPose();

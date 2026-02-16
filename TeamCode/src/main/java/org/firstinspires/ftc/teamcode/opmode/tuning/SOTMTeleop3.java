@@ -27,8 +27,10 @@ public class SOTMTeleop3 extends OpMode {
     public static double p = 0.005; // tune
     public static double d = 0.000; // tune
     public static double offset = 10; // tune, offset for the turret itself
-    public static double latencyScaleFactor = 1; // small number prob between 0 and 1
-    public static double kF = 0.001; // TODO: still don't know if its going the right direction lol
+    public static double latencyScaleFactor = 1.2; // small number prob between 0 and 1
+    public static double latencyScaleFactorRadial = 2.5;
+    // this is good for tangential
+    public static double kF = -0.03; // TODO: still don't know if its going the right direction lol
     // could set to something lower given that we have a p controller maybe like 0.05
 
     @Override
@@ -41,6 +43,7 @@ public class SOTMTeleop3 extends OpMode {
     public void loop() {
         teleop.robot.turret.setPDCoefficients(p, d);
         teleop.sotm.latencyScaleFactor = latencyScaleFactor;
+        teleop.sotm.latencyScaleFactorRadial = latencyScaleFactorRadial;
         teleop.sotm.offsetFactor = offset;
         teleop.sotm.kF = kF;
         teleop.loop();

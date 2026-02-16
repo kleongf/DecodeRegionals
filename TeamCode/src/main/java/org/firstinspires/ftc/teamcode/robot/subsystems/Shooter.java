@@ -59,8 +59,8 @@ public class Shooter extends Subsystem {
                     shooterMotor.setPower(1);
                     shooterMotor2.setPower(1);
                 } else if (velocity-shootingEpsilon > targetVelocity) {
-                    shooterMotor.setPower(0);
-                    shooterMotor2.setPower(0);
+                    shooterMotor.setPower(-1);
+                    shooterMotor2.setPower(-1);
                 } else {
                     double power = controller.calculate(velocity, targetVelocity);
                     power *= (nominalVoltage / voltageSensor.getVoltage());

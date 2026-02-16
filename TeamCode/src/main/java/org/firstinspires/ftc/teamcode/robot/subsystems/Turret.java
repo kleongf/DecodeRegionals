@@ -20,11 +20,12 @@ public class Turret extends Subsystem {
 
     private double offset = 0;
     private double maxPower = 0.5;
-    private double kS = 0.01;
-    public static double encoderOffsetDegrees = -120;
-    public static double maxVoltage = 3.29;
-    private double encoderGearRatio = 17/14d;
+    private double kS = 0.03;
+    public static double encoderOffsetDegrees = -107.2;
+    public static double maxVoltage = 3.272;
+    private double encoderGearRatio = 50/42d;
     private AnalogInput externalEncoder;
+    private double minVoltage = 0.02;
 
 
     public Turret(HardwareMap hardwareMap) {
@@ -61,11 +62,14 @@ public class Turret extends Subsystem {
     // ehhh this might not be as good but it should be fine
 
     private double calculatePositionTicks(double voltage) {
+        // the problem might be that the min voltage is 0.02, which is kinda a problem.
+        // 1 Software fix: I think the correct formula for calculating your encoder in degrees is (getVoltage() / 3.3) * 360 - offset; with your offset being the amount of degrees from zero. if you want extra precision sometimes the control hub outputs smaller voltages from the actual encoder so your minimum and maximum voltage could be like 0.024 - 3.19
+
         double realOffset = Math.toRadians(encoderOffsetDegrees + 360); // added to final
 
         // if it's reversed
-
-        double position = ((voltage /  maxVoltage) * 2 * Math.PI) % (2 * Math.PI) + realOffset;
+        // new logic: maxVoltage subtraction so that it work. and its positive no matter what
+        double position = ((Math.max(0, voltage-minVoltage) /  maxVoltage) * 2 * Math.PI) % (2 * Math.PI) + realOffset;
         double posToTicksGeared = position * ticksPerRadian * encoderGearRatio;
 
         return posToTicksGeared - 2 * ticksPerRevolution; // + ticksPerRevolution * rotations;
@@ -85,7 +89,9 @@ public class Turret extends Subsystem {
 
         double power = turretController.calculate(c, t);
         double error = t-c;
-        power += kS * Math.signum(error); // kS so that it works better, lots of friction but this is
+        if (Math.abs(error) > 10) {
+            power += kS * Math.signum(error); // kS so that it works better, lots of friction but this is
+        }
         power += feedforward;
 
         if (Math.abs(power) > maxPower) {

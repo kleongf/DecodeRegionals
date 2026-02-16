@@ -134,7 +134,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
         // TODO: GET THIS POSITION RIGHT
         // -122, 142, 230, 0); // this camera is on the other side: on the right side
         Position cameraPosition = new Position(DistanceUnit.MM,
-                122, 142, 230, 0);
+                138, 119, 236, 0);
         // straight up is zero, so i guess 20 deg up would be -70
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 0, -70, 0, 0);

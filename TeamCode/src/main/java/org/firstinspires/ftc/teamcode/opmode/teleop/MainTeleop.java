@@ -44,7 +44,7 @@ public class MainTeleop {
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;
-    private boolean automateRobot = true;
+    private boolean automateRobot = false;
     private Telemetry telemetry;
     private Alliance alliance;
     private PathBuilder pathBuilder;
