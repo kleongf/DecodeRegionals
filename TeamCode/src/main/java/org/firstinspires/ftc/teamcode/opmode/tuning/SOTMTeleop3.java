@@ -47,6 +47,7 @@ public class SOTMTeleop3 extends OpMode {
         // graphing these could make it a lot easier to tune.
         telemetry.addData("robot velocity magnitude unweighted", teleop.drivetrain.getVelocity().getMagnitude());
         telemetry.addData("robot velocity magnitude weighted", teleop.getRollingVelocity().getMagnitude());
+        telemetry.addData("feedforward power", kF);
         telemetry.addData("current pos", teleop.robot.turret.getCurrent());
         telemetry.addData("target pos", teleop.robot.turret.getTarget());
         telemetry.update();

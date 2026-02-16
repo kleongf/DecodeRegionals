@@ -212,41 +212,18 @@ public class MainTeleop {
 
         // park: b
         if (gamepad1.bWasPressed()) {
-            // if our y coord is low then go on bottom
-            if (currentPose.getY() < 32) {
-                PathChain park = pathBuilder
-                        .addPath(
-                                new Path(
-                                        new BezierLine(
-                                                currentPose,
-                                                parkPose
-                                        )
-                                )
-                        )
-                        .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading())
-                        .build();
-                drivetrain.park();
-            } else { // y coord is high so go on top
-                PathChain park = pathBuilder
-                        .addPath(
-                                new Path(
-                                        new BezierLine(
-                                                currentPose,
-                                                new Pose(parkPose.getX(), parkPose.getY() + 36)
-                                        )
-                                )
-                        )
-                        .setLinearHeadingInterpolation(currentPose.getHeading(), parkPose.getHeading()+Math.toRadians(180))
-                        .build();
-                drivetrain.park();
-            }
+            drivetrain.park();
+        }
+
+        if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
+            drivetrain.breakFollowing();
         }
 
         // GAMEPAD 2 (OPERATOR)
 
         // slow mo for good park, 0.3x speed
         if (Math.abs(gamepad2.left_trigger) > 0.05 || Math.abs(gamepad2.right_trigger) > 0.05) {
-            speedScaler = 0.3;
+            speedScaler = 0.4;
         } else {
             speedScaler = 1;
         }
@@ -290,26 +267,32 @@ public class MainTeleop {
             currentZone = Zone.FAR;
         }
 
-        // safety for auto drive: both gamepads so that if one driver doesn't realize, the other will
-        if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed() || gamepad2.leftStickButtonWasPressed() || gamepad2.rightStickButtonWasPressed()) {
-            drivetrain.breakFollowing();
+        // gamepad 2 left or right stick: reset encoder. why? no idea.
+        if (gamepad2.leftStickButtonWasPressed() || gamepad2.rightStickButtonWasPressed()) {
+            robot.resetTurretCommand.start();
         }
+
 
         double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, getRollingVelocity(), drivetrain.getAngularVelocity());
 
-        // new stuff: if we have a large
-        boolean isFar = MathUtil.distance(currentPose, goalPose) > 120; // at 120 or more inches, we switch to the far coefficients so we don't move.
-        if (isFar) {
-            robot.turret.setPDCoefficients(0.01, 0.0005);
+        // new stuff: if we have a large distance then hold it TODO: uncomment later
+//        boolean isFar = MathUtil.distance(currentPose, goalPose) > 120; // at 120 or more inches, we switch to the far coefficients so we don't move.
+//        if (isFar) {
+//            robot.turret.setPDCoefficients(0.01, 0.0005);
+//            robot.turret.setFeedforward(0);
+//        } else {
+//            robot.turret.setPDCoefficients(0.005, 0);
+//            robot.turret.setFeedforward(values[3]);
+//        }
+        if (!robot.resetTurretCommand.isFinished()) { // we are in the middle of trying to reset encoder, so don't set the target to something else
             robot.turret.setFeedforward(0);
         } else {
-            robot.turret.setPDCoefficients(0.005, 0);
+            robot.turret.setTarget(values[0]+turretOffset);
             robot.turret.setFeedforward(values[3]);
         }
 
         robot.shooter.setShooterPitch(values[1]);
         robot.shooter.setTargetVelocity(values[2]);
-        robot.turret.setTarget(values[0]+turretOffset);
 
         prevDetectState = robot.intake.detectionState;
         prevPose = currentPose;

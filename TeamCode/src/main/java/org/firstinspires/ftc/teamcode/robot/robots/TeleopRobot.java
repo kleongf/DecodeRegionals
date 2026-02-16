@@ -30,6 +30,7 @@ public class TeleopRobot {
     private final ArrayList<StateMachine> commands;
     public StateMachine shootCommand;
     public StateMachine idleCommand;
+    public StateMachine resetTurretCommand;
 
     public TeleopRobot(HardwareMap hardwareMap) {
         subsystems = new ArrayList<>();
@@ -87,6 +88,26 @@ public class TeleopRobot {
                         .maxTime(100)
         );
         commands.add(idleCommand);
+
+        // reset encoder command:
+        // set the position to 180 degrees: farthest from wraparound, so its fine
+        // wait 1s to do this
+        // reset encoder
+
+        // while the reset turret command is busy, delay
+        resetTurretCommand = new StateMachine(
+                new State()
+                        .onEnter(() -> {
+                            turret.setTarget(Math.toRadians(180));
+                        })
+                        .maxTime(1000),
+                new State()
+                        .onEnter(() -> {
+                            turret.resetEncoderWithAbsoluteReading();
+                        })
+                        .maxTime(100)
+        );
+        commands.add(resetTurretCommand);
     }
 
     public void setAzimuthThetaVelocity(double[] values) {

@@ -77,31 +77,21 @@ public class Turret extends Subsystem {
 
     @Override
     public void update() {
-        double c = calculatePositionTicks(externalEncoder.getVoltage());
+        // double c = calculatePositionTicks(externalEncoder.getVoltage());
 
-        // double c = turretMotor.getCurrentPosition();
-                // - offset/ticksPerRadian;
+        double c = turretMotor.getCurrentPosition() + offset;
+        // - offset/ticksPerRadian;
         double t = weirdAngleWrap(target) * ticksPerRadian;
 
         double power = turretController.calculate(c, t);
         double error = t-c;
         power += kS * Math.signum(error); // kS so that it works better, lots of friction but this is
-        // currently a random number that must be tuned. should work better for now though
-        if (Math.abs(t-c) > 300 && Math.abs(power) > maxPower) {
-            power = Math.signum(power) * maxPower;
-        }
         power += feedforward;
-
-//        if (Math.abs(c-t) > 10) {
-//            double error = t-c;
-//            power += 0.01 * Math.signum(error);
-//        }
 
         if (Math.abs(power) > maxPower) {
             power = maxPower * Math.signum(power);
         }
 
-        // power += feedforward;
         turretMotor.setPower(power);
     }
 
@@ -112,7 +102,8 @@ public class Turret extends Subsystem {
 
     @Override
     public void start() {
-
+        // TODO: uncomment when ready
+        // resetEncoderWithAbsoluteReading();
     }
 
     public void setFeedforward(double x) {
@@ -138,6 +129,13 @@ public class Turret extends Subsystem {
     public void resetEncoder() {
         turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void resetEncoderWithAbsoluteReading() {
+        // we are going to set the current position (or offset) to whatever the other thing reads
+        // offset = (absolute-motor)
+        // ex: absolute = -800, motor = -600: offset = -200 so it works
+        offset = calculatePositionTicks(externalEncoder.getVoltage()) - turretMotor.getCurrentPosition();
     }
 
     public void setTarget(double x) {

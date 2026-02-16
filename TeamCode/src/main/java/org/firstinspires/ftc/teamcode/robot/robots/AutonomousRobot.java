@@ -67,21 +67,11 @@ public class AutonomousRobot {
         commands.add(intakeCommand);
 
         shootCommand = new StateMachine(
-//                new State()
-//                        .onEnter(() -> {
-//                            intake.state = Intake.IntakeState.INTAKE_OFF;
-//                            shooter.openLatch();
-//                        })
-//                        .maxTime(10),
                 new State()
                         .onEnter(() -> {
                             shooter.openLatch();
-                            // for example here is where we would tell it to be bang bang
-                            // onExit set it back
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                         })
-                        // TODO: .transition(new Transition(() -> !intake.intakeFull()))
-                        // this does not quite work unless we know exactly how many we have
                         .maxTime(450)); // new time apparently
         commands.add(shootCommand);
 
@@ -96,12 +86,9 @@ public class AutonomousRobot {
                         .onEnter(() -> {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                         })
-                        // TODO: .transition(new Transition(() -> !intake.intakeFull()))
-                        // this does not quite work unless we know exactly how many we have
                         .maxTime(1500));
         commands.add(shootCommandSlow);
 
-        // meant to be called _ seconds (usually 0.8?) into a path.
     }
 
     public void initPositions() {
