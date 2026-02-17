@@ -68,20 +68,20 @@ public class ArtifactVision2 extends Subsystem {
 //        private Position cameraPosition = new Position(DistanceUnit.MM,
 //                -122, 142, 230, 0);
 
-//        if (alliance == Alliance.BLUE) {
-//            T = new Matrix(new double[][] {
-//                    {-4.80315, -9.05512, 5.59055}
-//            }).transpose();
-//
-//        }
+        if (alliance == Alliance.BLUE) {
+            T = new Matrix(new double[][] {
+                    {-4.80315, -9.05512, 5.59055}
+            }).transpose();
+
+        }
 
         // TODO: i don't actually think inverting is necessary? just subtract the x pos instead
 
-//        if (alliance == Alliance.RED) {
-//            T = new Matrix(new double[][] {
-//                    {4.80315, -9.05512, 5.59055} // TODO: invert the x position
-//            }).transpose();
-//        }
+        if (alliance == Alliance.RED) {
+            T = new Matrix(new double[][] {
+                    {4.80315, -9.05512, 5.59055}
+            }).transpose();
+        }
     }
 
     private Point imageToWorld(double u, double v) {

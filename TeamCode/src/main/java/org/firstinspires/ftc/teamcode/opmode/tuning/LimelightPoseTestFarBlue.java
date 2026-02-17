@@ -23,7 +23,7 @@ public class LimelightPoseTestFarBlue extends OpMode {
     private Limelight3A limelight;
     private Follower follower;
     private Intake intake;
-    private final Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
+    private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
 
     private double metersToInches(double meters) {
         return meters * 39.3701;

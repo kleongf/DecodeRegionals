@@ -10,6 +10,7 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
+    private double farScaleFactor = 0.5;
     public double kF = -0.02; //0.08
     public double kFAngular = -0.08;
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
@@ -83,8 +84,21 @@ public class SOTM {
     }
 
     private double caluclateOffset(boolean isBlue, double angleToGoal, double dist) {
-        double k0 = isBlue ? (angleToGoal - Math.PI/4) * (4/Math.PI) * offsetFactor : (angleToGoal + Math.PI/4) * (4/Math.PI) * offsetFactor;
-        return k0 / dist;
+        if (isBlue) {
+            double off = ((angleToGoal - Math.PI/4) * (4/Math.PI) * offsetFactor) / dist;
+            if (off < 0) {
+                return off * farScaleFactor;
+            } else {
+                return off;
+            }
+        } else {
+            double off = ((angleToGoal + Math.PI/4) * (4/Math.PI) * offsetFactor) / dist;
+            if (off > 0) {
+                return 0;
+            } else {
+                return off * farScaleFactor;
+            }
+        }
     }
 
     // assumes units meters, meters/s

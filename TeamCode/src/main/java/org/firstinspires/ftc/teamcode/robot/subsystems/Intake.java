@@ -90,7 +90,8 @@ public class Intake extends Subsystem {
                 }
                 break;
             case SECOND_TRIGGERED:
-                if (getBottomBeam() && detectionTimer.seconds() > 0.2) {
+                // && detectionTimer.seconds() > 0.2
+                if (getBottomBeam()) {
                     detectionState = DetectionState.THIRD_TRIGGERED;
                 }
                 break;

@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PoseFollower {
     // i am lazy and this is for proof of concept only so no d component. yes its gonna overshoot but idgaf
     private Pose goalPose;
-    private double kPDrive = 0.015;
-    private double kPStrafe = 0.03;
+    private double kPDrive = 0.02;
+    private double kPStrafe = 0.02;
     private double kPHeading = 0.5; // pedro already emphasizes heading
     private double kDDrive;
     private double kDStrafe;

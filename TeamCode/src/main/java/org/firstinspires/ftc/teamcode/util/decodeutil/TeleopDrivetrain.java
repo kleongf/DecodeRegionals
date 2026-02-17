@@ -262,19 +262,20 @@ public class TeleopDrivetrain {
                 break;
             case INTAKE_GATE:
                 if (!follower.isBusy()) { // follower is not busy even when holding point
-                    if (!holdingPoint) { // if not holding point, then start holding point
-                        if (alliance == Alliance.BLUE) {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                        } else {
-                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                        }
-                        holdingPoint = true;
-                        holdPointTimer.reset();
-                    } else { // else we are holding point
-                        if (holdPointTimer.seconds() > HOLD_TIME) {
-                            breakFollowing();
-                        }
-                    }
+                    breakFollowing();
+//                    if (!holdingPoint) { // if not holding point, then start holding point
+//                        if (alliance == Alliance.BLUE) {
+//                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+//                        } else {
+//                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+//                        }
+//                        holdingPoint = true;
+//                        holdPointTimer.reset();
+//                    } else { // else we are holding point
+//                        if (holdPointTimer.seconds() > HOLD_TIME) {
+//                            breakFollowing();
+//                        }
+//                    }
                 }
                 break;
         }

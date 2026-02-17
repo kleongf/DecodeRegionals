@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 @TeleOp(name="BEST and ONLY sotm tuner: p, d, offset, kf")
 public class TurretFeedForwardTuner extends OpMode {
     private MainTeleop2 teleop;
-    private Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE;
+    private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
     public static double p = 0.004; // tune
     public static double d = 0.0004; // tune
     public static double offset = 0;

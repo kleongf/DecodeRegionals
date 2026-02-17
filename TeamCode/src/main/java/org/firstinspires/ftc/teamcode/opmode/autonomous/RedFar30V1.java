@@ -29,8 +29,8 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
 // this one drives to a good point to "scout" for balls before driving to them. it seems that cam has not enough fov, so we are going to drive closer.
 // TODO: maybe add a "safety" path: if not over two balls were collected, make a new path to drive to corner?
-@Autonomous(name="Blue Far 27 pid to ball", group="!")
-public class BlueFar30V1 extends OpMode {
+@Autonomous(name="Red Far 30", group="!")
+public class RedFar30V1 extends OpMode {
     // TODO: we might want to do 30 or park, idk how much time we have.
     private Follower follower;
     private StateMachine stateMachine;
@@ -38,40 +38,40 @@ public class BlueFar30V1 extends OpMode {
     private SOTM sotm2;
     private PoseFollower poseFollower;
     private boolean isTrackingBall = false;
-    private final Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE; // TODO: get accurate position from the test.
-    private Pose currentShootPose = PoseConstants.BLUE_FAR_AUTO_POSE;
-    private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, finish1, goBack1, finish2, goBack2, finish3, goBack3, finish4, goBack4, finish5, goBack5, finish6, goBack6;
+    private final Pose startPose = PoseConstants.RED_FAR_AUTO_POSE; // TODO: get accurate position from the test.
+    private Pose currentShootPose = PoseConstants.RED_FAR_AUTO_POSE;
+    private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
+    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeCorner1, goBack1, intakeCorner2, goBack2, intakeCorner3, goBack3, intakeCorner4, goBack4, intakeCorner5, goBack5, intakeCorner6, goBack6, intakeCorner7, goBack7;
     private double optimalX = 0;
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(42, 8.000), new Pose(12.000, 9.000)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Pose(144-42, 8.000), new Pose(144-12.000, 9.000)))
+                .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
         shootCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(12.000, 9.000), new Pose(46, 9)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Pose(144-12.000, 9.000), new Pose(144-46, 9)))
+                .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(46, 9),
-                                new Pose(40.000, 36.000),
-                                new Pose(38.000, 36.000),
-                                new Pose(13.000, 36.000)
+                                new Pose(144-46, 9),
+                                new Pose(144-40.000, 36.000),
+                                new Pose(144-38.000, 36.000),
+                                new Pose(144-13.000, 36.000)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.000, 36.000), new Pose(50, 16))
+                        new BezierLine(new Pose(144-13.000, 36.000), new Pose(144-46, 9))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
     }
 
@@ -80,7 +80,7 @@ public class BlueFar30V1 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         follower.usePredictiveBraking = true;
-        robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
+        robot = new AutonomousRobot(hardwareMap, Alliance.RED);
         sotm2 = new SOTM(goalPose);
         poseFollower = new PoseFollower();
         buildPaths();
@@ -106,7 +106,7 @@ public class BlueFar30V1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            currentShootPose = new Pose(46, 9, Math.toRadians(180));
+                            currentShootPose = new Pose(144-46, 9, Math.toRadians(180-180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -129,40 +129,30 @@ public class BlueFar30V1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.startTeleopDrive(false);
-                            isTrackingBall = true;
-                            currentShootPose = new Pose(50, 16, Math.toRadians(180));
-                        })
-                        .maxTime(2000)
-                        // alternatively, once we pass x = 24 then just pid to the current one
-                        .transition(new Transition(() -> follower.getPose().getX() < 24)),
-                new State()
-                        .onEnter(() -> {
-                            finish1 = follower.pathBuilder()
+                            intakeCorner1 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
                                     .build();
-                            follower.followPath(finish1, false);
+                            follower.followPath(intakeCorner1, false);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            isTrackingBall = false;
                             goBack1 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(50, 16)
+                                                    new Pose(144-46, 9)
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
                                     .build();
-                            follower.breakFollowing();
                             follower.followPath(goBack1, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -171,41 +161,32 @@ public class BlueFar30V1 extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // pile 2
                 new State()
-                    .onEnter(() -> {
-                        robot.intakeCommand.start();
-                        follower.startTeleopDrive(false);
-                        isTrackingBall = true;
-                    })
-                    .maxTime(2000)
-                    // alternatively, once we pass x = 24 then just pid to the current one
-                    .transition(new Transition(() -> follower.getPose().getX() < 24)),
-                new State()
                         .onEnter(() -> {
-                            finish2 = follower.pathBuilder()
+                            robot.intakeCommand.start();
+                            intakeCorner2 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
                                     .build();
-                            follower.followPath(finish2, false);
+                            follower.followPath(intakeCorner2, false);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            isTrackingBall = false;
                             goBack2 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(50, 16)
+                                                    new Pose(144-46, 9)
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
                                     .build();
-                            follower.breakFollowing();
                             follower.followPath(goBack2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -216,39 +197,30 @@ public class BlueFar30V1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.startTeleopDrive(false);
-                            isTrackingBall = true;
-                        })
-                        .maxTime(2000)
-                        // alternatively, once we pass x = 24 then just pid to the current one
-                        .transition(new Transition(() -> follower.getPose().getX() < 24)),
-                new State()
-                        .onEnter(() -> {
-                            finish3 = follower.pathBuilder()
+                            intakeCorner3 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
                                     .build();
-                            follower.followPath(finish3, false);
+                            follower.followPath(intakeCorner3, false);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            isTrackingBall = false;
                             goBack3 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(50, 16)
+                                                    new Pose(144-46, 9)
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
                                     .build();
-                            follower.breakFollowing();
                             follower.followPath(goBack3, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -259,39 +231,30 @@ public class BlueFar30V1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.startTeleopDrive(false);
-                            isTrackingBall = true;
-                        })
-                        .maxTime(2000)
-                        // alternatively, once we pass x = 24 then just pid to the current one
-                        .transition(new Transition(() -> follower.getPose().getX() < 24)),
-                new State()
-                        .onEnter(() -> {
-                            finish4 = follower.pathBuilder()
+                            intakeCorner4 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
                                     .build();
-                            follower.followPath(finish4, false);
+                            follower.followPath(intakeCorner4, false);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            isTrackingBall = false;
                             goBack4 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(50, 16)
+                                                    new Pose(144-46, 9)
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
                                     .build();
-                            follower.breakFollowing();
                             follower.followPath(goBack4, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -302,39 +265,30 @@ public class BlueFar30V1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.startTeleopDrive(false);
-                            isTrackingBall = true;
-                        })
-                        .maxTime(2000)
-                        // alternatively, once we pass x = 24 then just pid to the current one
-                        .transition(new Transition(() -> follower.getPose().getX() < 24)),
-                new State()
-                        .onEnter(() -> {
-                            finish5 = follower.pathBuilder()
+                            intakeCorner5 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
                                     .build();
-                            follower.followPath(finish5, false);
+                            follower.followPath(intakeCorner5, false);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            isTrackingBall = false;
                             goBack5 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(50, 16)
+                                                    new Pose(144-46, 9)
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
                                     .build();
-                            follower.breakFollowing();
                             follower.followPath(goBack5, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -345,45 +299,73 @@ public class BlueFar30V1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.startTeleopDrive(false);
-                            isTrackingBall = true;
-                        })
-                        .maxTime(2000)
-                        // alternatively, once we pass x = 24 then just pid to the current one
-                        .transition(new Transition(() -> follower.getPose().getX() < 24)),
-                new State()
-                        .onEnter(() -> {
-                            finish6 = follower.pathBuilder()
+                            intakeCorner6 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
                                     .build();
-                            follower.followPath(finish6, false);
+                            follower.followPath(intakeCorner6, false);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            isTrackingBall = false;
                             goBack6 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(50, 16)
+                                                    new Pose(144-46, 9)
                                             )
                                     )
-                                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
                                     .build();
-                            follower.breakFollowing();
                             follower.followPath(goBack6, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished()))
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                // pile 7
+                new State()
+                        .onEnter(() -> {
+                            robot.intakeCommand.start();
+                            intakeCorner7 = follower.pathBuilder()
+                                    .addPath(
+                                            new BezierLine(
+                                                    follower.getPose(),
+                                                    new Pose(144-9, MathUtil.clamp(follower.getPose().getY() - optimalX, 9, 40))
+                                            )
+                                    )
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .setNoDeceleration()
+                                    .build();
+                            follower.followPath(intakeCorner7, false);
+                        })
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> {
+                            goBack7 = follower.pathBuilder()
+                                    .addPath(
+                                            new BezierLine(
+                                                    follower.getPose(),
+                                                    new Pose(144-46, 9)
+                                            )
+                                    )
+                                    .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                                    .build();
+                            follower.followPath(goBack7, true);
+                        })
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> robot.shootCommand.start())
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                new State()
+                        .onEnter(() -> follower.holdPoint(new Pose(144-38, 9, Math.toRadians(180-180))))
+
         );
 
         try {
@@ -401,21 +383,13 @@ public class BlueFar30V1 extends OpMode {
             double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
             robot.setAzimuthThetaVelocity(values);
         }
-        optimalX = robot.vision.getBestXMovingAverage();
-
-        Pose targetPose = new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40), Math.toRadians(180));
-        Log.d("target pose", targetPose.toString());
-        telemetry.addData("Target Pose", targetPose);
-
-        if (isTrackingBall) {
-            // optimalX = robot.vision.getBestXMovingAverage();
-            double[] powers = poseFollower.calculate(follower.getPose(), targetPose);
-            follower.setTeleOpDrive(powers[0], powers[1], powers[2], true);
-        }
-
+        optimalX = robot.vision.getLargestClusterX();
         stateMachine.update();
         follower.update();
         robot.update();
+
+        blackboard.put(RobotConstants.END_POSE_KEY, follower.getPose());
+
         telemetry.update();
     }
 
@@ -436,4 +410,3 @@ public class BlueFar30V1 extends OpMode {
         blackboard.put(RobotConstants.END_POSE_KEY, follower.getPose());
     }
 }
-
