@@ -39,7 +39,7 @@ public class MainTeleop {
     public TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
     private double speedScaler = 1;
-    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.2;
+    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.15;
     public TeleopRobot robot;
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
@@ -221,7 +221,7 @@ public class MainTeleop {
 
         // GAMEPAD 2 (OPERATOR)
 
-        // slow mo for good park, 0.3x speed
+        // slow mo for good park, 0.4x speed
         if (Math.abs(gamepad2.left_trigger) > 0.05 || Math.abs(gamepad2.right_trigger) > 0.05) {
             speedScaler = 0.4;
         } else {

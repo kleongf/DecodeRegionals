@@ -94,9 +94,9 @@ public class SOTM {
         } else {
             double off = ((angleToGoal + Math.PI/4) * (4/Math.PI) * offsetFactor) / dist;
             if (off > 0) {
-                return 0;
-            } else {
                 return off * farScaleFactor;
+            } else {
+                return off;
             }
         }
     }
