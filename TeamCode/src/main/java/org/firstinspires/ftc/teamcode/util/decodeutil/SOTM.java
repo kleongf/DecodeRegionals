@@ -332,7 +332,11 @@ public class SOTM {
 
         // double feedforward = Math.signum(crossProduct) * (vTangential.getMagnitude() / dist);
         // tangent = sine over cosine, magnitudes cancel out
-        double feedforward = Math.atan2(crossProduct, dotProduct);
+
+        // TODO: checking to see if red works by negating feedforward on red. maybe it will work.
+        boolean isBlue = goal.getX() == 0;
+        double feedforward = isBlue ? Math.atan2(crossProduct, dotProduct) : -Math.atan2(crossProduct, dotProduct);
+
         // Log.d("feedforward dir", "" + feedforward);
 
         // if the vectors are in the same direction, then we should subtract the radial velocity

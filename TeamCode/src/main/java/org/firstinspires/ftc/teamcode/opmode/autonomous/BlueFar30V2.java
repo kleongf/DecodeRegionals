@@ -41,7 +41,7 @@ public class BlueFar30V2 extends OpMode {
     private final Pose startPose = PoseConstants.BLUE_FAR_AUTO_POSE; // TODO: get accurate position from the test.
     private Pose currentShootPose = PoseConstants.BLUE_FAR_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeCorner1, goBack1, intakeCorner2, goBack2, intakeCorner3, goBack3, intakeCorner4, goBack4, intakeCorner5, goBack5, intakeCorner6, goBack6, intakeCorner7, goBack7;
+    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeCorner1, goBack1, intakeCorner2, goBack2, intakeCorner3, goBack3, intakeCorner4, goBack4, intakeCorner5, goBack5, intakeCorner6, goBack6, intakeCorner7, goBack7, park;
     private double optimalX = 0;
 
     public void buildPaths() {
@@ -73,6 +73,14 @@ public class BlueFar30V2 extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
+
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(46, 9), new Pose(36, 9))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setBrakingStart(2)
+                .build();
     }
 
     @Override
@@ -90,6 +98,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(2000) // in case it takes too long
                         .transition(new Transition(() -> robot.shooter.atTarget(20) && !follower.isBusy())),
+                new State()
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
@@ -110,6 +120,8 @@ public class BlueFar30V2 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
+                        .maxTime(100),
+                new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // third
@@ -122,6 +134,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .onEnter(() -> follower.followPath(shootThird, true))
                         .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -157,6 +171,8 @@ public class BlueFar30V2 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
+                        .maxTime(100),
+                new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // pile 2
@@ -190,6 +206,8 @@ public class BlueFar30V2 extends OpMode {
                             follower.followPath(goBack2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -225,6 +243,8 @@ public class BlueFar30V2 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
+                        .maxTime(100),
+                new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // pile 4
@@ -258,6 +278,8 @@ public class BlueFar30V2 extends OpMode {
                             follower.followPath(goBack4, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -293,6 +315,8 @@ public class BlueFar30V2 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
+                        .maxTime(100),
+                new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // pile 6
@@ -326,6 +350,8 @@ public class BlueFar30V2 extends OpMode {
                             follower.followPath(goBack6, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -361,10 +387,13 @@ public class BlueFar30V2 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
+                        .maxTime(100),
+                new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
-                        .onEnter(() -> follower.holdPoint(new Pose(38, 9, Math.toRadians(180))))
+                        .onEnter(() -> follower.followPath(park, true))
+                        .transition(new Transition(() -> !follower.isBusy()))
 
         );
 

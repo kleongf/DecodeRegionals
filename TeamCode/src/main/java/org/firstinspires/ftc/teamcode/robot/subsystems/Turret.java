@@ -19,7 +19,7 @@ public class Turret extends Subsystem {
     private double feedforward = 0;
 
     private double offset = 0;
-    private double maxPower = 0.5;
+    private double maxPower = 0.75;
     private double kS = 0.03;
     public static double encoderOffsetDegrees = -107.2;
     public static double maxVoltage = 3.272;
@@ -81,9 +81,10 @@ public class Turret extends Subsystem {
 
     @Override
     public void update() {
-        // double c = calculatePositionTicks(externalEncoder.getVoltage());
+        // TODO: testing if the encoder is noisy.
+        double c = calculatePositionTicks(externalEncoder.getVoltage());
 
-        double c = turretMotor.getCurrentPosition() + offset;
+        // double c = turretMotor.getCurrentPosition() + offset;
         // - offset/ticksPerRadian;
         double t = weirdAngleWrap(target) * ticksPerRadian;
 

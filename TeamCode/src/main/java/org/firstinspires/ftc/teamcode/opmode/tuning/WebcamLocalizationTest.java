@@ -9,9 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
@@ -62,6 +64,23 @@ public class WebcamLocalizationTest extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
+
+    public static AprilTagLibrary getDecodeTagLibraryAdjusted(){
+        return new AprilTagLibrary.Builder()
+                .addTag(20, "BlueTarget",
+                        6.5, new VectorF(-58.3727f + 1.5f, -55.6425f + 1.5f, 29.5f), DistanceUnit.INCH,
+                        new Quaternion(0.2182149f, -0.2182149f, -0.6725937f, 0.6725937f, 0))
+                .addTag(21, "Obelisk_GPP",
+                        6.5, DistanceUnit.INCH)
+                .addTag(22, "Obelisk_PGP",
+                        6.5, DistanceUnit.INCH)
+                .addTag(23, "Obelisk_PPG",
+                        6.5, DistanceUnit.INCH)
+                .addTag(24, "RedTarget",
+                        6.5, new VectorF(-58.3727f + 1.5f, 55.6425f - 1.5f, 29.5f), DistanceUnit.INCH,
+                        new Quaternion(0.6725937f, -0.6725937f, -0.2182149f, 0.2182149f, 0))
+                .build();
+    }
 
     @Override
     public void runOpMode() {
@@ -152,7 +171,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
                 .setLensIntrinsics(920.46723598, 918.07391093, 653.71790268, 406.18310197)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
-                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setTagLibrary(getDecodeTagLibraryAdjusted())
                 .setCameraPose(cameraPosition, cameraOrientation)
                 // ... these parameters are fx, fy, cx, cy.
 
