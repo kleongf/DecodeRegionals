@@ -53,23 +53,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
     private final Pose shootPose = new Pose(60, 72, Math.toRadians(-144));
     private Pose currentShootPose = new Pose(60, 72, Math.toRadians(-144));
     private PathChain shootPreloadIntakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeFirst, shootFirst;
-    private ArrayList<Vector> rollingVelocities;
-    private ElapsedTime elapsedTime;
-    private Pose prevPose;
-    private int numVelocities = 4;
     private boolean isSOTMing = true;
-
-    private Vector getRollingVelocity() {
-        Vector currentSum = new Vector();
-        if (rollingVelocities.isEmpty()) {
-            return currentSum;
-        }
-        for (Vector v: rollingVelocities) {
-            currentSum = MathUtil.addVectors(currentSum, v);
-        }
-        Vector movingAverage = MathUtil.scalarMultiplyVector(currentSum, 1d / rollingVelocities.size());
-        return movingAverage;
-    }
 
     public void buildPaths() {
         double k1 = 10; // i actually forgot what these were check desmos
@@ -89,7 +73,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
                         new BezierCurve(
                                 new Pose(54, 90),
                                 new Pose(40, 60),
-                                new Pose(12, 60)
+                                new Pose(15, 60)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -265,22 +249,16 @@ public class BlueClose24ExtraGateV8 extends OpMode {
         follower.setStartingPose(startPose);
         robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
         sotm2 = new SOTM(goalPose);
-        rollingVelocities = new ArrayList<>();
-        elapsedTime = new ElapsedTime();
-        prevPose = startPose;
         buildPaths();
 
         stateMachine = new StateMachine(
-                // TODO: when pathing is finalized, next priority is SOTM and driver automations
-                // i believe we can save at least a second with sotm at beginning.
-                // shoot preload and intake second
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(0.75);
                             follower.followPath(shootPreloadIntakeSecond, false);
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
-                        .maxTime(1000),
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -464,7 +442,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
     @Override
     public void loop() {
         if (isSOTMing) {
-            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), getRollingVelocity(), follower.getAngularVelocity());
+            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
             robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
             robot.turret.setFeedforward(values[3]);
         } else {
@@ -473,38 +451,12 @@ public class BlueClose24ExtraGateV8 extends OpMode {
             robot.turret.setFeedforward(0);
         }
 
-        // I am starting to believe that the turret is off because it's not reaching its target
-        // let's confirm, the p and d values are really low
-        Log.d("turret current pos", "" + robot.turret.getCurrent());
-        Log.d("turret target pos", "" + robot.turret.getTarget());
-
         stateMachine.update();
         follower.update();
-
-        double dt = elapsedTime.seconds();
-
-        Vector currentVelocity;
-        if (dt > 0) {
-            currentVelocity = follower.getPose().minus(prevPose).div(dt).getAsVector();
-        } else {
-            currentVelocity = follower.getVelocity();
-        }
-
-        if (rollingVelocities.size() < numVelocities) {
-            for (int i = 0; i < numVelocities; i++) {
-                rollingVelocities.add(currentVelocity);
-            }
-        } else {
-            rollingVelocities.add(currentVelocity);
-            rollingVelocities.remove(0);
-        }
 
         robot.update();
         // TODO: BRUH why did i never do this? of course we should update every loop just in case
         blackboard.put(RobotConstants.END_POSE_KEY, follower.getPose());
-
-        elapsedTime.reset();
-        prevPose = follower.getPose();
         telemetry.update();
     }
 
