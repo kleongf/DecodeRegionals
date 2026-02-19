@@ -102,10 +102,10 @@ public class BlueFar30V2 extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            robot.shootCommand.start();
+                            robot.shootCommandSlow.start();
                             follower.setMaxPower(1);
                         })
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // corner
                 new State()
                         .onEnter(() -> {
@@ -122,8 +122,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // third
                 new State()
                         .onEnter(() -> {
@@ -137,8 +137,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 1
                 new State()
                         .onEnter(() -> {
@@ -173,8 +173,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 2
                 new State()
                         .onEnter(() -> {
@@ -209,8 +209,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 3
                 new State()
                         .onEnter(() -> {
@@ -245,8 +245,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 4
                 new State()
                         .onEnter(() -> {
@@ -281,8 +281,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 5
                 new State()
                         .onEnter(() -> {
@@ -317,8 +317,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 6
                 new State()
                         .onEnter(() -> {
@@ -353,8 +353,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile 7
                 new State()
                         .onEnter(() -> {
@@ -389,8 +389,8 @@ public class BlueFar30V2 extends OpMode {
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
                         .onEnter(() -> follower.followPath(park, true))
                         .transition(new Transition(() -> !follower.isBusy()))

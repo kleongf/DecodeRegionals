@@ -126,29 +126,12 @@ public class MainTeleop {
                     speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         }
 
-        double dt = elapsedTime.seconds();
 
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
 
-        Vector currentVelocity;
-        if (dt > 0) {
-            currentVelocity = drivetrain.getPose().minus(prevPose).div(dt).getAsVector();
-        } else {
-            currentVelocity = drivetrain.getVelocity();
-        }
-
-        if (rollingVelocities.size() < numVelocities) {
-            for (int i = 0; i < numVelocities; i++) {
-                rollingVelocities.add(currentVelocity);
-            }
-        } else {
-            rollingVelocities.add(currentVelocity);
-            rollingVelocities.remove(0);
-        }
-
         // SETTING ROBOT STATE
-        if (robot.shootCommand.isFinished()) {
+        if (robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished()) {
             robotState = RobotState.IDLE;
         } else {
             robotState = RobotState.SHOOTING;
@@ -188,7 +171,12 @@ public class MainTeleop {
 
         // shoot: right bumper
         if (gamepad1.rightBumperWasPressed()) {
-            robot.shootCommand.start();
+            // i would consider 120 to be far
+            if (MathUtil.distance(currentPose, goalPose) > 120)  {
+                robot.shootCommandSlow.start();
+            } else {
+                robot.shootCommand.start();
+            }
         }
 
         // added just for this

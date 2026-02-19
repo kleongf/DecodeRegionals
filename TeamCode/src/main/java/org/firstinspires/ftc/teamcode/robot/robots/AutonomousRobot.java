@@ -78,15 +78,10 @@ public class AutonomousRobot {
         shootCommandSlow = new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            intake.state = Intake.IntakeState.INTAKE_OFF;
                             shooter.openLatch();
+                            intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
-                        .maxTime(150),
-                new State()
-                        .onEnter(() -> {
-                            intake.state = Intake.IntakeState.INTAKE_FAST;
-                        })
-                        .maxTime(1500));
+                        .maxTime(600)); // new time apparently
         commands.add(shootCommandSlow);
 
     }

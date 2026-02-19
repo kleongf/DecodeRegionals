@@ -31,6 +31,7 @@ public class TeleopRobot {
     public StateMachine shootCommand;
     public StateMachine idleCommand;
     public StateMachine resetTurretCommand;
+    public StateMachine shootCommandSlow;
 
     public TeleopRobot(HardwareMap hardwareMap) {
         subsystems = new ArrayList<>();
@@ -47,6 +48,8 @@ public class TeleopRobot {
         turret = new Turret(hardwareMap);
         subsystems.add(turret);
 
+        // TODO: do for webcam localizer
+
         limelightLocalizer = new LimelightLocalizer(hardwareMap);
         limelightLocalizer.setPipeline(LimelightLocalizer.Pipeline.APRILTAG);
         subsystems.add(limelightLocalizer);
@@ -62,22 +65,27 @@ public class TeleopRobot {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                             shooter.openLatch();
                         })
-                        // TODO: .transition(new Transition(() -> !intake.intakeFull()))
-                        // this does not quite work unless we know exactly how many we have
                         .onExit(() -> {
                             shooter.closeLatch();
                             intake.resetDetection();
                         })
                         .maxTime(800)
-//                new State()
-//                        .onEnter(() -> {
-//                            intake.state = Intake.IntakeState.INTAKE_FAST;
-//                            shooter.closeLatch();
-//                            intake.resetDetection();
-//                        })
-//                        .maxTime(100)
         );
         commands.add(shootCommand);
+
+        shootCommandSlow = new StateMachine(
+                new State()
+                        .onEnter(() -> {
+                            intake.state = Intake.IntakeState.INTAKE_SLOW;
+                            shooter.openLatch();
+                        })
+                        .onExit(() -> {
+                            shooter.closeLatch();
+                            intake.resetDetection();
+                        })
+                        .maxTime(800)
+        );
+        commands.add(shootCommandSlow);
 
         idleCommand = new StateMachine(
                 new State()
