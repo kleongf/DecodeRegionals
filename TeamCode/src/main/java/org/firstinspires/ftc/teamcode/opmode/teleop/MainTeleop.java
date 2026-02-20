@@ -179,6 +179,13 @@ public class MainTeleop {
             }
         }
 
+        // slow mo for good park, 0.4x speed
+        if (Math.abs(gamepad1.left_trigger) > 0.05 || Math.abs(gamepad1.right_trigger) > 0.05) {
+            speedScaler = 0.4;
+        } else {
+            speedScaler = 1;
+        }
+
         // added just for this
 
         if (gamepad1.dpadUpWasPressed()) {
@@ -209,13 +216,6 @@ public class MainTeleop {
 
         // GAMEPAD 2 (OPERATOR)
 
-        // slow mo for good park, 0.4x speed
-        if (Math.abs(gamepad2.left_trigger) > 0.05 || Math.abs(gamepad2.right_trigger) > 0.05) {
-            speedScaler = 0.4;
-        } else {
-            speedScaler = 1;
-        }
-
         // x: field-centric (toggle)
         if (gamepad2.bWasPressed()) {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
@@ -224,6 +224,15 @@ public class MainTeleop {
         // y: reset turret
         if (gamepad2.yWasPressed()) {
             robot.resetTurretCommand.start();
+        }
+
+        // slow mo for good park, 0.4x speed
+        if (Math.abs(gamepad2.right_trigger) > 0.05) {
+            robot.pivot.setPower(gamepad2.right_trigger);
+        }
+
+        if (Math.abs(gamepad2.left_trigger) > 0.05) {
+            robot.pivot.setPower(gamepad2.left_trigger);
         }
 
         // relocalization: left stick
