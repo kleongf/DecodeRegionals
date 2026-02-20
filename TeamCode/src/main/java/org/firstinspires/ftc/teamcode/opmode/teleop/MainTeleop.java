@@ -53,6 +53,7 @@ public class MainTeleop {
     private ElapsedTime elapsedTime;
     private ElapsedTime relocalizationTimer;
     private ZoneUtil zoneUtil;
+    private double relocalizationTime = 10; // 10 seconds
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -115,6 +116,7 @@ public class MainTeleop {
     }
 
     public void loop() {
+
         if (alliance == Alliance.BLUE) {
             // TODO: no idea, might have to add the 180 offset for red
             drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
@@ -125,7 +127,6 @@ public class MainTeleop {
                     speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
                     speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         }
-
 
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
@@ -166,6 +167,13 @@ public class MainTeleop {
                 }
             }
         }
+
+//        if (relocalizationTimer.seconds() > relocalizationTime) {
+//            // normal relocalization: checks velocity, angular velocity, and distance AND the timer to see if its over 10s
+//            if (drivetrain.getVelocity().getMagnitude() > 5 && drivetrain.getAngularVelocity() > 0.1 && getDistance(currentPose, goalPose) < 100) {
+//                drivetrain.follower.setPose(insert get pose func here);
+//            }
+//        }
 
         // GAMEPAD 1 (DRIVER)
 
@@ -237,9 +245,9 @@ public class MainTeleop {
 
         // relocalization: left stick
         if (gamepad2.leftStickButtonWasPressed()) { // map to o
+            // TODO: CHANGE TO WEBCAM
             Pose llPose = robot.limelightLocalizer.getCurrentPose(currentPose);
             if (llPose.getX() != currentPose.getX() && llPose.getY() != currentPose.getY()) {
-                gamepad1.rumble(300);
                 drivetrain.follower.setPose(llPose);
             }
         }
@@ -282,6 +290,7 @@ public class MainTeleop {
 //            robot.turret.setPDCoefficients(0.005, 0);
 //            robot.turret.setFeedforward(values[3]);
 //        }
+        // TODO: add a boolean to check if the endgame button was pressed, if so, then set turret to 180 and speed to 0 and hood to 0
         if (!robot.resetTurretCommand.isFinished()) { // we are in the middle of trying to reset encoder, so don't set the target to something else
             robot.turret.setFeedforward(0);
         } else {
