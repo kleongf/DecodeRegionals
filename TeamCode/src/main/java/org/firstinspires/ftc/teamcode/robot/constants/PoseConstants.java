@@ -24,8 +24,8 @@ public class PoseConstants {
 
     public static Pose RED_GATE_POSE = new Pose(FIELD_WIDTH-18, 63, Math.toRadians(180-180));
 
-    public static Pose RED_PARK_POSE = new Pose(39, 14, Math.toRadians(270));
-    public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-39, 14, Math.toRadians(270));
+    public static Pose RED_PARK_POSE = new Pose(39, 36, Math.toRadians(90));
+    public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-39, 36, Math.toRadians(90));
 
     // Autonomous Poses
     public static Pose BLUE_CLOSE_AUTO_POSE = new Pose(30, 135.5, Math.toRadians(270));

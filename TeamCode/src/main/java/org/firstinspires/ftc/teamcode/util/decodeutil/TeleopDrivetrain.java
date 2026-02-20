@@ -133,31 +133,43 @@ public class TeleopDrivetrain {
     }
 
     public void park() {
-        if (follower.getPose().getY() < 32) {
-            currentPathChain = () -> follower.pathBuilder()
-                    .addPath(
-                            new Path(
-                                    new BezierLine(
-                                            follower.getPose(),
-                                            parkPose
-                                    )
-                            )
-                    )
-                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading())
-                    .build();
-        } else { // y coord is high so go on top
-            currentPathChain = () -> follower.pathBuilder()
-                    .addPath(
-                            new Path(
-                                    new BezierLine(
-                                            follower.getPose(),
-                                            new Pose(parkPose.getX(), parkPose.getY() + 36)
-                                    )
-                            )
-                    )
-                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading()+Math.toRadians(180))
-                    .build();
-        }
+        // now it doesn't really matter because we have full park
+        currentPathChain = () -> follower.pathBuilder()
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        follower.getPose(),
+                                        parkPose
+                                )
+                        )
+                )
+                .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading())
+                .build();
+//        if (follower.getPose().getY() < 32) {
+//            currentPathChain = () -> follower.pathBuilder()
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(
+//                                            follower.getPose(),
+//                                            parkPose
+//                                    )
+//                            )
+//                    )
+//                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading())
+//                    .build();
+//        } else { // y coord is high so go on top
+//            currentPathChain = () -> follower.pathBuilder()
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(
+//                                            follower.getPose(),
+//                                            new Pose(parkPose.getX(), parkPose.getY() + 36)
+//                                    )
+//                            )
+//                    )
+//                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading()+Math.toRadians(180))
+//                    .build();
+//        }
         state = DrivetrainState.PARK;
         follower.followPath(currentPathChain.get(), true);
     }
@@ -194,7 +206,7 @@ public class TeleopDrivetrain {
                         new Path(
                                 new BezierLine(
                                         follower.getPose(),
-                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY())
+                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+15: gateIntakePose.getX()-15), gateIntakePose.getY())
                                 )
                         )
                 )
@@ -202,7 +214,7 @@ public class TeleopDrivetrain {
                 .addPath(
                         new Path(
                                 new BezierLine(
-                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+20: gateIntakePose.getX()-20), gateIntakePose.getY()),
+                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+15: gateIntakePose.getX()-15), gateIntakePose.getY()),
                                         gateIntakePose
                                 )
                         )

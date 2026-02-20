@@ -86,7 +86,7 @@ public class MainTeleop {
         this.prevPose = startPose;
     }
     private double normalizeInput(double input) {
-        return 1.2 * Math.signum(input) * Math.sqrt(Math.abs(input));
+        return 1.1 * Math.signum(input) * Math.sqrt(Math.abs(input));
     }
 
     private double getDistance(Pose a, Pose b) {
@@ -217,7 +217,7 @@ public class MainTeleop {
         // GAMEPAD 2 (OPERATOR)
 
         // x: field-centric (toggle)
-        if (gamepad2.bWasPressed()) {
+        if (gamepad2.xWasPressed()) {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
@@ -228,7 +228,7 @@ public class MainTeleop {
 
         // slow mo for good park, 0.4x speed
         if (Math.abs(gamepad2.right_trigger) > 0.05) {
-            robot.pivot.setPower(gamepad2.right_trigger);
+            robot.pivot.setPower(-gamepad2.right_trigger);
         }
 
         if (Math.abs(gamepad2.left_trigger) > 0.05) {

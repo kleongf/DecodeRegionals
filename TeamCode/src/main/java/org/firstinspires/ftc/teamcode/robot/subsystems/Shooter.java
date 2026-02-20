@@ -121,6 +121,7 @@ public class Shooter extends Subsystem {
     public void setTargetVelocity(double t) {
         targetVelocity = t;
     }
+    public double getTargetVelocity() {return targetVelocity;}
 
     public double getCurrentVelocity() {
         return shooterMotor.getVelocity();

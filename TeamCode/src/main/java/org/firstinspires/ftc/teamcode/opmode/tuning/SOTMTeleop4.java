@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="SOTM teleop tuning BLUE", group="!")
-public class SOTMTeleop3 extends OpMode {
+@TeleOp(name="SOTM teleop tuning RED", group="!")
+public class SOTMTeleop4 extends OpMode {
     // steps in order:
     // tune the pid first, so that we can track a moving target.
     // to do this set the latency scale factor to -1
@@ -23,20 +23,20 @@ public class SOTMTeleop3 extends OpMode {
     // find some function (if it is a function) to calculate offset
     // lastly tune the latency scale factor so that the turret and shooter update
     private MainTeleop teleop;
-    private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
+    private Pose startPose = PoseConstants.RED_STANDARD_START_POSE;
     public static double p = 0.005; // tune
     public static double d = 0.000; // tune
     public static double offset = 12; // tune, offset for the turret itself
     public static double latencyScaleFactor = 1.2; // small number prob between 0 and 1
     public static double latencyScaleFactorRadial = 2.5;
     // this is good for tangential
-    public static double kF = -0.02; // TODO: still don't know if its going the right direction lol
+    public static double kF = -0.02; // TODO: still don't know if its going the right direction lol. negate if wrong
     // could set to something lower given that we have a p controller maybe like 0.05
 
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        teleop = new MainTeleop(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2, true);
+        teleop = new MainTeleop(startPose, Alliance.RED, hardwareMap, telemetry, gamepad1, gamepad2, true);
     }
 
     @Override

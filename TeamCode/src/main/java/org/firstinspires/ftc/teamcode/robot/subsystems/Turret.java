@@ -122,6 +122,7 @@ public class Turret extends Subsystem {
     public double getCurrent() {
         return turretMotor.getCurrentPosition();
     }
+    public double getCurrentExternal() {return calculatePositionTicks(externalEncoder.getVoltage());}
 
     public double weirdAngleWrap(double radians) {
         while (radians > 0) {
