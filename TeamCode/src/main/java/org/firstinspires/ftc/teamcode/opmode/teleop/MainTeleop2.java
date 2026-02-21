@@ -239,11 +239,11 @@ public class MainTeleop2 {
 
         // relocalization
         if (gamepad2.xWasPressed()) {
-            Pose llPose = robot.limelightLocalizer.getCurrentPose(currentPose);
-            if (llPose.getX() != currentPose.getX() && llPose.getY() != currentPose.getY()) {
-                gamepad1.rumble(300);
-                drivetrain.follower.setPose(llPose);
-            }
+            // Pose llPose = robot.limelightLocalizer.getCurrentPose(currentPose);
+//            if (llPose.getX() != currentPose.getX() && llPose.getY() != currentPose.getY()) {
+//                gamepad1.rumble(300);
+//                drivetrain.follower.setPose(llPose);
+//            }
         }
 
         // corner relocalization

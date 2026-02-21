@@ -26,6 +26,7 @@ public class Turret extends Subsystem {
     private double encoderGearRatio = 50/42d;
     private AnalogInput externalEncoder;
     private double minVoltage = 0.02;
+    private boolean useExternal = true;
 
 
     public Turret(HardwareMap hardwareMap) {
@@ -82,9 +83,13 @@ public class Turret extends Subsystem {
     @Override
     public void update() {
         // TODO: testing if the encoder is noisy.
-        double c = calculatePositionTicks(externalEncoder.getVoltage());
+        double c;
+        if (useExternal) {
+            c = calculatePositionTicks(externalEncoder.getVoltage());
+        } else {
+            c = turretMotor.getCurrentPosition() + offset;
+        }
 
-        // double c = turretMotor.getCurrentPosition() + offset;
         // - offset/ticksPerRadian;
         double t = weirdAngleWrap(target) * ticksPerRadian;
 
@@ -123,6 +128,9 @@ public class Turret extends Subsystem {
         return turretMotor.getCurrentPosition();
     }
     public double getCurrentExternal() {return calculatePositionTicks(externalEncoder.getVoltage());}
+    public void setUseExternal(boolean x) {
+        useExternal = x;
+    }
 
     public double weirdAngleWrap(double radians) {
         while (radians > 0) {

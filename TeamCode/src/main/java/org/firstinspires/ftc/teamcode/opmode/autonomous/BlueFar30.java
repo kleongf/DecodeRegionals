@@ -34,7 +34,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 // and check when we are like 24 inches away or something idk, so that where we go is good
 // could always be driving to the best point or something
 
-@Autonomous(name="Blue Far 30", group="?")
+@Autonomous(name="Blue Far 30 bad", group="?")
 public class BlueFar30 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;

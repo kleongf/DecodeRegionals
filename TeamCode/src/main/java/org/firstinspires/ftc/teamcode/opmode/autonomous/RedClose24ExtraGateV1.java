@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Red Close 24 Extra Gate V1", group="!")
+@Autonomous(name="Red Close 24 Extra Gate Comp", group="!")
 public class RedClose24ExtraGateV1 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;

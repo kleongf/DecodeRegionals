@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
 import android.util.Size;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -61,6 +62,10 @@ public class WebcamLocalizer extends Subsystem {
     public WebcamLocalizer(HardwareMap hardwareMap) {
         currentPose = new Pose();
         aprilTag = new AprilTagProcessor.Builder()
+                // red: off by -3 inches (so add 3)
+                // blue: off by 3 inches (so subtract 3)
+                // this is for y coord btw
+
                 // theres no way its off by that much bruh
                 .setLensIntrinsics(920.46723598, 918.07391093, 653.71790268, 406.18310197)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
@@ -91,14 +96,26 @@ public class WebcamLocalizer extends Subsystem {
     public void update() {
         // PROBLEM: we can see two at once. which one do we trust?
         // fortunately, when we relocalize based on the distance constraint, we are unable to see both
+
         // so this is a non-issue
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 if (!detection.metadata.name.contains("Obelisk")) {
-                    Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
-                    currentPose = ppPose;
-                    isGoodDetection = true;
+                    if (detection.metadata.name.contains("BlueTarget")) {
+                        Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+                        ppPose = new Pose(ppPose.getX(), ppPose.getY()-3.0, ppPose.getHeading());
+                        Log.d("Pinpoint pose", ppPose.toString());
+                        currentPose = ppPose;
+                        isGoodDetection = true;
+                    }
+                    if (detection.metadata.name.contains("RedTarget")) {
+                        Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+                        ppPose = new Pose(ppPose.getX(), ppPose.getY()+3.0, ppPose.getHeading());
+                        Log.d("Pinpoint pose", ppPose.toString());
+                        currentPose = ppPose;
+                        isGoodDetection = true;
+                    }
                 }
             }
         }

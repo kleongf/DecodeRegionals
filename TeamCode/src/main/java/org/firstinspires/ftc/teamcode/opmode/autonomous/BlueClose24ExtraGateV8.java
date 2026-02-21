@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Blue Close 24 Extra Gate V8: no hard coding stuff, better first intake", group="!")
+@Autonomous(name="Blue Close 24 Extra Gate Comp", group="!")
 public class BlueClose24ExtraGateV8 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
@@ -294,7 +294,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -318,7 +318,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -344,7 +344,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -371,7 +371,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -399,7 +399,7 @@ public class BlueClose24ExtraGateV8 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -438,6 +438,8 @@ public class BlueClose24ExtraGateV8 extends OpMode {
             throw new RuntimeException(e);
         }
         robot.initPositions();
+        robot.turret.resetEncoderWithAbsoluteReading();
+        robot.turret.setUseExternal(false);
     }
     @Override
     public void loop() {

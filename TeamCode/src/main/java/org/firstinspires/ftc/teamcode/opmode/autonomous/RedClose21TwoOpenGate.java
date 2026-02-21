@@ -42,16 +42,16 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Blue Close 21 Two Open Gate Comp", group="!")
-public class BlueClose21TwoOpenGate extends OpMode {
+@Autonomous(name="Red Close 21 Two Open Gate Comp", group="!")
+public class RedClose21TwoOpenGate extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
-    private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private final Pose shootPose = new Pose(60, 72, Math.toRadians(-144));
-    private Pose currentShootPose = new Pose(60, 72, Math.toRadians(-144));
+    private final Pose startPose = PoseConstants.RED_CLOSE_AUTO_POSE;
+    private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
+    private final Pose shootPose = new Pose(144-60, 72, Math.toRadians(180-(-144)));
+    private Pose currentShootPose = new Pose(144-60, 72, Math.toRadians(180-(-144)));
     private PathChain shootPreloadIntakeSecond, openGate1, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, openGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeFirst, shootFirst;
     private boolean isSOTMing = true;
 
@@ -60,20 +60,20 @@ public class BlueClose21TwoOpenGate extends OpMode {
         double k2 = 20;
         // idk abt this just check it again and do for control point 2
         Pose controlPoint1 = new Pose(shootPose.getX() + k1 * Math.cos(shootPose.getHeading()), shootPose.getY() + k1 * Math.sin(shootPose.getHeading()));
-        Pose controlPoint2 = new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX() - k2 * Math.cos(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()), PoseConstants.BLUE_GATE_AUTO_POSE.getY() - k2 * Math.sin(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()));
+        Pose controlPoint2 = new Pose(PoseConstants.RED_GATE_AUTO_POSE.getX() - k2 * Math.cos(PoseConstants.RED_GATE_AUTO_POSE.getHeading()), PoseConstants.RED_GATE_AUTO_POSE.getY() - k2 * Math.sin(PoseConstants.RED_GATE_AUTO_POSE.getHeading()));
 
 
         shootPreloadIntakeSecond = follower.pathBuilder().addPath(
                         new BezierLine(
                                 startPose,
-                                new Pose(54.000, 90.000)
+                                new Pose(144-54.000, 90.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(-110))
+                ).setConstantHeadingInterpolation(Math.toRadians(180-(-110)))
                 .addPath(
                         new BezierCurve(
-                                new Pose(54, 90),
-                                new Pose(40, 60),
-                                new Pose(12, 60)
+                                new Pose(144-54, 90),
+                                new Pose(144-40, 60),
+                                new Pose(144-12, 60)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -82,42 +82,42 @@ public class BlueClose21TwoOpenGate extends OpMode {
         // also move slow while opening gate
         openGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(12.000, 60.000),
-                                new Pose(24.457, 58.947),
-                                new Pose(24.383, 63.138),
-                                PoseConstants.BLUE_GATE_POSE
+                                new Pose(144-12.000, 60.000),
+                                new Pose(144-24.457, 58.947),
+                                new Pose(144-24.383, 63.138),
+                                PoseConstants.RED_GATE_POSE
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .setNoDeceleration()
                 .build();
 
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
-                                PoseConstants.BLUE_GATE_POSE,
-                                new Pose(60.000, 72.000)
+                                PoseConstants.RED_GATE_POSE,
+                                new Pose(144-60.000, 72.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
         HeadingInterpolator toGateAfterOpen = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
                         0.75,
-                        HeadingInterpolator.linear(shootSecond.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.linear(shootSecond.getFinalHeadingGoal(), PoseConstants.RED_GATE_AUTO_POSE.getHeading())
                 ),
                 new HeadingInterpolator.PiecewiseNode(
                         0.75,
                         1,
-                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.constant(PoseConstants.RED_GATE_AUTO_POSE.getHeading())
                 )
         );
 
         intakeGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(144-60.000, 72.000),
+                                new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGateAfterOpen)
@@ -127,10 +127,10 @@ public class BlueClose21TwoOpenGate extends OpMode {
         // optimal coordinates trust. both the second intake and this path end at the same heading.
         shootGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                PoseConstants.RED_GATE_AUTO_POSE,
                                 controlPoint2,
                                 controlPoint1,
-                                new Pose(60.000, 72.000)
+                                new Pose(144-60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -140,21 +140,21 @@ public class BlueClose21TwoOpenGate extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0,
                         0.75,
-                        HeadingInterpolator.linear(shootGate1.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.linear(shootGate1.getFinalHeadingGoal(), PoseConstants.RED_GATE_AUTO_POSE.getHeading())
                 ),
                 new HeadingInterpolator.PiecewiseNode(
                         0.75,
                         1,
-                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.constant(PoseConstants.RED_GATE_AUTO_POSE.getHeading())
                 )
         );
 
         intakeGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(144-60.000, 72.000),
+                                new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -165,30 +165,43 @@ public class BlueClose21TwoOpenGate extends OpMode {
 
         openGate2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(31.806, 63.266),
-                                PoseConstants.BLUE_GATE_POSE
+                                PoseConstants.RED_GATE_AUTO_POSE,
+                                new Pose(144-31.806, 63.266),
+                                PoseConstants.RED_GATE_POSE
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(148), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(180-148), Math.toRadians(180-180))
                 .build();
 
 
         shootGate2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                PoseConstants.BLUE_GATE_POSE,
-                                new Pose(60.000, 72.000)
+                                // new Pose(PoseConstants.FIELD_WIDTH-15, 63, Math.toRadians(0)),
+                                PoseConstants.RED_GATE_POSE,
+                                new Pose(144-60.000, 72.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180-180))
+                .build();
+
+        intakeGate1 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(144-60.000, 72.000),
+                                new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
+                        )
+                )
+                .setHeadingInterpolation(toGateAfterOpen)
+                .setTValueConstraint(0.99)
                 .build();
 
 
         intakeGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                // new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY())
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(144-60.000, 72.000),
+                                new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                // new Pose(144-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY())
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGateAfterOpen)
@@ -198,10 +211,10 @@ public class BlueClose21TwoOpenGate extends OpMode {
         // optimal coordinates trust. both the second intake and this path end at the same heading.
         shootGate3 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                PoseConstants.RED_GATE_AUTO_POSE,
                                 controlPoint2,
                                 controlPoint1,
-                                new Pose(60.000, 72.000)
+                                new Pose(144-60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -210,10 +223,10 @@ public class BlueClose21TwoOpenGate extends OpMode {
         intakeGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY())
-                                // PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(144-60.000, 72.000),
+                                new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                new Pose(144-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY())
+                                // PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -223,25 +236,25 @@ public class BlueClose21TwoOpenGate extends OpMode {
         shootGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(48,70),
-                                new Pose(54, 84)
+                                PoseConstants.RED_GATE_AUTO_POSE,
+                                new Pose(144-48,70),
+                                new Pose(144-54, 84)
                         )
                 )
-                .setLinearHeadingInterpolation(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading(), Math.toRadians(180))
+                .setLinearHeadingInterpolation(PoseConstants.RED_GATE_AUTO_POSE.getHeading(), Math.toRadians(180-180))
                 .build();
 
         intakeFirst = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(54.000, 84.000), new Pose(18.000, 84.000))
+                        new BezierLine(new Pose(144-54.000, 84.000), new Pose(144-18.000, 84.000))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
 
         shootFirst = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(18.000, 84.000), new Pose(48, 114))
+                        new BezierLine(new Pose(144-18.000, 84.000), new Pose(144-48, 114))
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
@@ -253,7 +266,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
         follower.setStartingPose(startPose);
-        robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
+        robot = new AutonomousRobot(hardwareMap, Alliance.RED);
         sotm2 = new SOTM(goalPose);
         buildPaths();
 
@@ -281,7 +294,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             follower.setMaxPower(0.65);
                             follower.followPath(openGate1, true);
-                            currentShootPose = new Pose(60, 72, Math.toRadians(180));
+                            currentShootPose = new Pose(144-60, 72, Math.toRadians(180-180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -308,8 +321,8 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                            currentShootPose = new Pose(60, 72, Math.toRadians(-144));
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            currentShootPose = new Pose(144-60, 72, Math.toRadians(180-(-144)));
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -333,7 +346,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -351,7 +364,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             follower.setMaxPower(1);
                             follower.followPath(shootGate2, true);
-                            currentShootPose = new Pose(60, 72, Math.toRadians(180));
+                            currentShootPose = new Pose(144-60, 72, Math.toRadians(180-180));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
@@ -366,8 +379,8 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                            currentShootPose = new Pose(60, 72, Math.toRadians(-144));
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            currentShootPose = new Pose(144-60, 72, Math.toRadians(180-(-144)));
                         })
 //                        .minTime(600)
 //                        .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -394,8 +407,8 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                            currentShootPose = new Pose(54, 84, Math.toRadians(180));
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            currentShootPose = new Pose(144-54, 84, Math.toRadians(180-180));
                         })
 //                        .minTime(600)
 //                        .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -418,7 +431,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.followPath(intakeFirst, false);
-                            currentShootPose = new Pose(48, 114, Math.toRadians(-135));
+                            currentShootPose = new Pose(144-48, 114, Math.toRadians(180-(-135)));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
@@ -459,8 +472,8 @@ public class BlueClose21TwoOpenGate extends OpMode {
 
         // I am starting to believe that the turret is off because it's not reaching its target
         // let's confirm, the p and d values are really low
-//        Log.d("turret current pos", "" + robot.turret.getCurrent());
-//        Log.d("turret target pos", "" + robot.turret.getTarget());
+        Log.d("turret current pos", "" + robot.turret.getCurrent());
+        Log.d("turret target pos", "" + robot.turret.getTarget());
 
         stateMachine.update();
         follower.update();

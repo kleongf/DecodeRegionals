@@ -197,7 +197,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
         // Set the camera (webcam vs. built-in RC phone camera).
         // TODO: set to webcam 2 when we get the connector thingy
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }

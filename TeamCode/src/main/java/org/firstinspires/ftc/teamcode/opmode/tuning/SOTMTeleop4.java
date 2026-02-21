@@ -54,7 +54,7 @@ public class SOTMTeleop4 extends OpMode {
         telemetry.addData("target pos", teleop.robot.turret.getTarget());
         telemetry.addData("external encoder pos", teleop.robot.turret.getCurrentExternal());
         telemetry.addData("current flywheel speed", teleop.robot.shooter.getCurrentVelocity());
-        telemetry.addData("current flywheel speed", teleop.robot.shooter.getTargetVelocity());
+        telemetry.addData("target flywheel speed", teleop.robot.shooter.getTargetVelocity());
         telemetry.update();
     }
 

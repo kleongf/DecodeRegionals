@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
 // this one drives to a good point to "scout" for balls before driving to them. it seems that cam has not enough fov, so we are going to drive closer.
 // TODO: maybe add a "safety" path: if not over two balls were collected, make a new path to drive to corner?
-@Autonomous(name="Blue Far 30", group="!")
+@Autonomous(name="Blue Far 30 Comp", group="!")
 public class BlueFar30V2 extends OpMode {
     // TODO: we might want to do 30 or park, idk how much time we have.
     private Follower follower;
@@ -403,6 +403,8 @@ public class BlueFar30V2 extends OpMode {
             throw new RuntimeException(e);
         }
         robot.initPositions();
+        robot.turret.resetEncoderWithAbsoluteReading();
+        robot.turret.setUseExternal(false);
     }
 
     @Override

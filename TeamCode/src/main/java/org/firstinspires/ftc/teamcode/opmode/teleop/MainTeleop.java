@@ -2,6 +2,12 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import static com.qualcomm.robotcore.eventloop.opmode.OpMode.blackboard;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
+import android.util.Log;
+import android.util.Size;
+
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -10,6 +16,14 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.robot.robots.TeleopRobot;
@@ -23,8 +37,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Zone;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainTeleop {
@@ -54,6 +73,16 @@ public class MainTeleop {
     private ElapsedTime relocalizationTimer;
     private ZoneUtil zoneUtil;
     private double relocalizationTime = 10; // 10 seconds
+    private boolean endgameOn = false;
+    private Pose currentWebcamPose = new Pose();
+    private AprilTagProcessor aprilTag;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
+
+
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -85,48 +114,93 @@ public class MainTeleop {
         this.elapsedTime = new ElapsedTime();
         this.relocalizationTimer = new ElapsedTime();
         this.prevPose = startPose;
+
+        initAprilTag();
     }
     private double normalizeInput(double input) {
         return 1.1 * Math.signum(input) * Math.sqrt(Math.abs(input));
+    }
+
+    public static AprilTagLibrary getDecodeTagLibraryAdjusted(){
+        return new AprilTagLibrary.Builder()
+                .addTag(20, "BlueTarget",
+                        6.5, new VectorF(-58.3727f + 1.5f, -55.6425f + 1.5f, 29.5f), DistanceUnit.INCH,
+                        new Quaternion(0.2182149f, -0.2182149f, -0.6725937f, 0.6725937f, 0))
+                .addTag(21, "Obelisk_GPP",
+                        6.5, DistanceUnit.INCH)
+                .addTag(22, "Obelisk_PGP",
+                        6.5, DistanceUnit.INCH)
+                .addTag(23, "Obelisk_PPG",
+                        6.5, DistanceUnit.INCH)
+                .addTag(24, "RedTarget",
+                        6.5, new VectorF(-58.3727f + 1.5f, 55.6425f - 1.5f, 29.5f), DistanceUnit.INCH,
+                        new Quaternion(0.6725937f, -0.6725937f, -0.2182149f, 0.2182149f, 0))
+                .build();
+    }
+
+    private void initAprilTag() {
+        Position cameraPosition = new Position(DistanceUnit.MM,
+                138, 119, 236, 0);
+        // straight up is zero, so i guess 20 deg up would be -70
+        YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+                0, -70, 0, 0);
+
+        // Create the AprilTag processor.
+        aprilTag = new AprilTagProcessor.Builder()
+                .setLensIntrinsics(920.46723598, 918.07391093, 653.71790268, 406.18310197)
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .setDrawTagOutline(true)
+                .setTagLibrary(getDecodeTagLibraryAdjusted())
+                .setCameraPose(cameraPosition, cameraOrientation)
+                // ... these parameters are fx, fy, cx, cy.
+
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCameraResolution(new Size(1280, 800));
+
+        builder.setCamera(robot.hardwareMap.get(WebcamName.class, "Webcam 2"));
+        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        builder.addProcessor(aprilTag);
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+    }
+
+    private Pose toPinpointPose(Pose webcamPose) {
+        return new Pose(70.5 + webcamPose.getY(), 70.5 - webcamPose.getX(), webcamPose.getHeading());
+    }
+    private void updateAprilTag() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                if (currentDetections.size() > 1) {
+                    if (detection.metadata.name.contains("BlueTarget")) {
+                        Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+                        ppPose = new Pose(ppPose.getX(), ppPose.getY() - 3.0, ppPose.getHeading());
+                        // Log.d("Pinpoint pose", ppPose.toString());
+                        // System.out.println("PINPOINT POSE HOLY CRAP " + ppPose.toString());
+                        currentWebcamPose = ppPose;
+                    }
+                    if (detection.metadata.name.contains("RedTarget")) {
+                        Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+                        ppPose = new Pose(ppPose.getX(), ppPose.getY() + 3.0, ppPose.getHeading());
+                        // Log.d("Pinpoint pose", ppPose.toString());
+                        currentWebcamPose = ppPose;
+                    }
+                }
+            }
+        }
+        // System.out.println("Current Detections length: " + currentDetections.toArray().length);
     }
 
     private double getDistance(Pose a, Pose b) {
         return Math.hypot(a.getX()-b.getX(), a.getY()-b.getY());
     }
 
-    private void relocalize(Pose pinpointPose, Pose cameraPose, double velocity, double angularVelocity, double distanceEpsilon) {
-        // normal relocalization: checks velocity, angular velocity, and distance AND the timer to see if its over 10s
-        relocalizationTimer.reset();
-    }
-
-    private void overrideRelocalize(Pose pinpointPose, Pose cameraPose) {
-        // completely overrides the pinpoint with the heading and position.
-    }
-
-    public Vector getRollingVelocity() {
-        Vector currentSum = new Vector();
-        if (rollingVelocities.isEmpty()) {
-            return currentSum;
-        }
-        for (Vector v: rollingVelocities) {
-            currentSum = MathUtil.addVectors(currentSum, v);
-        }
-        Vector movingAverage = MathUtil.scalarMultiplyVector(currentSum, 1d / rollingVelocities.size());
-        return movingAverage;
-    }
 
     public void loop() {
-
-        if (alliance == Alliance.BLUE) {
-            // TODO: no idea, might have to add the 180 offset for red
-            drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
-                    speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
-                    speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
-        } else if (alliance == Alliance.RED) {
-            drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
-                    speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
-                    speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
-        }
+        updateAprilTag();
 
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
@@ -168,12 +242,19 @@ public class MainTeleop {
             }
         }
 
-//        if (relocalizationTimer.seconds() > relocalizationTime) {
-//            // normal relocalization: checks velocity, angular velocity, and distance AND the timer to see if its over 10s
+        if (relocalizationTimer.seconds() > relocalizationTime) {
+//            Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
+//            Log.d("Webcam pose", webcamPose.toString());
+//            drivetrain.follower.setPose(webcamPose);
+//            relocalizationTimer.reset();
+            // normal relocalization: checks velocity, angular velocity, and distance AND the timer to see if its over 10s
 //            if (drivetrain.getVelocity().getMagnitude() > 5 && drivetrain.getAngularVelocity() > 0.1 && getDistance(currentPose, goalPose) < 100) {
-//                drivetrain.follower.setPose(insert get pose func here);
+//                Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
+//                if (MathUtil.distance(relocalizedPose, currentPose) < 5) { // threshold: 5 inches
+//                    drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
+//                }
 //            }
-//        }
+        }
 
         // GAMEPAD 1 (DRIVER)
 
@@ -213,11 +294,6 @@ public class MainTeleop {
         // we don't want to park blindly. want to park either up or down, based on where we currently are.
         // usually we are the second bot to park, so either the top or bottom edge.
 
-        // park: b TODO: map this to a better button, not really sure which one though
-        if (gamepad1.bWasPressed()) {
-            drivetrain.park();
-        }
-
         if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
             drivetrain.breakFollowing();
         }
@@ -229,9 +305,10 @@ public class MainTeleop {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
-        // y: reset turret
+        // y: park
         if (gamepad2.yWasPressed()) {
-            robot.resetTurretCommand.start();
+            drivetrain.park();
+            endgameOn = !endgameOn;
         }
 
         // slow mo for good park, 0.4x speed
@@ -243,13 +320,21 @@ public class MainTeleop {
             robot.pivot.setPower(gamepad2.left_trigger);
         }
 
-        // relocalization: left stick
-        if (gamepad2.leftStickButtonWasPressed()) { // map to o
+        if (Math.abs(gamepad2.right_trigger) < 0.05 && Math.abs(gamepad2.left_trigger) < 0.05) {
+            robot.pivot.setPower(0);
+        }
+
+        // relocalization: left stick OVERRIDE with webcam
+        if (gamepad2.leftStickButtonWasPressed()) {
+            drivetrain.follower.setPose(currentWebcamPose);
             // TODO: CHANGE TO WEBCAM
-            Pose llPose = robot.limelightLocalizer.getCurrentPose(currentPose);
-            if (llPose.getX() != currentPose.getX() && llPose.getY() != currentPose.getY()) {
-                drivetrain.follower.setPose(llPose);
-            }
+//            if (robot.webcamLocalizer.getIsGoodDetection()) {
+//                Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
+//                Log.d("Webcam pose", webcamPose.toString());
+//                drivetrain.follower.setPose(webcamPose);
+//            }
+//            Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
+//            drivetrain.follower.setPose(webcamPose);
         }
 
         // corner relocalization: right stick
@@ -278,28 +363,32 @@ public class MainTeleop {
             currentZone = Zone.FAR;
         }
 
+        if (alliance == Alliance.BLUE) {
+            // TODO: no idea, might have to add the 180 offset for red
+            drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
+                    speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
+                    speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
+        } else if (alliance == Alliance.RED) {
+            drivetrain.update(speedScaler *-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
+                    speedScaler *-normalizeInput(gamepad1.left_stick_x*lateralSpeed),
+                    speedScaler *-normalizeInput(gamepad1.right_stick_x*rotationSpeed));
+        }
 
         double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, drivetrain.getVelocity(), drivetrain.getAngularVelocity());
 
-        // new stuff: if we have a large distance then hold it TODO: uncomment later
-//        boolean isFar = MathUtil.distance(currentPose, goalPose) > 120; // at 120 or more inches, we switch to the far coefficients so we don't move.
-//        if (isFar) {
-//            robot.turret.setPDCoefficients(0.01, 0.0005);
-//            robot.turret.setFeedforward(0);
-//        } else {
-//            robot.turret.setPDCoefficients(0.005, 0);
-//            robot.turret.setFeedforward(values[3]);
-//        }
-        // TODO: add a boolean to check if the endgame button was pressed, if so, then set turret to 180 and speed to 0 and hood to 0
-        if (!robot.resetTurretCommand.isFinished()) { // we are in the middle of trying to reset encoder, so don't set the target to something else
+
+
+        if (endgameOn) {
+            robot.turret.setTarget(Math.toRadians(-15));
             robot.turret.setFeedforward(0);
+            robot.shooter.setShooterPitch(RobotConstants.PITCH_I);
+            robot.shooter.setTargetVelocity(0);
         } else {
             robot.turret.setTarget(values[0]+turretOffset);
             robot.turret.setFeedforward(values[3]);
+            robot.shooter.setShooterPitch(values[1]);
+            robot.shooter.setTargetVelocity(values[2]);
         }
-
-        robot.shooter.setShooterPitch(values[1]);
-        robot.shooter.setTargetVelocity(values[2]);
 
         prevDetectState = robot.intake.detectionState;
         prevPose = currentPose;

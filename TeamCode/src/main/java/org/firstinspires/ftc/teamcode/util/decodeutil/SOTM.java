@@ -15,7 +15,7 @@ public class SOTM {
     public double kFAngular = -0.08;
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
     public double latencyScaleFactor = 1.1;
-    public double latencyScaleFactorRadial = 2.5;
+    public double latencyScaleFactorRadial = 2.8;
     public double timeScaleFactor = 1;
     public double offsetFactor = 12; // offset in inches to goal, i would prob set to 10
     public double constantTimeFactor = 0;

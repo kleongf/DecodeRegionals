@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.LimelightLocalizer;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.robot.subsystems.WebcamLocalizer;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
@@ -24,7 +25,8 @@ public class TeleopRobot {
     public final Intake intake;
     public final Shooter shooter;
     public final Turret turret;
-    public final LimelightLocalizer limelightLocalizer;
+    // public final WebcamLocalizer webcamLocalizer;
+    // public final LimelightLocalizer limelightLocalizer;
     public final Pivot pivot;
 
     private final ArrayList<StateMachine> commands;
@@ -32,8 +34,10 @@ public class TeleopRobot {
     public StateMachine idleCommand;
     public StateMachine resetTurretCommand;
     public StateMachine shootCommandSlow;
+    public HardwareMap hardwareMap;
 
     public TeleopRobot(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
         subsystems = new ArrayList<>();
 
         bulkRead = new BulkRead(hardwareMap);
@@ -50,9 +54,12 @@ public class TeleopRobot {
 
         // TODO: do for webcam localizer
 
-        limelightLocalizer = new LimelightLocalizer(hardwareMap);
-        limelightLocalizer.setPipeline(LimelightLocalizer.Pipeline.APRILTAG);
-        subsystems.add(limelightLocalizer);
+//        webcamLocalizer = new WebcamLocalizer(hardwareMap);
+//        subsystems.add(webcamLocalizer);
+
+//        limelightLocalizer = new LimelightLocalizer(hardwareMap);
+//        limelightLocalizer.setPipeline(LimelightLocalizer.Pipeline.APRILTAG);
+//        subsystems.add(limelightLocalizer);
 
         pivot = new Pivot(hardwareMap);
         subsystems.add(pivot);
@@ -68,6 +75,7 @@ public class TeleopRobot {
                         .onExit(() -> {
                             shooter.closeLatch();
                             intake.resetDetection();
+                            // turret.resetEncoderWithAbsoluteReading();
                         })
                         .maxTime(800)
         );
@@ -81,6 +89,7 @@ public class TeleopRobot {
                         })
                         .onExit(() -> {
                             shooter.closeLatch();
+                            intake.state = Intake.IntakeState.INTAKE_FAST;
                             intake.resetDetection();
                         })
                         .maxTime(800)
@@ -128,7 +137,7 @@ public class TeleopRobot {
         // configure shooter
         shooter.state = Shooter.ShooterState.SHOOTER_ON;
         shooter.closeLatch();
-        limelightLocalizer.setPipeline(LimelightLocalizer.Pipeline.APRILTAG);
+        // limelightLocalizer.setPipeline(LimelightLocalizer.Pipeline.APRILTAG);
     }
 
     public void update() {
