@@ -313,7 +313,7 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -337,7 +337,7 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -363,7 +363,7 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -390,7 +390,7 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -418,7 +418,7 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
