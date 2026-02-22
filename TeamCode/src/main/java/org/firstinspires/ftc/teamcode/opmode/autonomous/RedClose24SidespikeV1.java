@@ -31,6 +31,10 @@ package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
 // 23 and 7/8 * 6, -3/4 total (3/8 both sides) = 142.5
 
+// 24 open gate 3rd spike: omit the last gate cycle and replace. USE TANGENTIAL and different shoot pose going back as to be more efficient.
+// 24 no open gate 3rd spike: omit the path to open gate, omit last gate cycle and replace.
+// 24 no open gate no 3rd spike: same as this but omit the open gate part
+
 import static java.lang.Thread.sleep;
 
 import android.util.Log;
@@ -62,17 +66,17 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Blue Close 24 Sidespike no vision", group="!")
-public class BlueClose24SidespikeV1 extends OpMode {
+@Autonomous(name="Red Close 24 Sidespike no vision", group="!")
+public class RedClose24SidespikeV1 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
-    private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
+    private final Pose startPose = PoseConstants.RED_CLOSE_AUTO_POSE;
+    private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
     // in the future it might be better to do 56 72 -150
-    private final Pose shootPose = new Pose(60, 72, Math.toRadians(-144));
-    private Pose currentShootPose = new Pose(60, 72, Math.toRadians(-144));
+    private final Pose shootPose = new Pose(PoseConstants.FIELD_WIDTH-60, 72, Math.toRadians(180-(-144)));
+    private Pose currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-60, 72, Math.toRadians(180-(-144)));
     private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, openGate, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
 
     public void buildPaths() {
@@ -81,63 +85,63 @@ public class BlueClose24SidespikeV1 extends OpMode {
         double k3 = 20; // used for random cycle thingy, but we're gonna use vision later so its fine
 
         // idk abt this just check it again and do for control point 2
-        Pose controlPoint1 = new Pose(shootPose.getX() + k1 * Math.cos(shootPose.getHeading()), shootPose.getY() + k1 * Math.sin(shootPose.getHeading()));
-        Pose controlPoint2 = new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX() - k2 * Math.cos(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()), PoseConstants.BLUE_GATE_AUTO_POSE.getY() - k2 * Math.sin(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()));
+        Pose controlPoint1 = new Pose(PoseConstants.FIELD_WIDTH-shootPose.getX() + k1 * Math.cos(shootPose.getHeading()), shootPose.getY() + k1 * Math.sin(shootPose.getHeading()));
+        Pose controlPoint2 = new Pose(PoseConstants.FIELD_WIDTH-PoseConstants.RED_GATE_AUTO_POSE.getX() - k2 * Math.cos(PoseConstants.RED_GATE_AUTO_POSE.getHeading()), PoseConstants.RED_GATE_AUTO_POSE.getY() - k2 * Math.sin(PoseConstants.RED_GATE_AUTO_POSE.getHeading()));
 
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
                         startPose,
-                        new Pose(23.500, 105.000)
+                        new Pose(PoseConstants.FIELD_WIDTH-23.500, 105.000)
                 )
         ).setConstantHeadingInterpolation(startPose.getHeading()).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierLine(
-                        new Pose(23.500, 105.000),
-                        new Pose(23.500, 83.000)
+                        new Pose(PoseConstants.FIELD_WIDTH-23.500, 105.000),
+                        new Pose(PoseConstants.FIELD_WIDTH-23.500, 83.000)
                 )
         ).setConstantHeadingInterpolation(startPose.getHeading()).build();
 
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(23.500, 83.000),
-                                new Pose(23.500, 105.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-23.500, 83.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-23.500, 105.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(23.500, 105.000),
-                                new Pose(23.500, 62.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-23.500, 105.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-23.500, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
         openGate = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(23.500, 62.000),
-                                PoseConstants.BLUE_SIDE_GATE_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-23.500, 62.000),
+                                PoseConstants.RED_SIDE_GATE_POSE
                         )
-                ).setConstantHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading())
+                ).setConstantHeadingInterpolation(PoseConstants.RED_SIDE_GATE_POSE.getHeading())
                 .setNoDeceleration()
                 .build();
 
 
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
-                                PoseConstants.BLUE_SIDE_GATE_POSE,
-                                new Pose(60.000, 72.000)
+                                PoseConstants.RED_SIDE_GATE_POSE,
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000)
                         )
-                ).setLinearHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-144))
+                ).setLinearHeadingInterpolation(PoseConstants.RED_SIDE_GATE_POSE.getHeading(), Math.toRadians(180-(-144)))
                 .build();
 
         shootGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                PoseConstants.RED_GATE_AUTO_POSE,
                                 controlPoint2,
                                 controlPoint1,
-                                new Pose(60.000, 72.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -147,21 +151,21 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0,
                         0.75,
-                        HeadingInterpolator.linear(shootGate1.getFinalHeadingGoal(), PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.linear(shootGate1.getFinalHeadingGoal(), PoseConstants.RED_GATE_AUTO_POSE.getHeading())
                 ),
                 new HeadingInterpolator.PiecewiseNode(
                         0.75,
                         1,
-                        HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.constant(PoseConstants.RED_GATE_AUTO_POSE.getHeading())
                 )
         );
 
         intakeGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -171,9 +175,9 @@ public class BlueClose24SidespikeV1 extends OpMode {
         intakeGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -182,10 +186,10 @@ public class BlueClose24SidespikeV1 extends OpMode {
 
         shootGate2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                PoseConstants.RED_GATE_AUTO_POSE,
                                 controlPoint2,
                                 controlPoint1,
-                                new Pose(60.000, 72.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -194,9 +198,9 @@ public class BlueClose24SidespikeV1 extends OpMode {
         intakeGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -205,10 +209,10 @@ public class BlueClose24SidespikeV1 extends OpMode {
 
         shootGate3 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                PoseConstants.RED_GATE_AUTO_POSE,
                                 controlPoint2,
                                 controlPoint1,
-                                new Pose(60.000, 72.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -217,9 +221,9 @@ public class BlueClose24SidespikeV1 extends OpMode {
         intakeGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -228,10 +232,10 @@ public class BlueClose24SidespikeV1 extends OpMode {
 
         shootGate4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
+                                PoseConstants.RED_GATE_AUTO_POSE,
                                 controlPoint2,
                                 controlPoint1,
-                                new Pose(60.000, 72.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -241,35 +245,35 @@ public class BlueClose24SidespikeV1 extends OpMode {
         // TODO: maybe go to the end of the last tile far down at an angle, and strafe up? to cover all space
         intakePile = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(60.000, 72.000),
-                                new Pose(12.000, 34.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-12.000, 34.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(-144), Math.toRadians(125))
+                ).setLinearHeadingInterpolation(Math.toRadians(180-(-144)), Math.toRadians(180-125))
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 34.000),
-                                new Pose(12.000, 54.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-12.000, 34.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-12.000, 54.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(125))
+                ).setConstantHeadingInterpolation(Math.toRadians(180-125))
                 .build();
 
         // TODO: in fact, we should have time to make a double path to bounce on both tiles. bounce far, then close so the close groups up the far
         // this will ensure that we cover both tiles, leaving nothing behind
 
         shootPile = follower.pathBuilder().addPath(
-          new BezierLine(
-            new Pose(12.000, 54.000),
-            new Pose(52.000, 88.000)
-          )
-        ).setLinearHeadingInterpolation(Math.toRadians(125), Math.toRadians(-135))
+                        new BezierLine(
+                                new Pose(PoseConstants.FIELD_WIDTH-12.000, 54.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-52.000, 88.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180-125), Math.toRadians(180-(-135)))
 
-        .build();
+                .build();
 //        follower.pathBuilder().addPath(
 //                        new BezierCurve(
-//                                new Pose(12.000, 48.000),
-//                                new Pose(27.000, 48.000),
-//                                new Pose(43.820, 60.244),
-//                                new Pose(60.000, 72.000)
+//                                new Pose(PoseConstants.FIELD_WIDTH-12.000, 48.000),
+//                                new Pose(PoseConstants.FIELD_WIDTH-27.000, 48.000),
+//                                new Pose(PoseConstants.FIELD_WIDTH-43.820, 60.244),
+//                                new Pose(PoseConstants.FIELD_WIDTH-60.000, 72.000)
 //                        )
 //                ).setTangentHeadingInterpolation()
 //                .setReversed()
@@ -284,7 +288,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
         follower.setStartingPose(startPose);
-        robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
+        robot = new AutonomousRobot(hardwareMap, Alliance.RED);
         sotm2 = new SOTM(goalPose);
         buildPaths();
 
@@ -292,7 +296,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPreload, true);
-                            currentShootPose = new Pose(24, 105, Math.toRadians(-90));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-24, 105, Math.toRadians(180-(-90)));
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
                         .transition(new Transition(() -> !follower.isBusy() && robot.shooter.atTarget(40))),
@@ -314,7 +318,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(intakeSecond, true);
-                            currentShootPose = new Pose(60, 72, Math.toRadians(-144));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-60, 72, Math.toRadians(180-(-144)));
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -340,7 +344,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -363,7 +367,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -386,7 +390,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -408,7 +412,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
@@ -432,7 +436,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            currentShootPose = new Pose(52.000, 88.000, Math.toRadians(-135));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-52.000, 88.000, Math.toRadians(180-(-135)));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
@@ -482,4 +486,3 @@ public class BlueClose24SidespikeV1 extends OpMode {
         blackboard.put(RobotConstants.END_POSE_KEY, follower.getPose());
     }
 }
-

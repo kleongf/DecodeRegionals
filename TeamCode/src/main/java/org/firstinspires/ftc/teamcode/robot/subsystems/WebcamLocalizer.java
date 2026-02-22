@@ -85,6 +85,9 @@ public class WebcamLocalizer extends Subsystem {
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
 
+        // TODO: just for now so we can check feed
+        builder.enableLiveView(true);
+
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
 
