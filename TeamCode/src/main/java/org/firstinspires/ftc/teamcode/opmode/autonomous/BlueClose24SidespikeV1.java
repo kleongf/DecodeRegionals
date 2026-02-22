@@ -61,7 +61,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
     private final Pose shootPose = new Pose(60, 72, Math.toRadians(-144));
     private Pose currentShootPose = new Pose(60, 72, Math.toRadians(-144));
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecondOpenGate, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, openGate, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
 
     public void buildPaths() {
         double k1 = 10; // i actually forgot what these were check desmos
@@ -89,12 +89,38 @@ public class BlueClose24SidespikeV1 extends OpMode {
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(24.000, 88.000),
-                                new Pose(60.000, 72.000)
+
+                                new Pose(24.000, 105.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-144))
+                ).setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
-        // shootGate1 is initialized up here earlier
+        intakeSecond = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(24.000, 105.000),
+                                new Pose(24.000, 65.000)
+                        )
+                ).setConstantHeadingInterpolation(startPose.getHeading())
+                .build();
+
+        openGate = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(24.000, 65.000),
+                                PoseConstants.BLUE_SIDE_GATE_POSE
+                        )
+                ).setConstantHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading())
+                .setNoDeceleration()
+                .build();
+
+
+        shootSecond = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                PoseConstants.BLUE_SIDE_GATE_POSE,
+                                new Pose(60.000, 72.000)
+                        )
+                ).setLinearHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-144))
+                .build();
+
         shootGate1 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 PoseConstants.BLUE_GATE_AUTO_POSE,
@@ -118,29 +144,6 @@ public class BlueClose24SidespikeV1 extends OpMode {
                         HeadingInterpolator.constant(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 )
         );
-
-        intakeSecondOpenGate = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(60.000, 72.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
-                        )
-                )
-                .setHeadingInterpolation(toGate)
-                .setNoDeceleration()
-                .build();
-
-        shootSecond = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                controlPoint2,
-                                controlPoint1,
-                                new Pose(60.000, 72.000)
-                        )
-                ).setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
 
         intakeGate1 = follower.pathBuilder()
                 .addPath(
@@ -223,6 +226,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 .setReversed()
                 .build();
 
+        // btw: 60 + 20 cos (-144), 72 + 20 sin -144, 12-15 cos(180), 48-15 sin 180 = 48
         intakePile = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 72.000),
@@ -282,11 +286,17 @@ public class BlueClose24SidespikeV1 extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
-                            // TODO: i actually don't know if it should be true or false? prob true tho
-                            follower.followPath(intakeSecondOpenGate, true);
+                            follower.followPath(intakeSecond, true);
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
+                new State()
+                        .onEnter(() -> {
+                            follower.followPath(openGate, true);
+                        })
+                        .transition(new Transition(() -> follower.atParametricEnd())),
+                new State()
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> follower.followPath(shootSecond, true))
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -411,10 +421,13 @@ public class BlueClose24SidespikeV1 extends OpMode {
         robot.initPositions();
         robot.turret.resetEncoderWithAbsoluteReading();
         robot.turret.setUseExternal(false);
+        // TODO: remove?
         robot.turret.setPDCoefficients(0.008, 0.0002);
     }
     @Override
     public void loop() {
+        // TODO: test with sotm on
+        // ALSO TODO: change the position to be a bit lower as we are slightly over the line
         double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
         robot.setAzimuthThetaVelocity(new double[] {values[0], values[1], values[2]});
         robot.turret.setFeedforward(0);

@@ -58,7 +58,7 @@ public class TeleopDrivetrain {
         state = DrivetrainState.TELEOP_DRIVE;
 
         this.parkPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_PARK_POSE :  PoseConstants.RED_PARK_POSE;
-        this.gatePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_POSE : PoseConstants.RED_GATE_POSE;
+        this.gatePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_SIDE_GATE_POSE : PoseConstants.RED_SIDE_GATE_POSE;
         this.gateIntakePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE : PoseConstants.RED_GATE_AUTO_POSE;
 
         currentPathChain = () -> follower.pathBuilder() //Lazy Curve Generation
@@ -152,32 +152,6 @@ public class TeleopDrivetrain {
                         new Path(
                                 new BezierLine(
                                         follower.getPose(),
-                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
-                                )
-                        )
-                )
-                .setLinearHeadingInterpolation(follower.getPose().getHeading(), gatePose.getHeading())
-                .addPath(
-                        new Path(
-                                new BezierLine(
-                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
-                                        gatePose
-                                )
-                        )
-                )
-                .setConstantHeadingInterpolation(gatePose.getHeading())
-                .build();
-        state = DrivetrainState.INTAKE_GATE;
-        follower.followPath(currentPathChain.get(), true);
-        // follower.followPath(intakePath, true);
-    }
-
-    public void openGate() {
-        currentPathChain = () -> follower.pathBuilder()
-                .addPath(
-                        new Path(
-                                new BezierLine(
-                                        follower.getPose(),
                                         new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+15: gateIntakePose.getX()-15), gateIntakePose.getY())
                                 )
                         )
@@ -192,6 +166,31 @@ public class TeleopDrivetrain {
                         )
                 )
                 .setConstantHeadingInterpolation(gateIntakePose.getHeading())
+                .build();
+        state = DrivetrainState.INTAKE_GATE;
+        follower.followPath(currentPathChain.get(), true);
+    }
+
+    public void openGate() {
+        currentPathChain = () -> follower.pathBuilder()
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        follower.getPose(),
+                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
+                                )
+                        )
+                )
+                .setLinearHeadingInterpolation(follower.getPose().getHeading(), gatePose.getHeading())
+                .addPath(
+                        new Path(
+                                new BezierLine(
+                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
+                                        gatePose
+                                )
+                        )
+                )
+                .setConstantHeadingInterpolation(gatePose.getHeading())
                 .build();
         state = DrivetrainState.OPEN_GATE;
         follower.followPath(currentPathChain.get(), true);
