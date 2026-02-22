@@ -20,9 +20,13 @@ public class PoseConstants {
     public static Pose RED_GOAL_POSE = new Pose(FIELD_WIDTH, FIELD_WIDTH, Math.toRadians(45));
     public static Pose BLUE_FAR_POSE =  new Pose(54, 12, Math.toRadians(180));
     public static Pose RED_FAR_POSE =  new Pose(144-54, 12, Math.toRadians(0));
-    public static Pose BLUE_GATE_POSE = new Pose(15, 70, Math.toRadians(270));
+    public static Pose BLUE_GATE_POSE = new Pose(15, 63, Math.toRadians(180));
 
-    public static Pose RED_GATE_POSE = new Pose(FIELD_WIDTH-15, 70, Math.toRadians(270));
+    public static Pose RED_GATE_POSE = new Pose(FIELD_WIDTH-15, 63, Math.toRadians(180-180));
+
+    public static Pose BLUE_SIDE_GATE_POSE = new Pose(15, 70, Math.toRadians(270));
+
+    public static Pose RED_SIDE_GATE_POSE = new Pose(FIELD_WIDTH-15, 70, Math.toRadians(270));
 
     public static Pose RED_PARK_POSE = new Pose(39, 36, Math.toRadians(90));
     public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-39, 36, Math.toRadians(90));

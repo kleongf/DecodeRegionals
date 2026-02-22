@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
+import com.pedropathing.control.PIDFController;
 
 import java.util.function.Supplier;
 
@@ -38,21 +40,16 @@ public class TeleopDrivetrain {
     private Pose gatePose;
     private Pose gateIntakePose;
     private Pose parkPose;
-    private double kPHeading = 0.2;
+    private PIDFController headingPIDFController;
 
     public TeleopDrivetrain(HardwareMap hardwareMap, Alliance alliance) {
-        // how to heading lock:
-        // run a pid on heading, but just a p loop
-        // if rx == 0 (or about equals 0)
-        // save targetHeading: targetHeading = currentHeading, error = target-current
-        // if rx > 0
-        // targetheading = currentheading
-
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
         follower.startTeleopDrive(true);
         follower.usePredictiveBraking = true;
+
+        headingPIDFController = new PIDFController(Constants.followerConstants.coefficientsHeadingPIDF);
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
@@ -145,31 +142,6 @@ public class TeleopDrivetrain {
                 )
                 .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading())
                 .build();
-//        if (follower.getPose().getY() < 32) {
-//            currentPathChain = () -> follower.pathBuilder()
-//                    .addPath(
-//                            new Path(
-//                                    new BezierLine(
-//                                            follower.getPose(),
-//                                            parkPose
-//                                    )
-//                            )
-//                    )
-//                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading())
-//                    .build();
-//        } else { // y coord is high so go on top
-//            currentPathChain = () -> follower.pathBuilder()
-//                    .addPath(
-//                            new Path(
-//                                    new BezierLine(
-//                                            follower.getPose(),
-//                                            new Pose(parkPose.getX(), parkPose.getY() + 36)
-//                                    )
-//                            )
-//                    )
-//                    .setLinearHeadingInterpolation(follower.getPose().getHeading(), parkPose.getHeading()+Math.toRadians(180))
-//                    .build();
-//        }
         state = DrivetrainState.PARK;
         follower.followPath(currentPathChain.get(), true);
     }
@@ -249,14 +221,16 @@ public class TeleopDrivetrain {
         if (gateHeadingLock) {
             targetHeading = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE.getHeading() : PoseConstants.RED_GATE_AUTO_POSE.getHeading();
             // we aren't going to update
-            double headingError = MathUtil.angleWrap(targetHeading-currentHeading);
-            double outHeading = kPHeading * headingError;
+            double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
+            headingPIDFController.updateError(headingError);
+            double outHeading = headingPIDFController.run();
             return new double[] {x, y, outHeading};
         } else {
             // update target position heading
-            if (Math.abs(rx) < 0.001) { // we are not rotating: hold heading
-                double headingError = MathUtil.angleWrap(targetHeading-currentHeading);
-                double outHeading = kPHeading * headingError;
+            if (Math.abs(rx) < 0.005) { // we are not rotating: hold heading
+                double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
+                headingPIDFController.updateError(headingError);
+                double outHeading = headingPIDFController.run();
                 return new double[] {x, y, outHeading};
             } else {
                 targetHeading = currentHeading;
@@ -276,6 +250,7 @@ public class TeleopDrivetrain {
 
         switch (state) {
             case TELEOP_DRIVE:
+
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
                 if (alliance == Alliance.BLUE) {
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
