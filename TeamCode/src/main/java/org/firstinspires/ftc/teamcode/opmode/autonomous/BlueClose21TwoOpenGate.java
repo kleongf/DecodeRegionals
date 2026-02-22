@@ -281,6 +281,8 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             follower.setMaxPower(0.65);
                             follower.followPath(openGate1, true);
+                            // robot.turret.resetEncoderWithAbsoluteReading();
+                            robot.turret.setPDCoefficients(0.01, 0.0005);
                             currentShootPose = new Pose(60, 72, Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -292,7 +294,6 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
                             isSOTMing = false;
-                            robot.turret.setPDCoefficients(0.01, 0.0005);
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -314,7 +315,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -338,7 +339,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(0.65);
@@ -374,7 +375,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -402,7 +403,7 @@ public class BlueClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);

@@ -27,25 +27,28 @@ public class TeleopDrivetrain {
     private Supplier<PathChain> currentPathChain;
 
     private ElapsedTime kickTimer;
-    private ElapsedTime holdPointTimer;
     public Follower follower;
     private double targetHeading = 0;
     private ElapsedTime elapsedTime;
-    private double kp = 0.5;
-    private double kd = 0.015;
-    private double lastError = 0;
-    private double lastTimeStamp = 0;
     private DrivetrainState state;
     private boolean robotCentric = false;
     private double KICK_TIME = 1.0;
-    private double HOLD_TIME = 1.0;
-    private boolean holdingPoint = false;
+    private boolean gateHeadingLock = false;
     private Alliance alliance;
     private Pose gatePose;
     private Pose gateIntakePose;
     private Pose parkPose;
+    private double kPHeading = 0.2;
 
     public TeleopDrivetrain(HardwareMap hardwareMap, Alliance alliance) {
+        // how to heading lock:
+        // run a pid on heading, but just a p loop
+        // if rx == 0 (or about equals 0)
+        // save targetHeading: targetHeading = currentHeading, error = target-current
+        // if rx > 0
+        // targetheading = currentheading
+
+
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
         follower.startTeleopDrive(true);
@@ -53,7 +56,6 @@ public class TeleopDrivetrain {
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
-        holdPointTimer = new ElapsedTime();
 
         this.alliance = alliance;
         state = DrivetrainState.TELEOP_DRIVE;
@@ -82,11 +84,9 @@ public class TeleopDrivetrain {
     }
 
     public void breakFollowing() {
-        // follower.breakFollowing();
-        // follower.
         follower.startTeleopDrive(true);
         state = DrivetrainState.TELEOP_DRIVE;
-        holdingPoint = false;
+        targetHeading = follower.getHeading();
     }
 
     public Vector getVelocity() {
@@ -245,17 +245,43 @@ public class TeleopDrivetrain {
         return "TELEOP_DRIVE";
     }
 
+    private double[] calculateDrivetrainPowers(double x, double y, double rx, double currentHeading) {
+        if (gateHeadingLock) {
+            targetHeading = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE.getHeading() : PoseConstants.RED_GATE_AUTO_POSE.getHeading();
+            // we aren't going to update
+            double headingError = MathUtil.angleWrap(targetHeading-currentHeading);
+            double outHeading = kPHeading * headingError;
+            return new double[] {x, y, outHeading};
+        } else {
+            // update target position heading
+            if (Math.abs(rx) < 0.001) { // we are not rotating: hold heading
+                double headingError = MathUtil.angleWrap(targetHeading-currentHeading);
+                double outHeading = kPHeading * headingError;
+                return new double[] {x, y, outHeading};
+            } else {
+                targetHeading = currentHeading;
+                return new double[] {x, y, rx};
+            }
+        }
+    }
+
+    public void setGateHeadingLock(boolean x) {
+        gateHeadingLock = x;
+    }
+
+    public boolean getGateHeadingLock() {return gateHeadingLock;}
+
     public void update(double x, double y, double rx) {
         follower.update();
 
         switch (state) {
             case TELEOP_DRIVE:
+                double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
                 if (alliance == Alliance.BLUE) {
-                    follower.setTeleOpDrive(x, y, rx, false, Math.toRadians(180));
+                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
                 } else {
-                    follower.setTeleOpDrive(x, y, rx, false);
+                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
                 }
-
                 break;
             case OPEN_GATE:
                 if (!follower.isBusy()) {
@@ -275,19 +301,6 @@ public class TeleopDrivetrain {
             case INTAKE_GATE:
                 if (!follower.isBusy()) { // follower is not busy even when holding point
                     breakFollowing();
-//                    if (!holdingPoint) { // if not holding point, then start holding point
-//                        if (alliance == Alliance.BLUE) {
-//                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-//                        } else {
-//                            follower.holdPoint(new BezierPoint(PoseConstants.RED_GATE_AUTO_POSE_IN), PoseConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-//                        }
-//                        holdingPoint = true;
-//                        holdPointTimer.reset();
-//                    } else { // else we are holding point
-//                        if (holdPointTimer.seconds() > HOLD_TIME) {
-//                            breakFollowing();
-//                        }
-//                    }
                 }
                 break;
         }

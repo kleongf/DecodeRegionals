@@ -25,7 +25,7 @@ public class TeleopRobot {
     public final Intake intake;
     public final Shooter shooter;
     public final Turret turret;
-    // public final WebcamLocalizer webcamLocalizer;
+    public final WebcamLocalizer webcamLocalizer;
     // public final LimelightLocalizer limelightLocalizer;
     public final Pivot pivot;
 
@@ -54,8 +54,8 @@ public class TeleopRobot {
 
         // TODO: do for webcam localizer
 
-//        webcamLocalizer = new WebcamLocalizer(hardwareMap);
-//        subsystems.add(webcamLocalizer);
+        webcamLocalizer = new WebcamLocalizer(hardwareMap);
+        subsystems.add(webcamLocalizer);
 
 //        limelightLocalizer = new LimelightLocalizer(hardwareMap);
 //        limelightLocalizer.setPipeline(LimelightLocalizer.Pipeline.APRILTAG);

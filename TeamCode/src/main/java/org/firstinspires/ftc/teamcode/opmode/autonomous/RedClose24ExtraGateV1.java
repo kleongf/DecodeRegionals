@@ -283,6 +283,7 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
+
                             follower.setMaxPower(1);
                             robot.intakeCommand.start();
                         })
@@ -292,6 +293,8 @@ public class RedClose24ExtraGateV1 extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
                             isSOTMing = false;
+                            // robot.turret.resetEncoderWithAbsoluteReading();
+                            // robot.turret.setPDCoefficients(0.005, 0.0002);
                             robot.turret.setPDCoefficients(0.01, 0.0005);
                             robot.intakeCommand.start();
                         })

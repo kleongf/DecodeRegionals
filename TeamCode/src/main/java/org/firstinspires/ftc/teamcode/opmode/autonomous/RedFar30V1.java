@@ -128,6 +128,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 1
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 0;
                             robot.intakeCommand.start();
                             intakeCorner1 = follower.pathBuilder()
                                     .addPath(
@@ -162,6 +163,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 2
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 24;
                             robot.intakeCommand.start();
                             intakeCorner2 = follower.pathBuilder()
                                     .addPath(
@@ -196,6 +198,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 3
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 0;
                             robot.intakeCommand.start();
                             intakeCorner3 = follower.pathBuilder()
                                     .addPath(
@@ -230,6 +233,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 4
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 24;
                             robot.intakeCommand.start();
                             intakeCorner4 = follower.pathBuilder()
                                     .addPath(
@@ -264,6 +268,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 5
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 0;
                             robot.intakeCommand.start();
                             intakeCorner5 = follower.pathBuilder()
                                     .addPath(
@@ -298,6 +303,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 6
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 24;
                             robot.intakeCommand.start();
                             intakeCorner6 = follower.pathBuilder()
                                     .addPath(
@@ -332,6 +338,7 @@ public class RedFar30V1 extends OpMode {
                 // pile 7
                 new State()
                         .onEnter(() -> {
+                            // optimalX = 0;
                             robot.intakeCommand.start();
                             intakeCorner7 = follower.pathBuilder()
                                     .addPath(

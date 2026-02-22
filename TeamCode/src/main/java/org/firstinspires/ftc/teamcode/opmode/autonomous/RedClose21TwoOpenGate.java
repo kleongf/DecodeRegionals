@@ -182,19 +182,6 @@ public class RedClose21TwoOpenGate extends OpMode {
                 ).setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
-        intakeGate1 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(144-60.000, 72.000),
-                                new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
-                                PoseConstants.RED_GATE_AUTO_POSE
-                        )
-                )
-                .setHeadingInterpolation(toGateAfterOpen)
-                .setTValueConstraint(0.99)
-                .build();
-
-
         intakeGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -225,8 +212,8 @@ public class RedClose21TwoOpenGate extends OpMode {
                         new BezierCurve(
                                 new Pose(144-60.000, 72.000),
                                 new Pose(144-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
-                                new Pose(144-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY())
-                                // PoseConstants.RED_GATE_AUTO_POSE
+                                // new Pose(144-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY())
+                                PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -294,6 +281,8 @@ public class RedClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             follower.setMaxPower(0.65);
                             follower.followPath(openGate1, true);
+                            // robot.turret.resetEncoderWithAbsoluteReading();
+                            robot.turret.setPDCoefficients(0.01, 0.0005);
                             currentShootPose = new Pose(144-60, 72, Math.toRadians(180-180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -305,7 +294,6 @@ public class RedClose21TwoOpenGate extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
                             isSOTMing = false;
-                            robot.turret.setPDCoefficients(0.01, 0.0005);
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -327,7 +315,7 @@ public class RedClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -351,7 +339,7 @@ public class RedClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(0.65);
@@ -387,7 +375,7 @@ public class RedClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -415,7 +403,7 @@ public class RedClose21TwoOpenGate extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(1800),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -433,6 +421,7 @@ public class RedClose21TwoOpenGate extends OpMode {
                             follower.followPath(intakeFirst, false);
                             currentShootPose = new Pose(144-48, 114, Math.toRadians(180-(-135)));
                         })
+                        .maxTime(1200)
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {

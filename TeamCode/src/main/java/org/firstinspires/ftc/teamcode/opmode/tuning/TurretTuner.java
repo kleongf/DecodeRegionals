@@ -23,6 +23,7 @@ public class TurretTuner extends OpMode {
         turret.setKs(kS);
         turret.setTarget(Math.toRadians(target));
         turret.setFeedforward(0);
+        turret.setUseExternal(false);
 
         turret.update();
         telemetry.addData("current pos", turret.turretMotor.getCurrentPosition());

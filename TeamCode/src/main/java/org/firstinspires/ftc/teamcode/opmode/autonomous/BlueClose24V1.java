@@ -282,6 +282,7 @@ public class BlueClose24V1 extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
                             isSOTMing = false;
+                            // robot.turret.resetEncoderWithAbsoluteReading();
                             robot.turret.setPDCoefficients(0.01, 0.0005);
                             robot.intakeCommand.start();
                         })
@@ -303,7 +304,7 @@ public class BlueClose24V1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -327,7 +328,7 @@ public class BlueClose24V1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -353,7 +354,7 @@ public class BlueClose24V1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -381,7 +382,7 @@ public class BlueClose24V1 extends OpMode {
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
                         // currently setting all to 1000. if it is possible at 1s then it is possible. if not i should prob give up.
-                        .maxTime(3000),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -443,6 +444,8 @@ public class BlueClose24V1 extends OpMode {
             throw new RuntimeException(e);
         }
         robot.initPositions();
+        robot.turret.resetEncoderWithAbsoluteReading();
+        robot.turret.setUseExternal(false);
     }
     @Override
     public void loop() {
