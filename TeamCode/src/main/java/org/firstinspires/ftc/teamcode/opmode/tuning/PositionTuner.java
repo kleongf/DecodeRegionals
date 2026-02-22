@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 @TeleOp(name="Position Tuner")
 public class PositionTuner extends OpMode {
     public Servo leftLatch;
+    public Servo liftServo;
     public Servo pitchServo;
     public DcMotorEx intakeMotor;
     public DcMotorEx shooterMotor;
@@ -22,6 +23,7 @@ public class PositionTuner extends OpMode {
     public static double latchTarget = RobotConstants.LATCH_CLOSED;
     public static double shooterPower = 0;
     public static double intakePower = 0;
+    public static double liftTarget = 0;
     public static double pitchTarget = RobotConstants.PITCH_SERVO_MIN;
 
     private FeedForwardController controller;
@@ -30,6 +32,9 @@ public class PositionTuner extends OpMode {
     public void init() {
         leftLatch = hardwareMap.get(Servo.class, "latchServo");
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
+        liftServo = hardwareMap.get(Servo.class, "hang1");
+
+        // open 0.3 (not hung), close 0.54 (hung)
 
 
         leftLatch.setDirection(Servo.Direction.FORWARD);
@@ -60,5 +65,7 @@ public class PositionTuner extends OpMode {
 
         leftLatch.setPosition(latchTarget);
         pitchServo.setPosition(pitchTarget);
+
+        liftServo.setPosition(liftTarget);
     }
 }

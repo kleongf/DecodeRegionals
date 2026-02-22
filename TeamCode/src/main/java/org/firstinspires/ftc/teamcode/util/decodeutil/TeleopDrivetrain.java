@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util.decodeutil;
 
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
@@ -49,7 +50,7 @@ public class TeleopDrivetrain {
         follower.startTeleopDrive(true);
         follower.usePredictiveBraking = true;
 
-        headingPIDFController = new PIDFController(Constants.followerConstants.coefficientsHeadingPIDF);
+        headingPIDFController = new PIDFController(new PIDFCoefficients(0.4, 0, 0.03, 0));
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
@@ -225,16 +226,9 @@ public class TeleopDrivetrain {
             double outHeading = headingPIDFController.run();
             return new double[] {x, y, outHeading};
         } else {
-            // update target position heading
-            if (Math.abs(rx) < 0.005) { // we are not rotating: hold heading
-                double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
-                headingPIDFController.updateError(headingError);
-                double outHeading = headingPIDFController.run();
-                return new double[] {x, y, outHeading};
-            } else {
-                targetHeading = currentHeading;
-                return new double[] {x, y, rx};
-            }
+            // got rid of normal
+            targetHeading = currentHeading;
+            return new double[] {x, y, rx};
         }
     }
 

@@ -68,7 +68,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
     public static AprilTagLibrary getDecodeTagLibraryAdjusted(){
         return new AprilTagLibrary.Builder()
                 .addTag(20, "BlueTarget",
-                        6.5, new VectorF(-58.3727f + 1.5f, -55.6425f + 1.5f, 29.5f), DistanceUnit.INCH,
+                        6.5, new VectorF(-58.3727f, -55.6425f, 29.5f), DistanceUnit.INCH,
                         new Quaternion(0.2182149f, -0.2182149f, -0.6725937f, 0.6725937f, 0))
                 .addTag(21, "Obelisk_GPP",
                         6.5, DistanceUnit.INCH)
@@ -77,7 +77,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
                 .addTag(23, "Obelisk_PPG",
                         6.5, DistanceUnit.INCH)
                 .addTag(24, "RedTarget",
-                        6.5, new VectorF(-58.3727f + 1.5f, 55.6425f - 1.5f, 29.5f), DistanceUnit.INCH,
+                        6.5, new VectorF(-58.3727f, 55.6425f, 29.5f), DistanceUnit.INCH,
                         new Quaternion(0.6725937f, -0.6725937f, -0.2182149f, 0.2182149f, 0))
                 .build();
     }
@@ -166,9 +166,12 @@ public class WebcamLocalizationTest extends LinearOpMode {
     });
          */
 
+        // TODO: open: 0.78, close: 0.55 for the lift
+
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(920.46723598, 918.07391093, 653.71790268, 406.18310197)
+                // i think it may be fx focal length
+                .setLensIntrinsics(912.05826264, 921.29767907, 644.017359, 401.04515738)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(getDecodeTagLibraryAdjusted())
@@ -232,7 +235,11 @@ public class WebcamLocalizationTest extends LinearOpMode {
      * Add telemetry about AprilTag detections.
      */
     private Pose toPinpointPose(Pose webcamPose) {
-        return new Pose(70.5 + webcamPose.getY(), 70.5 - webcamPose.getX(), webcamPose.getHeading());
+        // x is the webcampose.getY() and it is negative, but it should be more negative (larger in magnitude)
+        // so we should probably decrease fx
+        // If estimated X is too large, your fx is too small
+        //If estimated X is too small, your fx is too large
+        return new Pose(71 + webcamPose.getY(), 71 - webcamPose.getX(), webcamPose.getHeading());
     }
     private void telemetryAprilTag() {
 

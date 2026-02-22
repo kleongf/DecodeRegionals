@@ -73,7 +73,8 @@ public class MainTeleop {
         this.relocalizationTimer = new ElapsedTime();
     }
     private double normalizeInput(double input) {
-        return 1.1 * Math.signum(input) * Math.sqrt(Math.abs(input));
+        return 1.1 * input;
+        // Math.signum(input) * Math.sqrt(Math.abs(input));
     }
 
     private double getDistance(Pose a, Pose b) {
@@ -146,12 +147,15 @@ public class MainTeleop {
             }
         }
 
-        if (gamepad1.leftBumperWasPressed()) {
-            drivetrain.setGateHeadingLock(!drivetrain.getGateHeadingLock());
+        // RIGHT TRIGGER: hold for gate heading lock
+        if (Math.abs(gamepad1.right_trigger) > 0.01)  {
+            drivetrain.setGateHeadingLock(true);
+        } else {
+            drivetrain.setGateHeadingLock(false);
         }
 
-        // slow mo for good park, 0.4x speed
-        if (Math.abs(gamepad1.left_trigger) > 0.01 || Math.abs(gamepad1.right_trigger) > 0.01) {
+        // LEFT TRIGGER: slow mo
+        if (Math.abs(gamepad1.left_trigger) > 0.01) {
             speedScaler = 0.4;
         } else {
             speedScaler = 1;
@@ -191,17 +195,18 @@ public class MainTeleop {
         }
 
         // slow mo for good park, 0.4x speed
-        if (Math.abs(gamepad2.right_trigger) > 0.05) {
-            robot.pivot.setPower(-gamepad2.right_trigger);
-        }
-
-        if (Math.abs(gamepad2.left_trigger) > 0.05) {
-            robot.pivot.setPower(gamepad2.left_trigger);
-        }
-
-        if (Math.abs(gamepad2.right_trigger) < 0.05 && Math.abs(gamepad2.left_trigger) < 0.05) {
-            robot.pivot.setPower(0);
-        }
+        // TODO: set up hang buttons. folded up = 0.73 and down = 0.5, so 0.5 when parking
+//        if (Math.abs(gamepad2.right_trigger) > 0.05) {
+//            robot.pivot.setPower(-gamepad2.right_trigger);
+//        }
+//
+//        if (Math.abs(gamepad2.left_trigger) > 0.05) {
+//            robot.pivot.setPower(gamepad2.left_trigger);
+//        }
+//
+//        if (Math.abs(gamepad2.right_trigger) < 0.05 && Math.abs(gamepad2.left_trigger) < 0.05) {
+//            robot.pivot.setPower(0);
+//        }
 
         // relocalization: left stick OVERRIDE with webcam
         if (gamepad2.leftStickButtonWasPressed()) {

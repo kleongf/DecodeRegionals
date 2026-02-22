@@ -20,47 +20,25 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 @TeleOp(name="limelight pose test blue standard start pose")
 public class LimelightPoseTestBlueStandard extends OpMode {
     // this assumes the limelight is like 3 inches right from center of robot, up like 9 inches, and angled at 45
-    private Limelight3A limelight;
     private Follower follower;
     private Intake intake;
     private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
 
-    private double metersToInches(double meters) {
-        return meters * 39.3701;
-    }
-
-    private String pedroPose(Pose3D llpose) {
-        double x = 72 + (metersToInches(llpose.getPosition().y));
-        double y = 72 - (metersToInches(llpose.getPosition().x));
-        return "X: " + x + ", Y: " + y;
-    }
 
     @Override
     public void loop() {
         follower.update();
         intake.update();
-        LLResult result = limelight.getLatestResult();
-        telemetry.addData("result is null?", result == null);
-        telemetry.addData("result is valid?", result.isValid());
-        if (result != null) {
-            Pose3D botpose = result.getBotpose();
-            System.out.println(botpose.toString());
-            telemetry.addData("pose", botpose.toString());
-            telemetry.addData("heading in degrees", result.getBotpose().getOrientation().getYaw(AngleUnit.DEGREES));
-            telemetry.addData("corrected heading", (result.getBotpose().getOrientation().getYaw(AngleUnit.DEGREES) - 270));
-            telemetry.addData("pedro converted pose", pedroPose(botpose));
-            telemetry.addData("actual pinpoint pose", follower.getPose());
-        }
+        telemetry.addLine(follower.getPose().toString());
+        // 14.7, 59.5
+                // 32. 135.8
 
         telemetry.update();
     }
 
     @Override
     public void init() {
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(3);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        limelight.start();
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         intake = new Intake(hardwareMap);
@@ -69,6 +47,6 @@ public class LimelightPoseTestBlueStandard extends OpMode {
 
     @Override
     public void start() {
-        limelight.start();
+
     }
 }

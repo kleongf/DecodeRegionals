@@ -27,9 +27,10 @@ public class Constants {
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
-            .centripetalScaling(0.0005)
+            .centripetalScaling(0.0005) // TODO: maybe set to 0?
             .holdPointHeadingScaling(0.35)
             .holdPointTranslationalScaling(0.35)
+            // hmm maybe i need an f component and strengthen p for translational
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.005, 0.0))
             .secondaryTranslationalPIDFCoefficients(
                     new PIDFCoefficients(0.14, 0, 0.008, 0.0)
