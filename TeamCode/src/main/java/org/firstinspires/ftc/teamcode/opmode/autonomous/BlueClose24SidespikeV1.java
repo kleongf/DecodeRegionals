@@ -274,7 +274,6 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(intakeFirst, true);
-                            currentShootPose = new Pose(60, 72, Math.toRadians(-144));
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -287,6 +286,7 @@ public class BlueClose24SidespikeV1 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(intakeSecond, true);
+                            currentShootPose = new Pose(60, 72, Math.toRadians(-144));
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
