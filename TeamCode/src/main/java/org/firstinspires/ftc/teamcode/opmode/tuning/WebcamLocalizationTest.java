@@ -171,7 +171,7 @@ public class WebcamLocalizationTest extends LinearOpMode {
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 // i think it may be fx focal length
-                .setLensIntrinsics(912.05826264, 921.29767907, 644.017359, 401.04515738)
+                .setLensIntrinsics(915.89533774, 916.57002166, 665.64617643, 423.48045066)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(getDecodeTagLibraryAdjusted())

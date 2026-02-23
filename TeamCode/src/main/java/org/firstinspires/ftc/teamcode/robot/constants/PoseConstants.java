@@ -4,7 +4,7 @@ import com.pedropathing.geometry.Pose;
 
 public class PoseConstants {
     // Teleop Poses
-    public static double DISTANCE_IN = 10; // if it is not holding/correcting can increase this number
+    public static double DISTANCE_IN = 15; // if it is not holding/correcting can increase this number
     public static double ROBOT_CENTER_TO_FRONT_LENGTH = 9; // center of drivetrain to front of robot
     public static double ROBOT_WIDTH = 15.1/2d;
     public static double FIELD_WIDTH = 142; // not 144 inches, i feel betrayed bruh
@@ -24,9 +24,9 @@ public class PoseConstants {
 
     public static Pose RED_GATE_POSE = new Pose(FIELD_WIDTH-15, 63, Math.toRadians(180-180));
 
-    public static Pose BLUE_SIDE_GATE_POSE = new Pose(15, 70, Math.toRadians(270));
+    public static Pose BLUE_SIDE_GATE_POSE = new Pose(16, 70, Math.toRadians(270));
 
-    public static Pose RED_SIDE_GATE_POSE = new Pose(FIELD_WIDTH-15, 70, Math.toRadians(270));
+    public static Pose RED_SIDE_GATE_POSE = new Pose(FIELD_WIDTH-16, 70, Math.toRadians(270));
 
     public static Pose RED_PARK_POSE = new Pose(39, 36, Math.toRadians(90));
     public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-39, 36, Math.toRadians(90));
@@ -54,9 +54,10 @@ public class PoseConstants {
     public static Pose BLUE_FAR_GATE_AUTO_POSE_IN = new Pose(BLUE_FAR_GATE_AUTO_POSE.getX()+Math.cos(BLUE_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_FAR_GATE_AUTO_POSE.getY()+Math.sin(BLUE_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_FAR_GATE_AUTO_POSE.getHeading());
     public static Pose RED_FAR_GATE_AUTO_POSE_IN = new Pose(RED_FAR_GATE_AUTO_POSE.getX()+Math.cos(RED_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_FAR_GATE_AUTO_POSE.getY()+Math.sin(RED_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_FAR_GATE_AUTO_POSE.getHeading());
 
-    public static Pose BLUE_GATE_AUTO_POSE =  new Pose(14.2, 56.5, Math.toRadians(148));
-    //public static Pose RED_GATE_AUTO_POSE = new Pose(144-12.4, 60, Math.toRadians(180-148));
-    public static Pose RED_GATE_AUTO_POSE = new Pose(FIELD_WIDTH-14.2, 56.5, Math.toRadians(180-148));
+    //
+    public static Pose BLUE_GATE_AUTO_POSE =  new Pose(13, 59, Math.toRadians(149));
+    // TODO: make the pose in turning negative degrees, so we turn into gate
+    public static Pose RED_GATE_AUTO_POSE = new Pose(FIELD_WIDTH-13, 59, Math.toRadians(180-149));
     public static Pose BLUE_GATE_AUTO_POSE_IN =  new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY()+Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getHeading());
     public static Pose RED_GATE_AUTO_POSE_IN =  new Pose(RED_GATE_AUTO_POSE.getX()+Math.cos(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getY()+Math.sin(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getHeading());
     public static Pose BLUE_SHOOT_AUTO_POSE = new Pose(54, 78, Math.toRadians(148));

@@ -36,7 +36,7 @@ public class SOTM {
         this.goal = goal;
 
         thetaLUT = new LUT();
-        // thetaLUT.addData(168, Math.toRadians(45)); // TODO: get data point for 168
+        thetaLUT.addData(168, Math.toRadians(50));
         thetaLUT.addData(158, Math.toRadians(49));
         thetaLUT.addData(145, Math.toRadians(48));
         thetaLUT.addData(138, Math.toRadians(48));
@@ -47,14 +47,20 @@ public class SOTM {
         thetaLUT.addData(88, Math.toRadians(48));
         thetaLUT.addData(78, Math.toRadians(47));
         thetaLUT.addData(68, Math.toRadians(45.5));
-        thetaLUT.addData(58, Math.toRadians(43));
-        thetaLUT.addData(53, Math.toRadians(40));
-        thetaLUT.addData(48, Math.toRadians(38));
-        thetaLUT.addData(43, Math.toRadians(32));
+        thetaLUT.addData(63, Math.toRadians(43));
+        // 63: 43, 1490
+        // 58: 41, 1440
+        // 53: 39, 1400
+        // 48: 35 1340
+        // 43: 27 1300
+        thetaLUT.addData(58, Math.toRadians(41));
+        thetaLUT.addData(53, Math.toRadians(38));
+        thetaLUT.addData(48, Math.toRadians(33));
+        thetaLUT.addData(43, Math.toRadians(27));
 
         velocityLUT = new LUT();
-        // velocityLUT.addData(168, 2280);
-        velocityLUT.addData(158, 2100);
+        velocityLUT.addData(168, 2140);
+        velocityLUT.addData(158, 2080);
         velocityLUT.addData(145, 2000);
         velocityLUT.addData(138, 1960);
         velocityLUT.addData(128, 1910);
@@ -64,9 +70,10 @@ public class SOTM {
         velocityLUT.addData(88, 1640);
         velocityLUT.addData(78, 1580);
         velocityLUT.addData(68, 1520);
-        velocityLUT.addData(58, 1460);
+        velocityLUT.addData(63, 1480);
+        velocityLUT.addData(58, 1440);
         velocityLUT.addData(53, 1400);
-        velocityLUT.addData(48, 1380);
+        velocityLUT.addData(48, 1340);
         velocityLUT.addData(43, 1300);
 
     }
