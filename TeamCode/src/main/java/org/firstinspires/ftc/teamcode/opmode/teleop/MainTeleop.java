@@ -40,7 +40,7 @@ public class MainTeleop {
     private Zone currentZone;
     private ElapsedTime relocalizationTimer;
     private ZoneUtil zoneUtil;
-    private double relocalizationTime = 10; // 10 seconds
+    private double relocalizationTime = 20; // 20 seconds
     private boolean endgameOn = false;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
@@ -121,18 +121,14 @@ public class MainTeleop {
         }
 
         if (relocalizationTimer.seconds() > relocalizationTime) {
-            // TODO: automatic relocalization
-//            Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
-//            Log.d("Webcam pose", webcamPose.toString());
-//            drivetrain.follower.setPose(webcamPose);
-//            relocalizationTimer.reset();
-            // normal relocalization: checks velocity, angular velocity, and distance AND the timer to see if its over 10s
-//            if (drivetrain.getVelocity().getMagnitude() > 5 && drivetrain.getAngularVelocity() > 0.1 && getDistance(currentPose, goalPose) < 100) {
-//                Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
-//                if (MathUtil.distance(relocalizedPose, currentPose) < 5) { // threshold: 5 inches
-//                    drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
-//                }
-//            }
+            // TODO: test automatic relocalization
+            if (drivetrain.getVelocity().getMagnitude() > 5 && drivetrain.getAngularVelocity() > 0.1 && getDistance(currentPose, goalPose) < 100) {
+                Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
+                if (MathUtil.distance(relocalizedPose, currentPose) < 5) { // threshold: 5 inches
+                    drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
+                    relocalizationTimer.reset();
+                }
+            }
         }
 
         // GAMEPAD 1 (DRIVER)

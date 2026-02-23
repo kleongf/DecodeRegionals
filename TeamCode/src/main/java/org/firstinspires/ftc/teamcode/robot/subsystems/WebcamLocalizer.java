@@ -45,7 +45,7 @@ public class WebcamLocalizer extends Subsystem {
     public static AprilTagLibrary getDecodeTagLibraryAdjusted(){
         return new AprilTagLibrary.Builder()
                 .addTag(20, "BlueTarget",
-                        6.5, new VectorF(-58.3727f + 1.5f, -55.6425f + 1.5f, 29.5f), DistanceUnit.INCH,
+                        6.5, new VectorF(-58.3727f, -55.6425f, 29.5f), DistanceUnit.INCH,
                         new Quaternion(0.2182149f, -0.2182149f, -0.6725937f, 0.6725937f, 0))
                 .addTag(21, "Obelisk_GPP",
                         6.5, DistanceUnit.INCH)
@@ -54,7 +54,7 @@ public class WebcamLocalizer extends Subsystem {
                 .addTag(23, "Obelisk_PPG",
                         6.5, DistanceUnit.INCH)
                 .addTag(24, "RedTarget",
-                        6.5, new VectorF(-58.3727f + 1.5f, 55.6425f - 1.5f, 29.5f), DistanceUnit.INCH,
+                        6.5, new VectorF(-58.3727f, 55.6425f, 29.5f), DistanceUnit.INCH,
                         new Quaternion(0.6725937f, -0.6725937f, -0.2182149f, 0.2182149f, 0))
                 .build();
     }
@@ -67,7 +67,7 @@ public class WebcamLocalizer extends Subsystem {
                 // this is for y coord btw
 
                 // theres no way its off by that much bruh
-                .setLensIntrinsics(920.46723598, 918.07391093, 653.71790268, 406.18310197)
+                .setLensIntrinsics(915.89533774, 916.57002166, 665.64617643, 423.48045066)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(getDecodeTagLibraryAdjusted())
@@ -107,15 +107,11 @@ public class WebcamLocalizer extends Subsystem {
                 if (!detection.metadata.name.contains("Obelisk")) {
                     if (detection.metadata.name.contains("BlueTarget")) {
                         Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
-                        ppPose = new Pose(ppPose.getX(), ppPose.getY()-3.0, ppPose.getHeading());
-                        Log.d("Pinpoint pose", ppPose.toString());
                         currentPose = ppPose;
                         isGoodDetection = true;
                     }
                     if (detection.metadata.name.contains("RedTarget")) {
                         Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
-                        ppPose = new Pose(ppPose.getX(), ppPose.getY()+3.0, ppPose.getHeading());
-                        Log.d("Pinpoint pose", ppPose.toString());
                         currentPose = ppPose;
                         isGoodDetection = true;
                     }

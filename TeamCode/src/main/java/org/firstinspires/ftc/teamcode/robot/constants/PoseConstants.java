@@ -56,8 +56,8 @@ public class PoseConstants {
 
     //
     public static Pose BLUE_GATE_AUTO_POSE =  new Pose(13, 59, Math.toRadians(149));
-    // TODO: make the pose in turning negative degrees, so we turn into gate
     public static Pose RED_GATE_AUTO_POSE = new Pose(FIELD_WIDTH-13, 59, Math.toRadians(180-149));
+    // TODO: testing if turning into the gate is better. (subtract heading) or change bumper
     public static Pose BLUE_GATE_AUTO_POSE_IN =  new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY()+Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getHeading());
     public static Pose RED_GATE_AUTO_POSE_IN =  new Pose(RED_GATE_AUTO_POSE.getX()+Math.cos(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getY()+Math.sin(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getHeading());
     public static Pose BLUE_SHOOT_AUTO_POSE = new Pose(54, 78, Math.toRadians(148));
