@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.comp.autonomous;
 // the main class for the sidespike
 // different choices based on the initial selection
 // can choose to intake third or not and to do cycle or not
+// TODO: if we are doing third do differently, go closer
 
 import static java.lang.Thread.sleep;
 
@@ -49,20 +50,22 @@ public class BlueClose24 extends OpMode {
     private boolean holdingTurret = true;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
-    private Pose currentShootPose = new Pose(24, 105, Math.toRadians(-90));
+    private Pose currentShootPose = new Pose(27, 104, Math.toRadians(-90));
+    // TODO: final pos is in between the stuff
     private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, openGate, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeThird, shootThird, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
 
     public void buildPaths() {
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
                         startPose,
-                        new Pose(23.500, 108.000)
+                        new Pose(27, 104.000)
                 )
-        ).setConstantHeadingInterpolation(startPose.getHeading()).build();
+        ).setBrakingStrength(0.5).setConstantHeadingInterpolation(startPose.getHeading()).build();
 
         intakeFirst = follower.pathBuilder().addPath(
-                new BezierLine(
-                        new Pose(23.500, 108.000),
+                new BezierCurve(
+                        new Pose(27, 104.000),
+                        new Pose(23.500, 102),
                         new Pose(23.500, 83.000)
                 )
         ).setConstantHeadingInterpolation(startPose.getHeading()).build();
@@ -70,10 +73,12 @@ public class BlueClose24 extends OpMode {
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(23.500, 83.000),
-                                new Pose(23.500, 108.000)
+                                new Pose(27, 104)
                         )
                 )
                 .setBrakingStrength(0.5) // equal to zpam 2 try this i guess
+                // i also decreased t value so it will stop earlier hopefully
+                .setTValueConstraint(0.9)
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 // TODO: play around with max power, i dont think its going to the correct spot
                 // .setBrakingStart(10)
@@ -84,21 +89,26 @@ public class BlueClose24 extends OpMode {
 
 
         intakeSecond = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(23.500, 108.000),
-                                new Pose(23.500, 64.000)
+                        new BezierCurve(
+                                // TODO: also artificially changed this lol
+                                new Pose(27.00, 104.000),
+                                // i also changed this control point a bit
+                                new Pose(25.00, 104.000),
+                                new Pose(23.500, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
         openGate = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(23.500, 64.000),
+                                new Pose(23.500, 62.000),
                                 PoseConstants.BLUE_SIDE_GATE_POSE
                         )
                 ).setConstantHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading())
                 .setNoDeceleration()
                 .build();
+
+        // TODO: should we change gate? to simulate the drift?
 
 
         shootSecond = follower.pathBuilder().addPath(
@@ -174,7 +184,8 @@ public class BlueClose24 extends OpMode {
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
                                 new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+0.5)
+                                // PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -208,7 +219,6 @@ public class BlueClose24 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-160))
-                .setReversed()
                 .build();
 
         intakeGate4 = follower.pathBuilder()
@@ -216,7 +226,8 @@ public class BlueClose24 extends OpMode {
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
                                 new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
+                                new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+1)
+                                // PoseConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -249,7 +260,9 @@ public class BlueClose24 extends OpMode {
                                 new Pose(12.000, 36.000),
                                 new Pose(60, 100)
                         )
-                ).setTangentHeadingInterpolation()
+                )
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         // TODO: when porting to red use FIELD_WIDTH not 144 btw
@@ -284,7 +297,7 @@ public class BlueClose24 extends OpMode {
                             // actually it seems to work on the first path
                             // also this pose isn't accurate?
                             follower.followPath(shootPreload, true);
-                            currentShootPose = new Pose(23.5, 108, Math.toRadians(-90));
+                            currentShootPose = new Pose(27, 102, Math.toRadians(-90));
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
                         .transition(new Transition(() -> !follower.isBusy() && robot.shooter.atTarget(40))),
@@ -300,14 +313,15 @@ public class BlueClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             // i also set a lower max power
-                            follower.setMaxPower(0.7);
+                            // this didnt do anything...
+                            // follower.setMaxPower(0.7);
                             follower.followPath(shootFirst, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
-                            follower.setMaxPower(1);
+                            // follower.setMaxPower(1);
                         })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
@@ -321,6 +335,7 @@ public class BlueClose24 extends OpMode {
                         .onEnter(() -> {
                             holdingTurret = false;
                             // TODO: maybe compensate by subtracting like 2 degrees? or test more with sotm on
+                            // i added 2 degrees
                             currentShootPose = new Pose(56, 75, Math.toRadians(-160));
                         })
                         // if no open gate, go to shoot second state
@@ -497,6 +512,7 @@ public class BlueClose24 extends OpMode {
         robot.initPositions();
         robot.turret.resetEncoderWithAbsoluteReading();
         robot.turret.setUseExternal(false);
+        // robot.turret.setPDCoefficients(0.005, 0);
     }
     @Override
     public void loop() {
@@ -512,8 +528,8 @@ public class BlueClose24 extends OpMode {
             double[] shooterValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
             // now it applies feedforward but target is same, so it will update slightly when shooting kinda like sotm.
             // TODO: testing no move turret
-            robot.setAzimuthThetaVelocity(new double[] {shooterValues[0], shooterValues[1], shooterValues[2]});
-            robot.turret.setFeedforward(shooterValues[3]);
+            robot.setAzimuthThetaVelocity(new double[] {turretValues[0], shooterValues[1], shooterValues[2]});
+            robot.turret.setFeedforward(turretValues[3]*0);
         }
 
         stateMachine.update();

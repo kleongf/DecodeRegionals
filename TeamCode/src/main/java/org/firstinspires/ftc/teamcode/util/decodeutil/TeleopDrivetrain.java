@@ -243,7 +243,7 @@ public class TeleopDrivetrain {
 
         switch (state) {
             case TELEOP_DRIVE:
-
+                // todo: swap forward backward up down robot centric
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
                 if (alliance == Alliance.BLUE) {
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));

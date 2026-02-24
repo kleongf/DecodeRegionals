@@ -26,7 +26,8 @@ public class StateMachine {
 
     private int getIndex(String stateName) {
         return IntStream.range(0, states.size())
-                .filter(i -> states.get(i).getName().equals(stateName))
+                .filter(i -> stateName != null &&
+                        stateName.equals(states.get(i).getName()))
                 .findFirst()
                 .orElse(-1);
     }

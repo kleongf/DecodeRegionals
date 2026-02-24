@@ -42,6 +42,8 @@ public class MainTeleop {
     private ZoneUtil zoneUtil;
     private double relocalizationTime = 20; // 20 seconds
     private boolean endgameOn = false;
+    private double prevLeftTriggerValue = 0;
+    private double prevRightTriggerValue = 0;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, boolean resetEncoders) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -192,6 +194,14 @@ public class MainTeleop {
 
         // slow mo for good park, 0.4x speed
         // TODO: set up hang buttons. folded up = 0.73 and down = 0.5, so 0.5 when parking
+
+        if (gamepad2.right_trigger > 0.5 && !(prevRightTriggerValue > 0.5)) {
+            robot.pivot.tilt();
+        }
+        if (gamepad2.left_trigger > 0.5 && !(prevLeftTriggerValue > 0.5)) {
+            robot.pivot.unTilt();
+        }
+
 //        if (Math.abs(gamepad2.right_trigger) > 0.05) {
 //            robot.pivot.setPower(-gamepad2.right_trigger);
 //        }
@@ -210,14 +220,6 @@ public class MainTeleop {
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
                 drivetrain.follower.setPose(webcamPose);
             }
-            // TODO: CHANGE TO WEBCAM
-//            if (robot.webcamLocalizer.getIsGoodDetection()) {
-//                Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
-//                Log.d("Webcam pose", webcamPose.toString());
-//                drivetrain.follower.setPose(webcamPose);
-//            }
-//            Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
-//            drivetrain.follower.setPose(webcamPose);
         }
 
         // corner relocalization: right stick
@@ -277,6 +279,8 @@ public class MainTeleop {
         }
 
         prevDetectState = robot.intake.detectionState;
+        prevRightTriggerValue = gamepad2.right_trigger;
+        prevLeftTriggerValue = gamepad2.left_trigger;
 
         robot.update();
 
