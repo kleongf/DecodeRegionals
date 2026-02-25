@@ -129,13 +129,21 @@ public class MainTeleop {
         if (relocalizationTimer.seconds() > relocalizationTime) {
             // TODO: test automatic relocalization
             // we could also try a larger dist constraint and avging the poses
+
+            // wait hold up:
+            // we want to know the angle of the camera relative to the goal
+            // the camera is same as the fucking robot's heading like am i dumb or something
+
+            // if we are on blue: camera angle is 135 deg, red is 45 deg
+            // check if robot heading roughly equal to angle to goal
+
             double dx = goalPose.getX() - currentPose.getX();
             double dy = goalPose.getY() - currentPose.getY();
-            double angleToGoal = Math.atan2(-dx, dy);
+            double angleToGoal = Math.atan2(-dx, dy) + Math.toRadians(90);
 
-            double processedAngle = alliance == Alliance.BLUE ? (angleToGoal - Math.PI / 4) : (angleToGoal + Math.PI / 4);
+            double headingDiffFromGoal = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), angleToGoal);
 
-            if (drivetrain.getVelocity().getMagnitude() < 3 && Math.abs(drivetrain.getAngularVelocity()) < 0.1 && getDistance(currentPose, goalPose) < 100 && Math.abs(processedAngle) < Math.toRadians(20)) {
+            if (drivetrain.getVelocity().getMagnitude() < 3 && Math.abs(drivetrain.getAngularVelocity()) < 0.1 && getDistance(currentPose, goalPose) < 100 && Math.abs(headingDiffFromGoal) < Math.toRadians(30)) {
                 Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
                 if (MathUtil.distance(relocalizedPose, currentPose) < 10) { // threshold: 10 inches
                     drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
