@@ -259,7 +259,7 @@ public class BlueClose24 extends OpMode {
         shootPile = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(12.000, 36.000),
-                                new Pose(60, 100)
+                                new Pose(58, 96)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -491,7 +491,7 @@ public class BlueClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            currentShootPose = new Pose(60.000, 100.000, Math.toRadians(-127));
+                            currentShootPose = new Pose(58, 96, Math.toRadians(-127));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()

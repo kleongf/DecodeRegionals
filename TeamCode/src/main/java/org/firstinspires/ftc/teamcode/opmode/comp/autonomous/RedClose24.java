@@ -259,7 +259,7 @@ public class RedClose24 extends OpMode {
         shootPile = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(PoseConstants.FIELD_WIDTH-12.000, 36.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-60, 100)
+                                new Pose(PoseConstants.FIELD_WIDTH-58, 96)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -491,7 +491,7 @@ public class RedClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-60.000, 100.000, Math.toRadians(180-(-127)));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-58.000, 96, Math.toRadians(180-(-127)));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
