@@ -22,7 +22,7 @@ public class Constants {
             .mass(11)
             .forwardZeroPowerAcceleration((-38.04 + (-32) + (-40.17)) / 3.0)
             .lateralZeroPowerAcceleration(((-70.57) + (-66.93) + (-67.08)) / 3.0)
-            // TODO: test again with predictive braking
+            // TODO: test again with predictive braking hmmm lowkey linear could be stronger? probably not, but have to retune velocity and zpam
             .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.05, 0.11, 0.0008))
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)

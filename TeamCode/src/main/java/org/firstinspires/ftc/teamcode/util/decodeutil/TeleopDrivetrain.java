@@ -219,7 +219,8 @@ public class TeleopDrivetrain {
 
     private double[] calculateDrivetrainPowers(double x, double y, double rx, double currentHeading) {
         if (gateHeadingLock) {
-            targetHeading = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE.getHeading() : PoseConstants.RED_GATE_AUTO_POSE.getHeading();
+            // added 2 deg
+            targetHeading = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()+Math.toRadians(2) : PoseConstants.RED_GATE_AUTO_POSE.getHeading()+Math.toRadians(2);
             // we aren't going to update
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
@@ -246,9 +247,17 @@ public class TeleopDrivetrain {
                 // todo: swap forward backward up down robot centric
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
                 if (alliance == Alliance.BLUE) {
-                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
+                    if (robotCentric) {
+                        follower.setTeleOpDrive(powers[1],powers[0], powers[2], true, Math.toRadians(180));
+                    } else {
+                        follower.setTeleOpDrive(powers[0], powers[1], powers[2], false, Math.toRadians(180));
+                    }
                 } else {
-                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
+                    if (robotCentric) {
+                        follower.setTeleOpDrive(powers[1],powers[0], powers[2], true, Math.toRadians(180));
+                    } else {
+                        follower.setTeleOpDrive(powers[0], powers[1], powers[2], false, Math.toRadians(180));
+                    }
                 }
                 break;
             case OPEN_GATE:

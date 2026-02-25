@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.robots;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision2;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
@@ -22,6 +23,7 @@ public class AutonomousRobot {
     public final Shooter shooter;
     public final Turret turret;
     public final ArtifactVision2 vision;
+    private final Servo light;
 
     private final ArrayList<StateMachine> commands;
     public StateMachine intakeCommand;
@@ -30,6 +32,8 @@ public class AutonomousRobot {
 
     public AutonomousRobot(HardwareMap hardwareMap, Alliance alliance) {
         subsystems = new ArrayList<>();
+        light = hardwareMap.get(Servo.class, "light");
+        light.setPosition(0);
 
         bulkRead = new BulkRead(hardwareMap);
         subsystems.add(bulkRead);

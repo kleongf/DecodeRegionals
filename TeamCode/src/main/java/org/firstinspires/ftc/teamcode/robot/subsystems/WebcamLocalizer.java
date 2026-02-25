@@ -4,6 +4,8 @@ import android.util.Log;
 import android.util.Size;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -35,6 +37,8 @@ public class WebcamLocalizer extends Subsystem {
     private boolean isGoodDetection = false;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
+    private ElapsedTime timer;
+    private Servo light;
     private Position cameraPosition = new Position(DistanceUnit.MM,
             138, 119, 236, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
@@ -61,6 +65,10 @@ public class WebcamLocalizer extends Subsystem {
 
     public WebcamLocalizer(HardwareMap hardwareMap) {
         currentPose = new Pose();
+        timer = new ElapsedTime();
+        light = hardwareMap.get(Servo.class, "light");
+        light.setPosition(0);
+
         aprilTag = new AprilTagProcessor.Builder()
                 // red: off by -3 inches (so add 3)
                 // blue: off by 3 inches (so subtract 3)
@@ -121,6 +129,10 @@ public class WebcamLocalizer extends Subsystem {
         if (currentDetections.isEmpty()) {
             isGoodDetection = false;
         }
+
+        if (timer.seconds() > 1) {
+            light.setPosition(0);
+        }
     }
 
     @Override
@@ -129,16 +141,8 @@ public class WebcamLocalizer extends Subsystem {
     public Pose getCurrentPose() {return currentPose;}
     public boolean getIsGoodDetection() {return isGoodDetection;}
 
-    // updates the pose but not the heading. used for normal relocalization, automatically after every 10s
-    // updates if the pose is similar
-    public Pose updatePinpointPose(Pose pinpointPose, double distanceConstraint) {
-        if (MathUtil.distance(pinpointPose, currentPose) < distanceConstraint) {
-            return new Pose(currentPose.getX(), currentPose.getY(), pinpointPose.getHeading());
-        }
-        return pinpointPose;
-    }
-
-    public Pose overridePinpointPose() {
-        return currentPose;
+    public void flashLED() {
+        light.setPosition(1.0);
+        timer.reset();
     }
 }

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.comp.autonomous;
-
-// TODO: if we are doing third do differently, go closer for last spike
-// additionally end pose is a bit over the line so we should make it go less far
-// better on gate pos
+// the main class for the sidespike
+// different choices based on the initial selection
+// can choose to intake third or not and to do cycle or not
+// TODO: if we are doing third do differently, go closer
 
 import static java.lang.Thread.sleep;
 
@@ -56,25 +56,29 @@ public class RedClose24 extends OpMode {
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
                         startPose,
-                        new Pose(PoseConstants.FIELD_WIDTH-27, 104.000)
+                        new Pose(PoseConstants.FIELD_WIDTH-32, 102.000)
                 )
-        ).setBrakingStrength(0.5).setConstantHeadingInterpolation(startPose.getHeading()).build();
+        ).setBrakingStrength(0.5).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierCurve(
-                        new Pose(PoseConstants.FIELD_WIDTH-27, 104.000),
-                        new Pose(PoseConstants.FIELD_WIDTH-23.500, 102),
+                        new Pose(PoseConstants.FIELD_WIDTH-32, 102.000),
+                        new Pose(PoseConstants.FIELD_WIDTH-23.5, 97),
+                        new Pose(PoseConstants.FIELD_WIDTH-23.5, 92),
                         new Pose(PoseConstants.FIELD_WIDTH-23.500, 83.000)
                 )
-        ).setConstantHeadingInterpolation(startPose.getHeading()).build();
+        ).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
 
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(PoseConstants.FIELD_WIDTH-23.500, 83.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-27, 104)
+                                new Pose(PoseConstants.FIELD_WIDTH-32, 102)
                         )
                 )
                 .setBrakingStrength(0.5) // equal to zpam 2 try this i guess
+                .setTValueConstraint(0.95)
+                // i also decreased t value so it will stop earlier hopefully
+                // .setTValueConstraint(0.9)
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 // TODO: play around with max power, i dont think its going to the correct spot
                 // .setBrakingStart(10)
@@ -86,8 +90,11 @@ public class RedClose24 extends OpMode {
 
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(PoseConstants.FIELD_WIDTH-27.00, 104.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-24.00, 104.000),
+                                // TODO: also artificially changed this lol
+                                new Pose(PoseConstants.FIELD_WIDTH-32.00, 102.000),
+                                // i also changed this control point a bit
+                                // new Pose(PoseConstants.FIELD_WIDTH-28.00, 92.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-25.00, 82.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-23.500, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
@@ -101,6 +108,8 @@ public class RedClose24 extends OpMode {
                 ).setConstantHeadingInterpolation(PoseConstants.RED_SIDE_GATE_POSE.getHeading())
                 .setNoDeceleration()
                 .build();
+
+        // TODO: should we change gate? to simulate the drift?
 
 
         shootSecond = follower.pathBuilder().addPath(
@@ -176,7 +185,8 @@ public class RedClose24 extends OpMode {
                         new BezierCurve(
                                 new Pose(PoseConstants.FIELD_WIDTH-56.000, 75.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
-                                PoseConstants.RED_GATE_AUTO_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY()+0.5)
+                                // PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -217,7 +227,8 @@ public class RedClose24 extends OpMode {
                         new BezierCurve(
                                 new Pose(PoseConstants.FIELD_WIDTH-56.000, 75.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
-                                PoseConstants.RED_GATE_AUTO_POSE
+                                new Pose(PoseConstants.FIELD_WIDTH-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY()+1)
+                                // PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -290,7 +301,7 @@ public class RedClose24 extends OpMode {
                             currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-27, 102, Math.toRadians(180-(-90)));
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
-                        .transition(new Transition(() -> !follower.isBusy() && robot.shooter.atTarget(40))),
+                        .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -302,15 +313,12 @@ public class RedClose24 extends OpMode {
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
-                            // i also set a lower max power
-                            follower.setMaxPower(0.7);
                             follower.followPath(shootFirst, true);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
-                            follower.setMaxPower(1);
                         })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
@@ -501,6 +509,8 @@ public class RedClose24 extends OpMode {
         robot.initPositions();
         robot.turret.resetEncoderWithAbsoluteReading();
         robot.turret.setUseExternal(false);
+        // TODO: test, should be a bit better. will not overcorrect.
+        sotm2.latencyScaleFactor = 0.5;
         // robot.turret.setPDCoefficients(0.005, 0);
     }
     @Override

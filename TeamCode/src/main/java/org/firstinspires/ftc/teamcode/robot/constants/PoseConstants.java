@@ -28,8 +28,8 @@ public class PoseConstants {
 
     public static Pose RED_SIDE_GATE_POSE = new Pose(FIELD_WIDTH-16, 70, Math.toRadians(270));
 
-    public static Pose RED_PARK_POSE = new Pose(39, 36, Math.toRadians(90));
-    public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-39, 36, Math.toRadians(90));
+    public static Pose RED_PARK_POSE = new Pose(30, 30, Math.toRadians(225));
+    public static Pose BLUE_PARK_POSE = new Pose(FIELD_WIDTH-30, 30, Math.toRadians(180-225));
 
     // Autonomous Poses
     public static Pose BLUE_CLOSE_AUTO_POSE = new Pose(31.5, 135.8, Math.toRadians(270));
@@ -54,11 +54,11 @@ public class PoseConstants {
     public static Pose BLUE_FAR_GATE_AUTO_POSE_IN = new Pose(BLUE_FAR_GATE_AUTO_POSE.getX()+Math.cos(BLUE_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_FAR_GATE_AUTO_POSE.getY()+Math.sin(BLUE_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_FAR_GATE_AUTO_POSE.getHeading());
     public static Pose RED_FAR_GATE_AUTO_POSE_IN = new Pose(RED_FAR_GATE_AUTO_POSE.getX()+Math.cos(RED_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_FAR_GATE_AUTO_POSE.getY()+Math.sin(RED_FAR_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_FAR_GATE_AUTO_POSE.getHeading());
 
-    public static Pose BLUE_GATE_AUTO_POSE =  new Pose(13, 60, Math.toRadians(149));
-    public static Pose RED_GATE_AUTO_POSE = new Pose(FIELD_WIDTH-13, 60, Math.toRadians(180-149));
+    public static Pose BLUE_GATE_AUTO_POSE =  new Pose(13.8, 58.5, Math.toRadians(146));
+    public static Pose RED_GATE_AUTO_POSE = new Pose(FIELD_WIDTH-13.8, 58.5, Math.toRadians(180-146));
     // TODO: testing if turning into the gate is better. (subtract heading) or change bumper
-    public static Pose BLUE_GATE_AUTO_POSE_IN =  new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY()+Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getHeading());
-    public static Pose RED_GATE_AUTO_POSE_IN =  new Pose(RED_GATE_AUTO_POSE.getX()+Math.cos(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getY()+Math.sin(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getHeading());
+    public static Pose BLUE_GATE_AUTO_POSE_IN =  new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY()+Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getHeading()-Math.toRadians(3));
+    public static Pose RED_GATE_AUTO_POSE_IN =  new Pose(RED_GATE_AUTO_POSE.getX()+Math.cos(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getY()+Math.sin(RED_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, RED_GATE_AUTO_POSE.getHeading()-Math.toRadians(3));
     public static Pose BLUE_SHOOT_AUTO_POSE = new Pose(54, 78, Math.toRadians(148));
     public static Pose RED_SHOOT_AUTO_POSE = new Pose(144-54, 78, Math.toRadians(180-148));
 }

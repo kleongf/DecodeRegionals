@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import static com.qualcomm.robotcore.eventloop.opmode.OpMode.blackboard;
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -29,7 +30,7 @@ public class MainTeleop {
     public TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
     private double speedScaler = 1;
-    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.45;
+    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.35;
     public TeleopRobot robot;
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
@@ -39,8 +40,10 @@ public class MainTeleop {
     private Alliance alliance;
     private Zone currentZone;
     private ElapsedTime relocalizationTimer;
+    private ElapsedTime turretResetTimer;
     private ZoneUtil zoneUtil;
     private double relocalizationTime = 20; // 20 seconds
+    private double turretResetTime = 20;
     private boolean endgameOn = false;
     private double prevLeftTriggerValue = 0;
     private double prevRightTriggerValue = 0;
@@ -73,6 +76,7 @@ public class MainTeleop {
 
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
+        this.turretResetTimer = new ElapsedTime();
     }
     private double normalizeInput(double input) {
         return 1.1 * input;
@@ -124,14 +128,42 @@ public class MainTeleop {
 
         if (relocalizationTimer.seconds() > relocalizationTime) {
             // TODO: test automatic relocalization
-            if (drivetrain.getVelocity().getMagnitude() > 5 && drivetrain.getAngularVelocity() > 0.1 && getDistance(currentPose, goalPose) < 100) {
+            // we could also try a larger dist constraint and avging the poses
+            double dx = goalPose.getX() - currentPose.getX();
+            double dy = goalPose.getY() - currentPose.getY();
+            double angleToGoal = Math.atan2(-dx, dy);
+
+            double processedAngle = alliance == Alliance.BLUE ? (angleToGoal - Math.PI / 4) : (angleToGoal + Math.PI / 4);
+
+            if (drivetrain.getVelocity().getMagnitude() < 3 && Math.abs(drivetrain.getAngularVelocity()) < 0.1 && getDistance(currentPose, goalPose) < 100 && Math.abs(processedAngle) < Math.toRadians(20)) {
                 Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
-                if (MathUtil.distance(relocalizedPose, currentPose) < 5) { // threshold: 5 inches
+                if (MathUtil.distance(relocalizedPose, currentPose) < 10) { // threshold: 10 inches
                     drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
+                    double averageX = (relocalizedPose.getX() + currentPose.getX()) / 2;
+                    double averageY = (relocalizedPose.getY() + currentPose.getY()) / 2;
+                    double theta1 = currentPose.getHeading();
+                    double theta2 = relocalizedPose.getHeading();
+                    double averageAngle = Math.atan2(Math.cos(theta1) + Math.cos(theta2), Math.sin(theta1) + Math.sin(theta2));
+                    Pose averagePose = new Pose(averageX, averageY, averageAngle);
+                    // something is cooked here.
+                    // drivetrain.follower.setPose(averagePose);
+                    robot.webcamLocalizer.flashLED();
                     relocalizationTimer.reset();
                 }
             }
         }
+
+        // TODO: a new thing to automatically reset turret every like 20 seconds, when not moving much and at decent position
+        // check turret motor location and velocity.
+
+        if (turretResetTimer.seconds() > turretResetTime) {
+            double turretPos = robot.turret.turretMotor.getCurrentPosition();
+            if (Math.abs(robot.turret.turretMotor.getVelocity()) < 30 && turretPos > -1200 && turretPos < -200) {
+                robot.turret.resetEncoderWithAbsoluteReading();
+                turretResetTimer.reset();
+            }
+        }
+
 
         // GAMEPAD 1 (DRIVER)
 
@@ -164,10 +196,9 @@ public class MainTeleop {
             automateRobot = !automateRobot;
         }
 
-        // set robot centric: x (used to be intake gate but not anymore)
+        // set robot centric: x
         if (gamepad1.xWasPressed()) {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
-            // drivetrain.intakeGate();
         }
 
         // gate open: y
@@ -175,6 +206,7 @@ public class MainTeleop {
             drivetrain.openGate();
         }
 
+        // stop auto drive: left/right stick
         if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
             drivetrain.breakFollowing();
         }
@@ -192,9 +224,7 @@ public class MainTeleop {
             endgameOn = !endgameOn;
         }
 
-        // slow mo for good park, 0.4x speed
-        // TODO: set up hang buttons. folded up = 0.73 and down = 0.5, so 0.5 when parking
-
+        // right/left trigger: tilt
         if (gamepad2.right_trigger > 0.5 && !(prevRightTriggerValue > 0.5)) {
             robot.pivot.tilt();
         }
@@ -202,22 +232,11 @@ public class MainTeleop {
             robot.pivot.unTilt();
         }
 
-//        if (Math.abs(gamepad2.right_trigger) > 0.05) {
-//            robot.pivot.setPower(-gamepad2.right_trigger);
-//        }
-//
-//        if (Math.abs(gamepad2.left_trigger) > 0.05) {
-//            robot.pivot.setPower(gamepad2.left_trigger);
-//        }
-//
-//        if (Math.abs(gamepad2.right_trigger) < 0.05 && Math.abs(gamepad2.left_trigger) < 0.05) {
-//            robot.pivot.setPower(0);
-//        }
-
         // relocalization: left stick OVERRIDE with webcam
         if (gamepad2.leftStickButtonWasPressed()) {
             Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
+                robot.webcamLocalizer.flashLED();
                 drivetrain.follower.setPose(webcamPose);
             }
         }
@@ -300,6 +319,7 @@ public class MainTeleop {
 
     public void start() {
         robot.initPositions();
+        robot.intake.state = Intake.IntakeState.INTAKE_FAST;
         robot.start();
     }
 

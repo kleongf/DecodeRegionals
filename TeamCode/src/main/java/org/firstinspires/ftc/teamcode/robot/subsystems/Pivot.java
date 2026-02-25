@@ -10,7 +10,7 @@ public class Pivot extends Subsystem {
     public Servo hang1;
     public Pivot(HardwareMap hardwareMap) {
         hang1 = hardwareMap.get(Servo.class, "hang1");
-        // unTilt();
+        unTilt();
     }
 
     @Override
