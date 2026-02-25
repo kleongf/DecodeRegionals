@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Blue Close 24 Extra Gate Comp", group="!")
+@Autonomous(name="Blue Close 24 Extra Gate Comp", group="?")
 public class BlueClose24ExtraGateV8 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;

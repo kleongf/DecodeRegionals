@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="Vision Distance Test Blue")
-public class VisionDistanceTest extends OpMode {
+@TeleOp(name="Vision Distance Test Red")
+public class VisionDistanceTestRed extends OpMode {
     private ArtifactVision2 vision;
     @Override
     public void loop() {
@@ -25,7 +25,7 @@ public class VisionDistanceTest extends OpMode {
 
     @Override
     public void init() {
-        vision = new ArtifactVision2(hardwareMap, Alliance.BLUE);
+        vision = new ArtifactVision2(hardwareMap, Alliance.RED);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 

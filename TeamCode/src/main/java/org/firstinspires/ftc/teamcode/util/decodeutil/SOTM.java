@@ -10,7 +10,7 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
-    private double farScaleFactor = 0.5;
+    private double farScaleFactor = 0.7;
     public double kF = -0.02; //0.08
     public double kFAngular = -0.08;
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10

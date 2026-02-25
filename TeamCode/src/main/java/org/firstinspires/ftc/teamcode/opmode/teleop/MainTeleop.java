@@ -305,6 +305,13 @@ public class MainTeleop {
             }
         }
 
+        // more solid tracking from far
+        if (getDistance(currentPose, goalPose) > 120) {
+            robot.turret.setPDCoefficients(0.008, 0);
+        } else {
+            robot.turret.setPDCoefficients(0.005, 0);
+        }
+
         prevDetectState = robot.intake.detectionState;
         prevRightTriggerValue = gamepad2.right_trigger;
         prevLeftTriggerValue = gamepad2.left_trigger;

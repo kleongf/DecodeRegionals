@@ -62,7 +62,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Blue Close 24 Sidespike V2 no vision", group="!")
+@Autonomous(name="Blue Close 24 Sidespike V2 no vision", group="?")
 public class BlueClose24SidespikeV2 extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
