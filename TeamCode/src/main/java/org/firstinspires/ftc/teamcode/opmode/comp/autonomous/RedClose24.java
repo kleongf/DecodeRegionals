@@ -48,7 +48,7 @@ public class RedClose24 extends OpMode {
     private boolean holdingTurret = true;
     private final Pose startPose = PoseConstants.RED_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
-    private Pose currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-27, 104, Math.toRadians(180-(-90)));
+    private Pose currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-27, 102, Math.toRadians(180-(-90)));
     // TODO: final pos is in between the stuff
     private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, openGate, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeThird, shootThird, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
 
@@ -58,7 +58,7 @@ public class RedClose24 extends OpMode {
                         startPose,
                         new Pose(PoseConstants.FIELD_WIDTH-32, 102.000)
                 )
-        ).setBrakingStrength(0.5).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
+        ).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.93).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierCurve(
@@ -185,7 +185,7 @@ public class RedClose24 extends OpMode {
                         new BezierCurve(
                                 new Pose(PoseConstants.FIELD_WIDTH-56.000, 75.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
-                                new Pose(PoseConstants.FIELD_WIDTH-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY()+0.5)
+                                new Pose(PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY()+0.5)
                                 // PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )
@@ -227,7 +227,7 @@ public class RedClose24 extends OpMode {
                         new BezierCurve(
                                 new Pose(PoseConstants.FIELD_WIDTH-56.000, 75.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-45, PoseConstants.RED_GATE_AUTO_POSE.getY()),
-                                new Pose(PoseConstants.FIELD_WIDTH-PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY()+1)
+                                new Pose(PoseConstants.RED_GATE_AUTO_POSE.getX(), PoseConstants.RED_GATE_AUTO_POSE.getY()+1)
                                 // PoseConstants.RED_GATE_AUTO_POSE
                         )
                 )

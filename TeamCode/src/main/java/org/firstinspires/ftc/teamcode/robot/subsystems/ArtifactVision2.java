@@ -26,7 +26,7 @@ import java.util.List;
 public class ArtifactVision2 extends Subsystem {
     private VisionPortal portal;
     private ArtifactProcessor colorLocator;
-    private double bestX = -19;
+    private double bestX = 0;
     private double cameraAngle = Math.toRadians(0); // if angled down, -10 degrees or something
     // camera intrinsic matrix. since focusing the new lens it may need some retuning.
     private ArrayList<Double> movingAverages = new ArrayList<>();
@@ -168,7 +168,7 @@ public class ArtifactVision2 extends Subsystem {
             Log.d("null pointer exception in vision: ", e.toString());
         }
         // prob better for now
-        double maxAreaLoc = 0;
+        double maxAreaLoc = 24;
         double maxArea = 0;
 
         for (int i = -240; i < 240; i++) {

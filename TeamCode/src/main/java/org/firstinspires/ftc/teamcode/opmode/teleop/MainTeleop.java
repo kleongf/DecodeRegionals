@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.robot.robots.TeleopRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.robot.subsystems.WebcamLocalizer;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.TeleopDrivetrain;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
@@ -35,7 +36,8 @@ public class MainTeleop {
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;
-    private boolean automateRobot = true;
+    private boolean automateRobot = false;
+    private boolean automateTurretReset = true;
     private Telemetry telemetry;
     private Alliance alliance;
     private Zone currentZone;
@@ -105,6 +107,10 @@ public class MainTeleop {
 //        } else if (robotState == RobotState.IDLE && !robot.intake.isFull()) {
 //            robot.intake.state = Intake.IntakeState.INTAKE_FAST;
 //        }
+        if (robot.intake.isFull() && prevDetectState != robot.intake.detectionState) {
+            robot.webcamLocalizer.ledState = WebcamLocalizer.LedState.INTAKE_FULL;
+            robot.webcamLocalizer.flashLEDMultipleTimes();
+        }
 
         if (automateRobot) {
             // if prev few states were the same, then we didn't shoot anything, therefore no need to autodrive again
@@ -164,11 +170,13 @@ public class MainTeleop {
         // TODO: a new thing to automatically reset turret every like 20 seconds, when not moving much and at decent position
         // check turret motor location and velocity.
 
-        if (turretResetTimer.seconds() > turretResetTime) {
-            double turretPos = robot.turret.turretMotor.getCurrentPosition();
-            if (Math.abs(robot.turret.turretMotor.getVelocity()) < 30 && turretPos > -1200 && turretPos < -200) {
-                robot.turret.resetEncoderWithAbsoluteReading();
-                turretResetTimer.reset();
+        if (automateTurretReset) {
+            if (turretResetTimer.seconds() > turretResetTime) {
+                double turretPos = robot.turret.turretMotor.getCurrentPosition();
+                if (Math.abs(robot.turret.turretMotor.getVelocity()) < 30 && turretPos > -1200 && turretPos < -200) {
+                    robot.turret.resetEncoderWithAbsoluteReading();
+                    turretResetTimer.reset();
+                }
             }
         }
 
@@ -203,6 +211,12 @@ public class MainTeleop {
         if (gamepad1.dpadUpWasPressed()) {
             automateRobot = !automateRobot;
         }
+
+        // stop turret reset
+        // if full relocalize then do this
+//        if (gamepad1.dpadDownWasPressed()) {
+//            automateTurretReset = !automateTurretReset;
+//        }
 
         // set robot centric: x
         if (gamepad1.xWasPressed()) {
@@ -311,6 +325,8 @@ public class MainTeleop {
         } else {
             robot.turret.setPDCoefficients(0.005, 0);
         }
+
+        // population std dev: 28.32
 
         prevDetectState = robot.intake.detectionState;
         prevRightTriggerValue = gamepad2.right_trigger;

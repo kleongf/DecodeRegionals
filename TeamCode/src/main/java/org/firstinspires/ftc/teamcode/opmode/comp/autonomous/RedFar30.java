@@ -42,18 +42,18 @@ public class RedFar30 extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-42, 8.000), new Pose(PoseConstants.FIELD_WIDTH-12.000, 9.000)))
+                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-42, 8.000), new Pose(PoseConstants.FIELD_WIDTH-12.000, 14.000)))
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
         shootCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-12.000, 9.000), new Pose(PoseConstants.FIELD_WIDTH-46, 9)))
+                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-12.000, 14.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14)))
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(PoseConstants.FIELD_WIDTH-46, 9),
+                                new Pose(PoseConstants.FIELD_WIDTH-46, 14),
                                 new Pose(PoseConstants.FIELD_WIDTH-40.000, 36.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-38.000, 36.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-13.000, 36.000)
@@ -65,7 +65,7 @@ public class RedFar30 extends OpMode {
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-13.000, 36.000), new Pose(PoseConstants.FIELD_WIDTH-46, 9))
+                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-13.000, 36.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
@@ -101,7 +101,7 @@ public class RedFar30 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 9, Math.toRadians(180-180));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -133,7 +133,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner1, false);
                         })
@@ -144,7 +144,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -168,7 +168,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner2, false);
                         })
@@ -179,7 +179,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -203,7 +203,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner3, false);
                         })
@@ -214,7 +214,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -238,7 +238,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner4, false);
                         })
@@ -249,7 +249,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -273,7 +273,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner5, false);
                         })
@@ -284,7 +284,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -308,7 +308,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner6, false);
                         })
@@ -319,7 +319,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -343,7 +343,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner7, false);
                         })
@@ -354,7 +354,7 @@ public class RedFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 9)
+                                                    new Pose(PoseConstants.FIELD_WIDTH-46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -366,7 +366,7 @@ public class RedFar30 extends OpMode {
                         .onEnter(() -> robot.shootCommandSlow.start())
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
-                        .onEnter(() -> follower.holdPoint(new Pose(PoseConstants.FIELD_WIDTH-38, 9, Math.toRadians(180-180))))
+                        .onEnter(() -> follower.holdPoint(new Pose(PoseConstants.FIELD_WIDTH-38, 14, Math.toRadians(180-180))))
 
         );
 
@@ -400,7 +400,7 @@ public class RedFar30 extends OpMode {
     public void start() {
         double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
         robot.setAzimuthThetaVelocity(values);
-        robot.turret.setPDCoefficients(0.008, 0.0004);
+        robot.turret.setPDCoefficients(0.01, 0.0005);
 
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
 

@@ -43,18 +43,18 @@ public class BlueFar30 extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(42, 8.000), new Pose(12.000, 9.000)))
+                .addPath(new BezierLine(new Pose(42, 8.000), new Pose(12.000, 14.000)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
         shootCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(12.000, 9.000), new Pose(46, 9)))
+                .addPath(new BezierLine(new Pose(12.000, 14.000), new Pose(46, 14)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(46, 9),
+                                new Pose(46, 14),
                                 new Pose(40.000, 36.000),
                                 new Pose(38.000, 36.000),
                                 new Pose(13.000, 36.000)
@@ -66,14 +66,14 @@ public class BlueFar30 extends OpMode {
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.000, 36.000), new Pose(46, 9))
+                        new BezierLine(new Pose(13.000, 36.000), new Pose(46, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         park = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(46, 9), new Pose(36, 9))
+                        new BezierLine(new Pose(46, 14), new Pose(36, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .setBrakingStrength(0.5)
@@ -111,7 +111,7 @@ public class BlueFar30 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            currentShootPose = new Pose(46, 9, Math.toRadians(180));
+                            currentShootPose = new Pose(46, 14, Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -138,11 +138,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner1, false);
                         })
@@ -153,7 +153,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -174,11 +174,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner2, false);
                         })
@@ -189,7 +189,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -208,11 +208,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner3, false);
                         })
@@ -223,7 +223,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -242,11 +242,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner4, false);
                         })
@@ -257,7 +257,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -276,11 +276,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner5, false);
                         })
@@ -291,7 +291,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -310,11 +310,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner6, false);
                         })
@@ -325,7 +325,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -344,11 +344,11 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 9, 40))
+                                                    new Pose(9, MathUtil.clamp(follower.getPose().getY() + optimalX, 14, 40))
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
-                                    .setNoDeceleration()
+                                    
                                     .build();
                             follower.followPath(intakeCorner7, false);
                         })
@@ -359,7 +359,7 @@ public class BlueFar30 extends OpMode {
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 9)
+                                                    new Pose(46, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -406,7 +406,7 @@ public class BlueFar30 extends OpMode {
     public void start() {
         double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
         robot.setAzimuthThetaVelocity(values);
-        robot.turret.setPDCoefficients(0.008, 0.0004);
+        robot.turret.setPDCoefficients(0.01, 0.0005);
 
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
         stateMachine.start();

@@ -33,16 +33,23 @@ public class WebcamLocalizer extends Subsystem {
     // ok this camera position is also probably wrong
 
     // (72+y), (72-x)
+    public enum LedState {
+        INTAKE_FULL,
+        RELOCALIZING
+    }
     private Pose currentPose;
     private boolean isGoodDetection = false;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private ElapsedTime timer;
+    private ElapsedTime flashingTimer;
     private Servo light;
+    public LedState ledState = LedState.INTAKE_FULL;
     private Position cameraPosition = new Position(DistanceUnit.MM,
             138, 119, 236, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -70, 0, 0);
+
     public static Pose toPinpointPose(Pose webcamPose) {
         return new Pose(PoseConstants.FIELD_WIDTH / 2d + webcamPose.getY(), PoseConstants.FIELD_WIDTH / 2d - webcamPose.getX(), webcamPose.getHeading());
     }
@@ -66,6 +73,7 @@ public class WebcamLocalizer extends Subsystem {
     public WebcamLocalizer(HardwareMap hardwareMap) {
         currentPose = new Pose();
         timer = new ElapsedTime();
+        flashingTimer = new ElapsedTime();
         light = hardwareMap.get(Servo.class, "light");
         light.setPosition(0);
 
@@ -130,8 +138,22 @@ public class WebcamLocalizer extends Subsystem {
             isGoodDetection = false;
         }
 
-        if (timer.seconds() > 1) {
-            light.setPosition(0);
+        if (ledState == LedState.RELOCALIZING) {
+            if (timer.seconds() > 1) {
+                light.setPosition(0);
+            } else {
+                light.setPosition(1);
+            }
+        } else if (ledState == LedState.INTAKE_FULL) {
+            if (flashingTimer.seconds() < 1) {
+                if (Math.round(flashingTimer.seconds() * 10) % 2 == 0) {
+                    light.setPosition(1);
+                } else {
+                    light.setPosition(0);
+                }
+            } else {
+                light.setPosition(0);
+            }
         }
     }
 
@@ -142,7 +164,14 @@ public class WebcamLocalizer extends Subsystem {
     public boolean getIsGoodDetection() {return isGoodDetection;}
 
     public void flashLED() {
+        ledState = LedState.RELOCALIZING;
         light.setPosition(1.0);
         timer.reset();
+    }
+
+    public void flashLEDMultipleTimes() {
+        ledState = LedState.INTAKE_FULL;
+        light.setPosition(1.0);
+        flashingTimer.reset();
     }
 }

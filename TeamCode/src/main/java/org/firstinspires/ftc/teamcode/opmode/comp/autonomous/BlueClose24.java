@@ -58,7 +58,7 @@ public class BlueClose24 extends OpMode {
                         startPose,
                         new Pose(32, 102.000)
                 )
-        ).setBrakingStrength(0.5).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
+        ).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.93).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierCurve(

@@ -40,8 +40,8 @@ public class PoseConstants {
     public static Pose BLUE_FAR_AUTO_POSE = new Pose(42, 8, Math.toRadians(180));
     public static Pose RED_FAR_AUTO_POSE = new Pose(FIELD_WIDTH-42, 8, Math.toRadians(180-180));
 
-    public static Pose BLUE_END_AUTO_POSE = new Pose(48, 114, Math.toRadians(-135));
-    public static Pose RED_END_AUTO_POSE = new Pose(144-48, 114, Math.toRadians(180-(-135)));
+    public static Pose BLUE_END_AUTO_POSE = new Pose(58, 96, Math.toRadians(-127));
+    public static Pose RED_END_AUTO_POSE = new Pose(FIELD_WIDTH-58, 96, Math.toRadians(180-(-127)));
     public static Pose BLUE_END_FAR_AUTO_POSE = new Pose(36, 12, Math.toRadians(180));
     public static Pose RED_END_FAR_AUTO_POSE = new Pose(FIELD_WIDTH - 36, 12, Math.toRadians(180-180));
     // 144-12.4
