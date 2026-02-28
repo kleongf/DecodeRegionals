@@ -12,6 +12,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -29,7 +30,9 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
 // this one drives to a good point to "scout" for balls before driving to them. it seems that cam has not enough fov, so we are going to drive closer.
 // TODO: maybe add a "safety" path: if not over two balls were collected, make a new path to drive to corner?
+@Disabled
 @Autonomous(name="Blue Far 27 pid to ball", group="!")
+
 public class BlueFar30V1 extends OpMode {
     // TODO: we might want to do 30 or park, idk how much time we have.
     private Follower follower;

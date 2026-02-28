@@ -43,11 +43,11 @@ public class RedClose24ExtraGateCycle extends OpMode {
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private double firstSpikesOffset = -Math.toRadians(5);
+    private double firstSpikesOffset = -Math.toRadians(3);
     private boolean holdingTurret = true;
     private final Pose startPose = PoseConstants.RED_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
-    private Pose currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-27, 104, Math.toRadians(180-(-90)));
+    private Pose currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-32, 108, Math.toRadians(180-(-90)));
     // TODO: final pos is in between the stuff
     private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, openGate, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeThird, shootThird, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile;
 
@@ -55,15 +55,15 @@ public class RedClose24ExtraGateCycle extends OpMode {
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
                         startPose,
-                        new Pose(PoseConstants.FIELD_WIDTH-32, 102.000)
+                        new Pose(PoseConstants.FIELD_WIDTH-32, 108.000)
                 )
-        ).setBrakingStrength(2).setTimeoutConstraint(100).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
+        ).setBrakingStrength(4).setTimeoutConstraint(100).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierCurve(
-                        new Pose(PoseConstants.FIELD_WIDTH-32, 102.000),
-                        new Pose(PoseConstants.FIELD_WIDTH-23.5, 97),
-                        new Pose(PoseConstants.FIELD_WIDTH-23.5, 92),
+                        new Pose(PoseConstants.FIELD_WIDTH-32, 108.000),
+                        new Pose(PoseConstants.FIELD_WIDTH-24, 97),
+                        new Pose(PoseConstants.FIELD_WIDTH-24, 92),
                         new Pose(PoseConstants.FIELD_WIDTH-23.500, 83.000)
                 )
         ).setConstantHeadingInterpolation(startPose.getHeading()).setTValueConstraint(0.95).build();
@@ -71,7 +71,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(PoseConstants.FIELD_WIDTH-23.500, 83.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-32, 102)
+                                new Pose(PoseConstants.FIELD_WIDTH-32, 108)
                         )
                 )
                 .setBrakingStrength(0.5) // equal to zpam 2 try this i guess
@@ -90,11 +90,11 @@ public class RedClose24ExtraGateCycle extends OpMode {
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 // TODO: also artificially changed this lol
-                                new Pose(PoseConstants.FIELD_WIDTH-32.00, 102.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-32.00, 108.000),
                                 // i also changed this control point a bit
                                 // new Pose(PoseConstants.FIELD_WIDTH-28.00, 92.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-24.50, 80.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-24, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-22, 82.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-22, 72.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-23.500, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
@@ -328,13 +328,6 @@ public class RedClose24ExtraGateCycle extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
 
-        follower.setSecondaryDrivePIDFCoefficients(
-                new FilteredPIDFCoefficients(0.012, 0, 0.0012, 0.6, 0)
-        );
-
-//        follower.setDrivePIDFCoefficients(
-//                new FilteredPIDFCoefficients(0.015, 0, 0.00015, 0.6, 0)
-//        );
 
         follower.setStartingPose(startPose);
         robot = new AutonomousRobot(hardwareMap, Alliance.RED);
@@ -348,7 +341,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                             // actually it seems to work on the first path
                             // also this pose isn't accurate?
                             follower.followPath(shootPreload, true);
-                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-27, 102, Math.toRadians(180-(-90)));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-32, 108, Math.toRadians(180-(-90)));
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                         })
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
@@ -357,12 +350,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
-//                            follower.setDrivePIDFCoefficients(
-//                                    new FilteredPIDFCoefficients(0.02, 0, 0.0004, 0.6, 0)
-//                            );
-                            follower.setSecondaryDrivePIDFCoefficients(
-                                    new FilteredPIDFCoefficients(0.02, 0, 0.0008, 0.6, 0)
-                            );
+
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                         })
@@ -431,6 +419,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.followPath(intakeGate1, true);
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-56, 75, Math.toRadians(180-(-160))+Math.toRadians(2));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -589,7 +578,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
         robot.turret.resetEncoderWithAbsoluteReading();
         robot.turret.setUseExternal(false);
         // TODO: test, should be a bit better. will not overcorrect.
-        // sotm2.latencyScaleFactor = 1;
+        sotm2.latencyScaleFactor = 0.5;
         // robot.turret.setPDCoefficients(0.005, 0);
     }
     @Override
@@ -607,7 +596,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
             // now it applies feedforward but target is same, so it will update slightly when shooting kinda like sotm.
             // TODO: testing no move turret
             robot.setAzimuthThetaVelocity(new double[] {turretValues[0], shooterValues[1], shooterValues[2]});
-            robot.turret.setFeedforward(turretValues[3]*0.2);
+            robot.turret.setFeedforward(turretValues[3]*0);
         }
 
         stateMachine.update();

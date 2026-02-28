@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 
 @Config
-@TeleOp(name="Robot Test #2", group = "!")
+@TeleOp(name="Robot Test #2 COMP: individual motor test", group = "!")
 public class RobotTest2 extends OpMode {
     public Servo leftLatch;
     public Servo liftServo;
@@ -58,8 +58,19 @@ public class RobotTest2 extends OpMode {
 
     @Override
     public void loop() {
-        shooterMotor.setPower(shooterPower1);
-        shooterMotor2.setPower(shooterPower2);
+        if (gamepad1.left_trigger > 0.1) {
+            shooterMotor.setPower(1);
+        } else {
+            shooterMotor.setPower(0);
+        }
+
+        if (gamepad1.right_trigger > 0.1) {
+            shooterMotor2.setPower(1);
+        } else {
+            shooterMotor2.setPower(0);
+        }
+//        shooterMotor.setPower(shooterPower1);
+//        shooterMotor2.setPower(shooterPower2);
 
         intakeMotor.setPower(intakePower);
 

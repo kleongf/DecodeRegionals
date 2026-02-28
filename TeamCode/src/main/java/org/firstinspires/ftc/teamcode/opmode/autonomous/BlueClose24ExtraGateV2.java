@@ -26,6 +26,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -54,6 +55,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
     2. it follows path back when gate intaking is done
     3. it tries to sotm
  */
+@Disabled
 @Autonomous(name="Blue Close 24 Extra Gate, good pathing and predictive", group="?")
 public class BlueClose24ExtraGateV2 extends OpMode {
     private Follower follower;

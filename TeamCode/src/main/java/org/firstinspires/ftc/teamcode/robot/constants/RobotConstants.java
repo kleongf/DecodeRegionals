@@ -9,7 +9,7 @@ public class RobotConstants {
     public static double LATCH_CLOSED = 0.5;//0.56;
     public static double LATCH_OPEN = 0.7;
     public static String END_POSE_KEY = "END_POSE";
-    public static double TILT_SERVO_TILTED = 0.55;
+    public static double TILT_SERVO_TILTED = 0.8;
     public static double TILT_SERVO_UNTILTED = 0;
     public static int ROBOT_RADIUS = 8;
 }

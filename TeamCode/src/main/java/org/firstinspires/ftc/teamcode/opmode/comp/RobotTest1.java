@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="Robot Test #1", group="!")
+@TeleOp(name="Robot Test #1 COMP: tele + apriltag camera", group="!")
 public class RobotTest1 extends OpMode {
     private TestTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;

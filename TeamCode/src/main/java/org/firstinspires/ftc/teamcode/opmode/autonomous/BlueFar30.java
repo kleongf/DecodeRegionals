@@ -9,6 +9,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -33,7 +34,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 // for more accuracy, maybe go to the middle? about x = 24 ish? we are going from x = 48 to x = 9 to check.
 // and check when we are like 24 inches away or something idk, so that where we go is good
 // could always be driving to the best point or something
-
+@Disabled
 @Autonomous(name="Blue Far 30 bad", group="?")
 public class BlueFar30 extends OpMode {
     private Follower follower;

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="SOTM teleop tuning BLUE", group="!")
+@TeleOp(name="SOTM teleop tuning BLUE", group="?")
 public class SOTMTeleop3 extends OpMode {
     // steps in order:
     // tune the pid first, so that we can track a moving target.

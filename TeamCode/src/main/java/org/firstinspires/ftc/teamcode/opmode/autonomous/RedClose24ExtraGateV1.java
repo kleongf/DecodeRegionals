@@ -24,6 +24,7 @@ import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -41,7 +42,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
-
+@Disabled
 @Autonomous(name="Red Close 24 Extra Gate Comp", group="!")
 public class RedClose24ExtraGateV1 extends OpMode {
     private Follower follower;

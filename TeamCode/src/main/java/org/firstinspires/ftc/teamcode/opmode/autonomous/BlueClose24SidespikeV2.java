@@ -44,6 +44,7 @@ import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -61,7 +62,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 import java.util.ArrayList;
-
+@Disabled
 @Autonomous(name="Blue Close 24 Sidespike V2 no vision", group="?")
 public class BlueClose24SidespikeV2 extends OpMode {
     private Follower follower;

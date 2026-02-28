@@ -108,7 +108,7 @@ public class RedFar30 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180)+Math.toRadians(4));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180)+Math.toRadians(3));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),

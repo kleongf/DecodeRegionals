@@ -142,12 +142,12 @@ public class WebcamLocalizer extends Subsystem {
             if (timer.seconds() > 1) {
                 light.setPosition(0);
             } else {
-                light.setPosition(1);
+                light.setPosition(0.7);
             }
         } else if (ledState == LedState.INTAKE_FULL) {
             if (flashingTimer.seconds() < 1) {
                 if (Math.round(flashingTimer.seconds() * 10) % 2 == 0) {
-                    light.setPosition(1);
+                    light.setPosition(0.7);
                 } else {
                     light.setPosition(0);
                 }
