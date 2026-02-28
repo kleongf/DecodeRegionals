@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 @TeleOp(name="Absolute Encoder Tuner")
 public class AbsoluteEncoderTuning extends OpMode {
     // TODO: i also have no idea if it's reversed or not. might need to negate to calculate position
-    public static double encoderOffsetDegrees = 0;
+    public static double encoderOffsetDegrees = -107.2;
     public static double minVoltage = 0.02;
-    public static double maxVoltage = 3.29; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
+    public static double maxVoltage = 3.272; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
     public static boolean isReversed = false;
     private Turret turret;
     private double ticksPerRevolution = 1381; // 383.6*5

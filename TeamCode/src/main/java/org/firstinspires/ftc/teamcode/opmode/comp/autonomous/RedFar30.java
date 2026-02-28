@@ -37,16 +37,16 @@ public class RedFar30 extends OpMode {
     private final Pose startPose = PoseConstants.RED_FAR_AUTO_POSE;
     private Pose currentShootPose = PoseConstants.RED_FAR_AUTO_POSE;
     private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
-    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeCorner1, goBack1, intakeCorner2, goBack2, intakeCorner3, goBack3, intakeCorner4, goBack4, intakeCorner5, goBack5, intakeCorner6, goBack6, intakeCorner7, goBack7;
+    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeCorner1, goBack1, intakeCorner2, goBack2, intakeCorner3, goBack3, intakeCorner4, goBack4, intakeCorner5, goBack5, intakeCorner6, goBack6, intakeCorner7, goBack7, park;
     private double optimalX = 0;
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-42, 8.000), new Pose(PoseConstants.FIELD_WIDTH-12.000, 14.000)))
+                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-42, 8.000), new Pose(PoseConstants.FIELD_WIDTH-12.000, 9)))
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
         shootCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-12.000, 14.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14)))
+                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-12, 9), new Pose(PoseConstants.FIELD_WIDTH-46, 14)))
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
 
@@ -54,9 +54,9 @@ public class RedFar30 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(PoseConstants.FIELD_WIDTH-46, 14),
-                                new Pose(PoseConstants.FIELD_WIDTH-40.000, 36.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-38.000, 36.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-13.000, 36.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-40.000, 34.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-38.000, 34.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-13.000, 34.000)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -65,7 +65,14 @@ public class RedFar30 extends OpMode {
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-13.000, 36.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14))
+                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-13.000, 34.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180-180))
+                .build();
+
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-46, 14), new Pose(PoseConstants.FIELD_WIDTH-36, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
@@ -101,9 +108,10 @@ public class RedFar30 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180)+Math.toRadians(4));
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
@@ -137,7 +145,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner1, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack1 = follower.pathBuilder()
@@ -172,7 +181,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner2, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack2 = follower.pathBuilder()
@@ -207,7 +217,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner3, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack3 = follower.pathBuilder()
@@ -242,7 +253,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner4, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack4 = follower.pathBuilder()
@@ -277,7 +289,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner5, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack5 = follower.pathBuilder()
@@ -312,7 +325,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner6, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack6 = follower.pathBuilder()
@@ -347,7 +361,8 @@ public class RedFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner7, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .maxTime(1200),
                 new State()
                         .onEnter(() -> {
                             goBack7 = follower.pathBuilder()
@@ -366,7 +381,8 @@ public class RedFar30 extends OpMode {
                         .onEnter(() -> robot.shootCommandSlow.start())
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
-                        .onEnter(() -> follower.holdPoint(new Pose(PoseConstants.FIELD_WIDTH-38, 14, Math.toRadians(180-180))))
+                        .onEnter(() -> follower.followPath(park, true))
+                        .transition(new Transition(() -> !follower.isBusy()))
 
         );
 
@@ -400,7 +416,7 @@ public class RedFar30 extends OpMode {
     public void start() {
         double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
         robot.setAzimuthThetaVelocity(values);
-        robot.turret.setPDCoefficients(0.01, 0.0005);
+        robot.turret.setPDCoefficients(0.008, 0.0005);
 
         robot.shooter.state = Shooter.ShooterState.SHOOTER_ON;
 
