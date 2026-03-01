@@ -474,7 +474,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1500),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate3, true);
@@ -516,7 +516,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1500),
+                        .maxTime(1800),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate4, true);
@@ -558,7 +558,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
 //                        })
 //                        .minTime(600)
 //                        .transition(new Transition(() -> robot.intake.intakeFull()))
-//                        .maxTime(1500),
+//                        .maxTime(1800),
 //                new State()
 //                        .onEnter(() -> {
 //                            follower.followPath(shootGate5, true);
