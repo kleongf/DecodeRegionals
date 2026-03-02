@@ -38,11 +38,8 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 import java.util.ArrayList;
 
 
-@Autonomous(name="Blue Close 24 Side Spike COMP", group="!")
-public class BlueClose24ExtraGateCycle extends OpMode {
-    private boolean doThirdSpike = false;
-    private boolean doOpenGate = false;
-    private double pileCycleY = 36; // idk just in case we need to change it? unsure. i might just make a diff program for that?
+@Autonomous(name="Blue Close 27 Side Spike MTI", group="!")
+public class BlueClose27MTI extends OpMode {
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
@@ -53,7 +50,7 @@ public class BlueClose24ExtraGateCycle extends OpMode {
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
     private Pose currentShootPose = new Pose(32, 108, Math.toRadians(-90));
     // TODO: final pos is in between the stuff
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, openGate, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeThird, shootThird, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeThird, shootThird, intakePile1, shootPile1, intakePile2, shootPile2;
 
     public void buildPaths() {
         shootPreload = follower.pathBuilder().addPath(
@@ -79,65 +76,27 @@ public class BlueClose24ExtraGateCycle extends OpMode {
                                 new Pose(32, 108)
                         )
                 )
-                .setBrakingStrength(0.5) // equal to zpam 2 try this i guess
+                .setBrakingStrength(0.5)
                 .setTValueConstraint(0.95)
-                // i also decreased t value so it will stop earlier hopefully
-                // .setTValueConstraint(0.9)
-                .setConstantHeadingInterpolation(startPose.getHeading())
-                // TODO: play around with max power, i dont think its going to the correct spot
-                // .setBrakingStart(10)
-                // TODO: idk maybe give it some time to correct?
-                // .setTimeoutConstraint(200)
-                // TODO: or turn off predictive for the first two paths
                 .build();
 
 
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                // TODO: also artificially changed this lol
                                 new Pose(32.00, 108.000),
-                                // i also changed this control point a bit
-                                // new Pose(28.00, 92.000),
                                 new Pose(22, 82.000),
                                 new Pose(22, 72.000),
                                 new Pose(23.500, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
-                // .addParametricCallback(0.6, () -> follower.setMaxPower(0.6))
                 .build();
-
-        openGate = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(23.500, 62.000),
-                                PoseConstants.BLUE_SIDE_GATE_POSE
-                        )
-                ).setConstantHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading())
-                .setNoDeceleration()
-                .build();
-
-        // TODO: should we change gate? to simulate the drift?
-
-        HeadingInterpolator shootSecondHeadingInterpolator = HeadingInterpolator.piecewise(
-                new HeadingInterpolator.PiecewiseNode(
-                        0,
-                        0.3,
-                        HeadingInterpolator.constant(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading())
-                ),
-                new HeadingInterpolator.PiecewiseNode(
-                        0.3,
-                        1,
-                        HeadingInterpolator.linear(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-160))
-                )
-        );
 
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
-                                PoseConstants.BLUE_SIDE_GATE_POSE,
+                                new Pose(23.500, 64.000),
                                 new Pose(56.000, 75.000)
                         )
-                )
-                .setHeadingInterpolation(shootSecondHeadingInterpolator)
-                // .setLinearHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-160))
+                ).setLinearHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-160))
                 .build();
 
 
@@ -238,110 +197,54 @@ public class BlueClose24ExtraGateCycle extends OpMode {
         shootThird = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(13.000, 36.000),
-                                new Pose(56.000, 75.000)
+                                new Pose(50.000, 9.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-160))
+                ).setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
 
-        intakeGate4 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(56.000, 75.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
-                                // new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+1)
-                                // PoseConstants.BLUE_GATE_AUTO_POSE
-                        )
-                )
-                .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
-                .build();
-
-        shootGate4 = follower.pathBuilder()
-                .addPath(
+        intakePile1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(56.000, 75.000)
+                                new Pose(50.000, 9.000),
+                                new Pose(9.000, 9.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setTValueConstraint(0.95)
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
 
-        intakeGate5 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(56.000, 75.000),
-                                new Pose(45, PoseConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                PoseConstants.BLUE_GATE_AUTO_POSE
-                                // new Pose(PoseConstants.BLUE_GATE_AUTO_POSE.getX(), PoseConstants.BLUE_GATE_AUTO_POSE.getY()+1)
-                                // PoseConstants.BLUE_GATE_AUTO_POSE
-                        )
-                )
-                .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
-                .build();
-
-        shootGate5 = follower.pathBuilder()
-                .addPath(
+        shootPile1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                PoseConstants.BLUE_GATE_AUTO_POSE,
-                                new Pose(56.000, 75.000)
+                                new Pose(9.000, 9.000),
+                                new Pose(50.000, 14.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
 
-
-        intakePile = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(56.000, 72.000),
-                                new Pose(40.000, 36.000),
-                                new Pose(12.000, 36.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(-160), Math.toRadians(-180))
-                .build();
-
-        shootPile = follower.pathBuilder().addPath(
+        intakePile2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(12.000, 36.000),
-                                new Pose(58, 96)
+                                new Pose(50.000, 14.000),
+                                new Pose(9.000, 30.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setTValueConstraint(0.95)
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
 
-        // TODO: when porting to red use FIELD_WIDTH not 144 btw
-    }
-
-    @Override
-    public void init_loop() {
-        if (gamepad1.dpadUpWasPressed()) {
-            doThirdSpike = !doThirdSpike;
-        }
-        if (gamepad1.dpadDownWasPressed()) {
-            doOpenGate = !doOpenGate;
-        }
-        telemetry.addLine("Press the dpad up/down buttons to configure spike and gate.");
-        telemetry.addData("Do Third Spike", doThirdSpike);
-        telemetry.addData("Do Open Gate", doOpenGate);
+        shootPile2 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(30.000, 9.000),
+                                new Pose(9.000, 30.000)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
+                .build();
     }
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
-
-//        follower.setSecondaryDrivePIDFCoefficients(
-//                new FilteredPIDFCoefficients(0.012, 0, 0.0012, 0.6, 0)
-//        );
-
-//        follower.setDrivePIDFCoefficients(
-//                new FilteredPIDFCoefficients(0.015, 0, 0.00015, 0.6, 0)
-//        );
-
         follower.setStartingPose(startPose);
         robot = new AutonomousRobot(hardwareMap, Alliance.BLUE);
         sotm2 = new SOTM(goalPose);
@@ -350,9 +253,6 @@ public class BlueClose24ExtraGateCycle extends OpMode {
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            // follower.usePredictiveBraking = false;
-                            // actually it seems to work on the first path
-                            // also this pose isn't accurate?
                             follower.followPath(shootPreload, true);
                             currentShootPose = new Pose(32, 108, Math.toRadians(-90));
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
@@ -363,12 +263,6 @@ public class BlueClose24ExtraGateCycle extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
-//                            follower.setDrivePIDFCoefficients(
-//                                    new FilteredPIDFCoefficients(0.02, 0, 0.0004, 0.6, 0)
-//                            );
-//                            follower.setSecondaryDrivePIDFCoefficients(
-//                                    new FilteredPIDFCoefficients(0.02, 0, 0.0008, 0.6, 0)
-//                            );
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                         })
@@ -393,40 +287,12 @@ public class BlueClose24ExtraGateCycle extends OpMode {
                 new State()
                         .onEnter(() -> {
                             holdingTurret = false;
-                            // TODO: maybe compensate by subtracting like 2 degrees? or test more with sotm on
-                            // i added 2 degrees
                             currentShootPose = new Pose(56, 75, Math.toRadians(-160));
                         })
                         // if no open gate, go to shoot second state
-                        .transition(new Transition(() -> follower.atParametricEnd() && !doOpenGate, "shootSecond"))
-                        .transition(new Transition(() -> follower.atParametricEnd() && doOpenGate)),
-                new State()
-                        .onEnter(() -> {
-                            follower.setMaxPower(1);
-                            follower.followPath(openGate, true);
-                        })
                         .transition(new Transition(() -> follower.atParametricEnd())),
-                new State()
-                        .maxTime(100),
                 new State("shootSecond")
                         .onEnter(() -> {
-                            if (doOpenGate) {
-                                shootSecond = follower.pathBuilder().addPath(
-                                                new BezierLine(
-                                                        PoseConstants.BLUE_SIDE_GATE_POSE,
-                                                        new Pose(56.000, 75.000)
-                                                )
-                                        ).setLinearHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-160))
-                                        .build();
-                            } else {
-                                shootSecond = follower.pathBuilder().addPath(
-                                                new BezierLine(
-                                                        new Pose(23.500, 64.000),
-                                                        new Pose(56.000, 75.000)
-                                                )
-                                        ).setLinearHeadingInterpolation(PoseConstants.BLUE_SIDE_GATE_POSE.getHeading(), Math.toRadians(-160))
-                                        .build();
-                            }
                             follower.followPath(shootSecond, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -501,9 +367,7 @@ public class BlueClose24ExtraGateCycle extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished() && doThirdSpike, "thirdSpike"))
-                        .transition(new Transition(() -> robot.shootCommand.isFinished() && !doThirdSpike, "gateCycle4")),
-
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State("thirdSpike")
                         .onEnter(() -> {
                             robot.intakeCommand.start();
@@ -519,74 +383,44 @@ public class BlueClose24ExtraGateCycle extends OpMode {
                         .onEnter(() -> {
                             robot.shootCommand.start();
                         })
-                        // intake pile after third
-                        .transition(new Transition(() -> robot.shootCommand.isFinished(), "intakePile")),
-
-                // gate cycle 4
-                new State("gateCycle4")
-                        .onEnter(() -> {
-                            robot.intakeCommand.start();
-                            follower.followPath(intakeGate4, true);
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                        })
-                        .minTime(600)
-                        .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1600),
-                new State()
-                        .onEnter(() -> {
-                            follower.followPath(shootGate4, true);
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
-
                 // pile intake
-                new State("intakePile")
+                new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.followPath(intakePile, false);
+                            follower.followPath(intakePile1, false);
+                            currentShootPose = new Pose(50, 14, Math.toRadians(-180));
                         })
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.5 && robot.intake.intakeFull()))
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(shootPile, true);
-                            currentShootPose = new Pose(60, 100, Math.toRadians(-127));
+                            follower.followPath(shootPile1, true);
                         })
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> {
+                            robot.shootCommand.start();
+                        })
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                // pile intake 2
+                new State()
+                        .onEnter(() -> {
+                            robot.intakeCommand.start();
+                            follower.followPath(intakePile2, false);
+                        })
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.5 && robot.intake.intakeFull()))
                         .transition(new Transition(() -> follower.atParametricEnd())),
+                new State()
+                        .onEnter(() -> {
+                            follower.followPath(shootPile2, true);
+                        })
+                        .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
                         })
                         .transition(new Transition(() -> robot.shootCommand.isFinished()))
-
-                // gate cycle 5
-                // TODO: UNCOMMENT FOR CHEESY
-//                new State()
-//                        .onEnter(() -> {
-//                            robot.intakeCommand.start();
-//                            follower.followPath(intakeGate5, true);
-//                        })
-//                        .transition(new Transition(() -> !follower.isBusy())),
-//                new State()
-//                        .onEnter(() -> {
-//                            follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-//                        })
-//                        .minTime(600)
-//                        .transition(new Transition(() -> robot.intake.intakeFull()))
-//                        .maxTime(1800),
-//                new State()
-//                        .onEnter(() -> {
-//                            follower.followPath(shootGate5, true);
-//                        })
-//                        .transition(new Transition(() -> !follower.isBusy())),
-//                new State()
-//                        .onEnter(() -> robot.shootCommand.start())
-//                        .transition(new Transition(() -> robot.shootCommand.isFinished()))
         );
 
         try {
@@ -597,9 +431,7 @@ public class BlueClose24ExtraGateCycle extends OpMode {
         robot.initPositions();
         robot.turret.resetEncoderWithAbsoluteReading();
         robot.turret.setUseExternal(false);
-        // TODO: test, should be a bit better. will not overcorrect.
         sotm2.latencyScaleFactor = 0.5;
-        // robot.turret.setPDCoefficients(0.005, 0);
     }
     @Override
     public void loop() {
@@ -614,7 +446,6 @@ public class BlueClose24ExtraGateCycle extends OpMode {
             double[] turretValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, follower.getVelocity(), follower.getAngularVelocity());
             double[] shooterValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
             // now it applies feedforward but target is same, so it will update slightly when shooting kinda like sotm.
-            // TODO: testing no move turret
             robot.setAzimuthThetaVelocity(new double[] {turretValues[0], shooterValues[1], shooterValues[2]});
             robot.turret.setFeedforward(turretValues[3]*0);
         }

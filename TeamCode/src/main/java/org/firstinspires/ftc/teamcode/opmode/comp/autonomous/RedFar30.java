@@ -34,6 +34,7 @@ public class RedFar30 extends OpMode {
     private AutonomousRobot robot;
     private SOTM sotm2;
     private boolean isTrackingBall = false;
+    private boolean isFirst = true;
     private final Pose startPose = PoseConstants.RED_FAR_AUTO_POSE;
     private Pose currentShootPose = PoseConstants.RED_FAR_AUTO_POSE;
     private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
@@ -42,7 +43,7 @@ public class RedFar30 extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-42, 8.000), new Pose(PoseConstants.FIELD_WIDTH-12.000, 9)))
+                .addPath(new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-42, 8.000), new Pose(PoseConstants.FIELD_WIDTH-10, 9)))
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
         shootCorner = follower.pathBuilder()
@@ -54,9 +55,9 @@ public class RedFar30 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(PoseConstants.FIELD_WIDTH-46, 14),
-                                new Pose(PoseConstants.FIELD_WIDTH-40.000, 34.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-40.000, 30.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-38.000, 34.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-13.000, 34.000)
+                                new Pose(PoseConstants.FIELD_WIDTH-12.000, 34.000)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
@@ -65,7 +66,7 @@ public class RedFar30 extends OpMode {
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-13.000, 34.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14))
+                        new BezierLine(new Pose(PoseConstants.FIELD_WIDTH-12.000, 34.000), new Pose(PoseConstants.FIELD_WIDTH-46, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180-180))
                 .build();
@@ -85,6 +86,8 @@ public class RedFar30 extends OpMode {
         follower.usePredictiveBraking = true;
         robot = new AutonomousRobot(hardwareMap, Alliance.RED);
         sotm2 = new SOTM(goalPose);
+        // -Math.toRadians(2)
+        currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180));
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -102,15 +105,17 @@ public class RedFar30 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
+                            isFirst = false;
                             follower.followPath(intakeCorner, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .maxTime(1200)
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180)+Math.toRadians(3));
+                            currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180));
                         })
-                        .transition(new Transition(() -> follower.atParametricEnd()))
+                        .transition(new Transition(() -> !follower.isBusy()))
                         .maxTime(1200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -121,7 +126,7 @@ public class RedFar30 extends OpMode {
                             robot.intakeCommand.start();
                             follower.followPath(intakeThird, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> follower.followPath(shootThird, true))
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -216,6 +221,7 @@ public class RedFar30 extends OpMode {
                                     
                                     .build();
                             follower.followPath(intakeCorner3, false);
+                            // currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180)+Math.toRadians(4));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),
@@ -288,6 +294,7 @@ public class RedFar30 extends OpMode {
                                     
                                     .build();
                             follower.followPath(intakeCorner5, false);
+                            // currentShootPose = new Pose(PoseConstants.FIELD_WIDTH-46, 14, Math.toRadians(180-180)+Math.toRadians(5));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),
@@ -398,10 +405,19 @@ public class RedFar30 extends OpMode {
 
     @Override
     public void loop() {
-        robot.turret.setFeedforward(0);
-        if (follower.getPose() != null) {
-            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
-            robot.setAzimuthThetaVelocity(values);
+        if (isFirst) {
+            robot.turret.setFeedforward(0);
+            if (follower.getPose() != null) {
+                double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
+                values[0] += Math.toRadians(3);
+                robot.setAzimuthThetaVelocity(values);
+            }
+        } else {
+            robot.turret.setFeedforward(0);
+            if (follower.getPose() != null) {
+                double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), 0);
+                robot.setAzimuthThetaVelocity(values);
+            }
         }
         optimalX = robot.vision.getLargestClusterX();
         stateMachine.update();

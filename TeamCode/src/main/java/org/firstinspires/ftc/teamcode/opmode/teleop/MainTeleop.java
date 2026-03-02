@@ -132,40 +132,40 @@ public class MainTeleop {
             }
         }
 
-        if (relocalizationTimer.seconds() > relocalizationTime) {
-            // TODO: test automatic relocalization
-            // we could also try a larger dist constraint and avging the poses
-
-            // wait hold up:
-            // we want to know the angle of the camera relative to the goal
-            // the camera is same as the fucking robot's heading like am i dumb or something
-
-            // if we are on blue: camera angle is 135 deg, red is 45 deg
-            // check if robot heading roughly equal to angle to goal
-
-            double dx = goalPose.getX() - currentPose.getX();
-            double dy = goalPose.getY() - currentPose.getY();
-            double angleToGoal = Math.atan2(-dx, dy) + Math.toRadians(90);
-
-            double headingDiffFromGoal = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), angleToGoal);
-
-            if (drivetrain.getVelocity().getMagnitude() < 3 && Math.abs(drivetrain.getAngularVelocity()) < 0.1 && getDistance(currentPose, goalPose) < 100 && Math.abs(headingDiffFromGoal) < Math.toRadians(30)) {
-                Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
-                if (MathUtil.distance(relocalizedPose, currentPose) < 10) { // threshold: 10 inches
-                    drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
-                    double averageX = (relocalizedPose.getX() + currentPose.getX()) / 2;
-                    double averageY = (relocalizedPose.getY() + currentPose.getY()) / 2;
-                    double theta1 = currentPose.getHeading();
-                    double theta2 = relocalizedPose.getHeading();
-                    double averageAngle = Math.atan2(Math.cos(theta1) + Math.cos(theta2), Math.sin(theta1) + Math.sin(theta2));
-                    Pose averagePose = new Pose(averageX, averageY, averageAngle);
-                    // something is cooked here.
-                    // drivetrain.follower.setPose(averagePose);
-                    robot.webcamLocalizer.flashLED();
-                    relocalizationTimer.reset();
-                }
-            }
-        }
+//        if (relocalizationTimer.seconds() > relocalizationTime) {
+//            // TODO: test automatic relocalization
+//            // we could also try a larger dist constraint and avging the poses
+//
+//            // wait hold up:
+//            // we want to know the angle of the camera relative to the goal
+//            // the camera is same as the fucking robot's heading like am i dumb or something
+//
+//            // if we are on blue: camera angle is 135 deg, red is 45 deg
+//            // check if robot heading roughly equal to angle to goal
+//
+//            double dx = goalPose.getX() - currentPose.getX();
+//            double dy = goalPose.getY() - currentPose.getY();
+//            double angleToGoal = Math.atan2(-dx, dy) + Math.toRadians(90);
+//
+//            double headingDiffFromGoal = MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), angleToGoal);
+//
+//            if (drivetrain.getVelocity().getMagnitude() < 3 && Math.abs(drivetrain.getAngularVelocity()) < 0.1 && getDistance(currentPose, goalPose) < 100 && Math.abs(headingDiffFromGoal) < Math.toRadians(30)) {
+//                Pose relocalizedPose = robot.webcamLocalizer.getCurrentPose();
+//                if (MathUtil.distance(relocalizedPose, currentPose) < 10) { // threshold: 10 inches
+//                    drivetrain.follower.setPose(new Pose(relocalizedPose.getX(), relocalizedPose.getY(), currentPose.getHeading()));
+//                    double averageX = (relocalizedPose.getX() + currentPose.getX()) / 2;
+//                    double averageY = (relocalizedPose.getY() + currentPose.getY()) / 2;
+//                    double theta1 = currentPose.getHeading();
+//                    double theta2 = relocalizedPose.getHeading();
+//                    double averageAngle = Math.atan2(Math.cos(theta1) + Math.cos(theta2), Math.sin(theta1) + Math.sin(theta2));
+//                    Pose averagePose = new Pose(averageX, averageY, averageAngle);
+//                    // something is cooked here.
+//                    // drivetrain.follower.setPose(averagePose);
+//                    robot.webcamLocalizer.flashLED();
+//                    relocalizationTimer.reset();
+//                }
+//            }
+//        }
 
         // TODO: a new thing to automatically reset turret every like 20 seconds, when not moving much and at decent position
         // check turret motor location and velocity.
@@ -274,10 +274,10 @@ public class MainTeleop {
 
         // turret offset
         if (gamepad2.rightBumperWasPressed()) {
-            turretOffset -= Math.toRadians(4);
+            turretOffset -= Math.toRadians(2);
         }
         if (gamepad2.leftBumperWasPressed()) {
-            turretOffset += Math.toRadians(4);
+            turretOffset += Math.toRadians(2);
         }
 
         // close zone: dpad up

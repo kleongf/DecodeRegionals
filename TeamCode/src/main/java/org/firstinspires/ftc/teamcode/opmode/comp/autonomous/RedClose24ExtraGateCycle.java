@@ -43,7 +43,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private double firstSpikesOffset = -Math.toRadians(3);
+    private double firstSpikesOffset = -Math.toRadians(5);
     private boolean holdingTurret = true;
     private final Pose startPose = PoseConstants.RED_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.RED_GOAL_POSE;
@@ -93,8 +93,8 @@ public class RedClose24ExtraGateCycle extends OpMode {
                                 new Pose(PoseConstants.FIELD_WIDTH-32.00, 108.000),
                                 // i also changed this control point a bit
                                 // new Pose(PoseConstants.FIELD_WIDTH-28.00, 92.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-22, 82.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-22, 72.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-23, 82.000),
+                                new Pose(PoseConstants.FIELD_WIDTH-23, 72.000),
                                 new Pose(PoseConstants.FIELD_WIDTH-23.500, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
@@ -300,7 +300,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
         shootPile = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(PoseConstants.FIELD_WIDTH-12.000, 36.000),
-                                new Pose(PoseConstants.FIELD_WIDTH-58, 96)
+                                new Pose(PoseConstants.FIELD_WIDTH-60, 100)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -327,7 +327,6 @@ public class RedClose24ExtraGateCycle extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
-
 
         follower.setStartingPose(startPose);
         robot = new AutonomousRobot(hardwareMap, Alliance.RED);
@@ -474,7 +473,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1800),
+                        .maxTime(1500),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate3, true);
@@ -516,7 +515,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.intakeFull()))
-                        .maxTime(1800),
+                        .maxTime(1500),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate4, true);
@@ -531,6 +530,7 @@ public class RedClose24ExtraGateCycle extends OpMode {
                             robot.intakeCommand.start();
                             follower.followPath(intakePile, false);
                         })
+                        .maxTime(1800)
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {

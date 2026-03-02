@@ -43,21 +43,21 @@ public class BlueFar30 extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(42, 8.000), new Pose(12.000, 9)))
+                .addPath(new BezierLine(new Pose(42, 8.000), new Pose(10.000, 9)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
         shootCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(12.000, 9), new Pose(46, 14)))
+                .addPath(new BezierLine(new Pose(10.000, 9), new Pose(49, 14)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(46, 14),
-                                new Pose(40.000, 34.000),
+                                new Pose(49, 14),
+                                new Pose(40.000, 30.000),
                                 new Pose(38.000, 34.000),
-                                new Pose(13.000, 34.000)
+                                new Pose(12.000, 34.000)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -66,14 +66,14 @@ public class BlueFar30 extends OpMode {
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.000, 34.000), new Pose(46, 14))
+                        new BezierLine(new Pose(12.000, 34.000), new Pose(49, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         park = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(46, 14), new Pose(36, 14))
+                        new BezierLine(new Pose(49, 14), new Pose(36, 14))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
@@ -113,7 +113,7 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(shootCorner, true);
                             // TODO: i added a small offset
                             // i also added a max time and parametric end
-                            currentShootPose = new Pose(46, 14, Math.toRadians(180)-Math.toRadians(4));
+                            currentShootPose = new Pose(49, 14, Math.toRadians(180)-Math.toRadians(4));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -150,15 +150,17 @@ public class BlueFar30 extends OpMode {
                                     
                                     .build();
                             follower.followPath(intakeCorner1, false);
+                            currentShootPose = new Pose(49, 14, Math.toRadians(180)-Math.toRadians(3));
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .maxTime(1200)
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             goBack1 = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
                                                     follower.getPose(),
-                                                    new Pose(46, 14)
+                                                    new Pose(49, 14)
                                             )
                                     )
                                     .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -166,8 +168,6 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(goBack1, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .maxTime(10),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
@@ -187,7 +187,8 @@ public class BlueFar30 extends OpMode {
                                     .build();
                             follower.followPath(intakeCorner2, false);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .maxTime(1200)
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             goBack2 = follower.pathBuilder()
@@ -221,6 +222,7 @@ public class BlueFar30 extends OpMode {
                                     
                                     .build();
                             follower.followPath(intakeCorner3, false);
+                            currentShootPose = new Pose(46, 14, Math.toRadians(180)-Math.toRadians(3));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),
@@ -291,6 +293,7 @@ public class BlueFar30 extends OpMode {
                                     
                                     .build();
                             follower.followPath(intakeCorner5, false);
+                            currentShootPose = new Pose(46, 14, Math.toRadians(180)-Math.toRadians(4));
                         })
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),
