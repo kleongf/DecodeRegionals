@@ -59,7 +59,7 @@ public class MainTeleop {
             robot.turret.resetEncoder();
         }
         robot.turret.resetEncoderWithAbsoluteReading();
-        robot.turret.setUseExternal(false);
+        robot.turret.setUseExternal(true);
 
         this.goalPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GOAL_POSE :  PoseConstants.RED_GOAL_POSE;
         this.parkPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_PARK_POSE :  PoseConstants.RED_PARK_POSE;
