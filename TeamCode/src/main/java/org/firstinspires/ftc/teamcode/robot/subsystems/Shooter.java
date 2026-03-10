@@ -26,7 +26,7 @@ public class Shooter extends Subsystem {
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
     private double epsilon = 100;
-    private double shootingEpsilon = 100;
+    private double shootingEpsilon = 200;
     private FeedForwardController controller;
     private VoltageSensor voltageSensor;
     private boolean isShooting = false;

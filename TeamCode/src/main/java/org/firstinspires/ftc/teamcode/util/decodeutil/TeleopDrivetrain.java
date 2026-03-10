@@ -37,6 +37,7 @@ public class TeleopDrivetrain {
     private boolean robotCentric = false;
     private double KICK_TIME = 1.0;
     private boolean gateHeadingLock = false;
+    public boolean openGateHeadingLock = false;
     private Alliance alliance;
     private Pose gatePose;
     private Pose gateIntakePose;
@@ -226,7 +227,15 @@ public class TeleopDrivetrain {
             headingPIDFController.updateError(headingError);
             double outHeading = headingPIDFController.run();
             return new double[] {x, y, outHeading};
-        } else {
+        } else if (openGateHeadingLock) {
+            targetHeading = alliance == Alliance.BLUE ? Math.toRadians(180) : Math.toRadians(0);
+            // we aren't going to update
+            double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
+            headingPIDFController.updateError(headingError);
+            double outHeading = headingPIDFController.run();
+            return new double[] {x, y, outHeading};
+        }
+        else {
             // got rid of normal
             targetHeading = currentHeading;
             return new double[] {x, y, rx};

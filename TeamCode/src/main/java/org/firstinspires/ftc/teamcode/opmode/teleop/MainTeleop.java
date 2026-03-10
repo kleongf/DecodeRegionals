@@ -59,7 +59,7 @@ public class MainTeleop {
             robot.turret.resetEncoder();
         }
         robot.turret.resetEncoderWithAbsoluteReading();
-        robot.turret.setUseExternal(true);
+        robot.turret.setUseExternal(false);
 
         this.goalPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GOAL_POSE :  PoseConstants.RED_GOAL_POSE;
         this.parkPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_PARK_POSE :  PoseConstants.RED_PARK_POSE;
@@ -73,6 +73,8 @@ public class MainTeleop {
         this.alliance = alliance;
 
         this.sotm = new SOTM(goalPose);
+        this.sotm.latencyScaleFactor = 0;
+        this.sotm.timeScaleFactor = 0;
         this.currentZone = Zone.FAR;
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
 
@@ -200,12 +202,18 @@ public class MainTeleop {
             drivetrain.setGateHeadingLock(false);
         }
 
-        // LEFT TRIGGER: slow mo
-        if (Math.abs(gamepad1.left_trigger) > 0.01) {
-            speedScaler = 0.4;
+        if (Math.abs(gamepad1.left_trigger) > 0.01)  {
+            drivetrain.openGateHeadingLock = true;
         } else {
-            speedScaler = 1;
+            drivetrain.openGateHeadingLock = false;
         }
+
+        // LEFT TRIGGER: slow mo
+//        if (Math.abs(gamepad1.left_trigger) > 0.01) {
+//            speedScaler = 0.4;
+//        } else {
+//            speedScaler = 1;
+//        }
 
         // added just for this
         if (gamepad1.dpadUpWasPressed()) {

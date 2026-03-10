@@ -10,7 +10,7 @@ public class SOTM {
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
-    private double farScaleFactor = 0.5;
+    private double farScaleFactor = 0.3;
     public double kF = -0.02; //0.08
     public double kFAngular = -0.08;
     // public double kOffsetIn = 0; // offset in inches to goal, i would prob set to 10
@@ -59,11 +59,11 @@ public class SOTM {
         thetaLUT.addData(43, Math.toRadians(27));
 
         velocityLUT = new LUT();
-        velocityLUT.addData(168, 2140+20);
-        velocityLUT.addData(158, 2080+20);
-        velocityLUT.addData(145, 2000+20);
-        velocityLUT.addData(138, 1960);
-        velocityLUT.addData(128, 1910);
+        velocityLUT.addData(168, 2140+30);
+        velocityLUT.addData(158, 2080+30);
+        velocityLUT.addData(145, 2000+30);
+        velocityLUT.addData(138, 1960+10);
+        velocityLUT.addData(128, 1910+10);
         velocityLUT.addData(118, 1830);
         velocityLUT.addData(108, 1760);
         velocityLUT.addData(98, 1700);

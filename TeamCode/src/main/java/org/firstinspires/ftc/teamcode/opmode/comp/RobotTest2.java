@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.comp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,6 +33,7 @@ public class RobotTest2 extends OpMode {
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         leftLatch = hardwareMap.get(Servo.class, "latchServo");
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
         liftServo = hardwareMap.get(Servo.class, "hang1");
@@ -78,5 +81,9 @@ public class RobotTest2 extends OpMode {
         pitchServo.setPosition(pitchTarget);
 
         liftServo.setPosition(liftTarget);
+
+        telemetry.addData("shooter motor 1 velocity", shooterMotor.getVelocity());
+        telemetry.addData("shooter motor 2 velocity", shooterMotor2.getVelocity());
     }
+
 }
