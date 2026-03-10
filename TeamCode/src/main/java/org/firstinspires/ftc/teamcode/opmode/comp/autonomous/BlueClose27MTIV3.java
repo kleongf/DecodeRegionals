@@ -445,8 +445,11 @@ public class BlueClose27MTIV3 extends OpMode {
             // double[] turretValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, follower.getVelocity(), follower.getAngularVelocity());
             // double[] shooterValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
             // now it applies feedforward but target is same, so it will update slightly when shooting kinda like sotm.
-            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+//            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
+//            robot.setAzimuthThetaVelocity(values);
+            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
             robot.setAzimuthThetaVelocity(values);
+            robot.turret.setFeedforward(0);
             // robot.setAzimuthThetaVelocity(new double[] {turretValues[0], shooterValues[1], shooterValues[2]});
             // robot.turret.setFeedforward(turretValues[3]*0);
         }
