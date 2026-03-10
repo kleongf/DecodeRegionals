@@ -75,6 +75,7 @@ public class MainTeleop {
         this.sotm = new SOTM(goalPose);
         this.sotm.latencyScaleFactor = 0;
         this.sotm.timeScaleFactor = 0;
+        this.sotm.latencyScaleFactorRadial = 0;
         this.currentZone = Zone.FAR;
         this.zoneUtil = new ZoneUtil(8); // 8 inch radius seems right
 
