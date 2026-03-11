@@ -43,7 +43,7 @@ public class FeedForwardTuner extends OpMode {
     @Override
     public void loop() {
         controller.setCoefficients(kV, kS, kP);
-        double currentVel = shooterMotor.getVelocity();
+        double currentVel = -shooterMotor.getVelocity();
         double power = controller.calculate(currentVel, target);
         shooterMotor.setPower(power);
         shooterMotor2.setPower(power);

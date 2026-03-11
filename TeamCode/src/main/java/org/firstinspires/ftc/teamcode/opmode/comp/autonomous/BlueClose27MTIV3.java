@@ -145,7 +145,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(12.000, 36.000),
-                                new Pose(52.000, 16.000)
+                                new Pose(60.000, 12.000)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -154,7 +154,7 @@ public class BlueClose27MTIV3 extends OpMode {
         intakePile1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(52.000, 16.000),
+                                new Pose(60.000, 12.000),
                                 new Pose(9.000, 9.000)
                         )
                 )
@@ -165,16 +165,17 @@ public class BlueClose27MTIV3 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(9, 9.000),
-                                new Pose(52, 16)
+                                new Pose(60.000, 12.000)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(148))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(148))
                 .build();
 
         intakeGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(52, 16),
+                                new Pose(60, 12),
                                 new Pose(38,41),
                                 PoseConstants.BLUE_GATE_AUTO_POSE
                         )
@@ -188,17 +189,18 @@ public class BlueClose27MTIV3 extends OpMode {
                         new BezierCurve(
                                 PoseConstants.BLUE_GATE_AUTO_POSE,
                                 new Pose(38,41),
-                                new Pose(52,16)
+                                new Pose(60,12)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setLinearHeadingInterpolation(PoseConstants.BLUE_GATE_AUTO_POSE.getHeading(), Math.toRadians(180))
+//                .setTangentHeadingInterpolation()
+//                .setReversed()
                 .build();
 
         intakePile2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(52, 16),
+                                new Pose(60, 12),
                                 new Pose(9, 25)
                         )
                 )
@@ -209,7 +211,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(9, 25),
-                                new Pose(52.000, 16.000)
+                                new Pose(60, 12)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -254,7 +256,7 @@ public class BlueClose27MTIV3 extends OpMode {
                             robot.intake.state = Intake.IntakeState.INTAKE_SLOW;
                             robot.turret.setPDCoefficients(0.009, 0.0003);
                         })
-                        .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
+                        .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(200))),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -329,7 +331,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootThird, true);
-                            currentShootPose = new Pose(52,16,Math.toRadians(180));
+                            currentShootPose = new Pose(60,12,Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -348,7 +350,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile1, true);
-                            currentShootPose = new Pose(52, 16, Math.toRadians(148));
+                            currentShootPose = new Pose(60, 12, Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()

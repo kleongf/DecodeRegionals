@@ -12,8 +12,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
+import org.firstinspires.ftc.teamcode.util.Log;
 
 public class Shooter extends Subsystem {
+    Log log = Log.getLog();
     public enum ShooterState {
         SHOOTER_ON,
         SHOOTER_OFF
@@ -46,13 +48,16 @@ public class Shooter extends Subsystem {
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
         // (1.0/2000)
 
-        controller = new FeedForwardController(0.00036, 0, 0.003);
+        controller = new FeedForwardController(0.00036, 0, 0/*0.0036*/); // removed kp and it got better, but not great because it doesnt reach target fully
     }
     @Override
     public void update() {
         switch (state) {
             case SHOOTER_ON:
-                double velocity = shooterMotor.getVelocity();
+
+                double velocity = -shooterMotor.getVelocity();
+                //log.addData(velocity);
+                //log.addData(targetVelocity);
                 // double velocityAvg = (shooterMotor.getVelocity() + shooterMotor2.getVelocity()) / 2;
                 // || (shooterMotor.getVelocity() < targetVelocity && (Math.abs(shooterMotor.getVelocity()-targetVelocity)) > shootingEpsilon && isShooting)
                 if (velocity+shootingEpsilon < targetVelocity) {
@@ -67,6 +72,9 @@ public class Shooter extends Subsystem {
                     shooterMotor.setPower(power);
                     shooterMotor2.setPower(power);
                 }
+
+                //log.addData(shooterMotor.getPower());
+
 //                double power = controller.calculate(velocityAvg, targetVelocity);
 //                power *= (nominalVoltage / voltageSensor.getVoltage());
 //                shooterMotor.setPower(power);
@@ -124,17 +132,17 @@ public class Shooter extends Subsystem {
     public double getTargetVelocity() {return targetVelocity;}
 
     public double getCurrentVelocity() {
-        return shooterMotor.getVelocity();
+        return -shooterMotor.getVelocity();
     }
     public double getCurrentVelocity2() {return shooterMotor2.getVelocity();}
-    public double getVelocityDiff() {return Math.abs(shooterMotor.getVelocity() - shooterMotor2.getVelocity());}
+    public double getVelocityDiff() {return Math.abs(-shooterMotor.getVelocity() - shooterMotor2.getVelocity());}
     public double getPower() {return shooterMotor.getPower();}
     public void setIsShooting(boolean x) {isShooting = x;}
 
 
     // useful trust
     public boolean atTarget(double threshold) {
-        return Math.abs(shooterMotor.getVelocity()-targetVelocity) < threshold;
+        return Math.abs(-shooterMotor.getVelocity()-targetVelocity) < threshold;
     }
 
     @Override
