@@ -292,6 +292,7 @@ public class MainTeleop2 {
         telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
         telemetry.addLine("Current turret pos: " + robot.turret.getCurrent());
         telemetry.addLine("Target turret pos: " + robot.turret.getTarget());
+        telemetry.addLine("Turret error: " + (robot.turret.getCurrent()-robot.turret.getTarget())%1381);
         telemetry.update();
     }
 

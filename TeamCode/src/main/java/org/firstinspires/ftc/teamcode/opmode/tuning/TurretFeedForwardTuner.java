@@ -34,7 +34,7 @@ public class TurretFeedForwardTuner extends OpMode {
         teleop.sotm.offsetFactor = offset;
         teleop.robot.turret.setPDCoefficients(p, d);
         teleop.loop();
-        telemetry.update();
+        //telemetry.update();
     }
 
     @Override

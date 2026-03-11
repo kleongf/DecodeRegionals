@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import static org.firstinspires.ftc.teamcode.robot.constants.RobotConstants.*;
 
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,10 +13,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Subsystem;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
-import org.firstinspires.ftc.teamcode.util.Log;
 
 public class Shooter extends Subsystem {
-    Log log = Log.getLog();
     public enum ShooterState {
         SHOOTER_ON,
         SHOOTER_OFF
@@ -48,7 +47,7 @@ public class Shooter extends Subsystem {
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
         // (1.0/2000)
 
-        controller = new FeedForwardController(0.00036, 0, 0/*0.0036*/); // removed kp and it got better, but not great because it doesnt reach target fully
+        controller = new FeedForwardController(0.00036, 0, 0.002);//0.0036); // removed kp and it got better, but not great because it doesnt reach target fully
     }
     @Override
     public void update() {

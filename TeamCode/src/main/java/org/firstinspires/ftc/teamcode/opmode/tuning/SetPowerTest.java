@@ -14,33 +14,19 @@ import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 
 @Config
-@TeleOp(name="Position Tuner")
-public class PositionTuner extends OpMode {
-    public Servo leftLatch;
-    public Servo liftServo;
-    public Servo pitchServo;
+@TeleOp(name="SetPower test")
+public class SetPowerTest extends OpMode {
     public DcMotorEx intakeMotor;
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
-    public static double latchTarget = RobotConstants.LATCH_CLOSED;
     public static double shooterPower = 0;
     public static double intakePower = 0;
-    public static double liftTarget = 0;
-    public static double pitchTarget = RobotConstants.PITCH_SERVO_MIN;
 
     private FeedForwardController controller;
 
     @Override
     public void init() {
-        leftLatch = hardwareMap.get(Servo.class, "latchServo");
-        pitchServo = hardwareMap.get(Servo.class, "pitchServo");
-        liftServo = hardwareMap.get(Servo.class, "hang1");
-
-        // open 0.3 (not hung), close 0.54 (hung)
-
-
-        leftLatch.setDirection(Servo.Direction.FORWARD);
-        pitchServo.setDirection(Servo.Direction.FORWARD);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -62,13 +48,12 @@ public class PositionTuner extends OpMode {
         shooterMotor.setPower(shooterPower);
         shooterMotor2.setPower(shooterPower);
 
+        telemetry.addData("shooter power: ", shooterPower);
+        telemetry.addData("shooter velo: ", shooterMotor.getVelocity());
+
 
         intakeMotor.setPower(intakePower);
 
-        leftLatch.setPosition(latchTarget);
-        pitchServo.setPosition(pitchTarget);
-
-        liftServo.setPosition(liftTarget);
 
     }
 }
