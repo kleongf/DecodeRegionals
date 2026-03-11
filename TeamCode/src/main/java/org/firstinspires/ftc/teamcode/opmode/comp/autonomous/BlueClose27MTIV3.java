@@ -38,6 +38,7 @@ public class BlueClose27MTIV3 extends OpMode {
     private SOTM sotm2;
     private double firstSpikesOffset = Math.toRadians(3-10);
     private boolean holdingTurret = true;
+    private boolean isTrackingFar = false;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
     private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
     private Pose currentShootPose = new Pose(32, 108, Math.toRadians(-90));
@@ -331,6 +332,10 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootThird, true);
+                            isTrackingFar = true;
+                            robot.turret.setPDCoefficients(0.008, 0.0003);
+                            sotm2.latencyScaleFactor = 0;
+                            sotm2.latencyScaleFactorRadial = 0;
                             currentShootPose = new Pose(60,12,Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -444,16 +449,14 @@ public class BlueClose27MTIV3 extends OpMode {
             robot.setAzimuthThetaVelocity(new double[] {shooterValues[0]+firstSpikesOffset, shooterValues[1], shooterValues[2]});
             robot.turret.setFeedforward(0);
         } else {
-            // double[] turretValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, follower.getVelocity(), follower.getAngularVelocity());
-            // double[] shooterValues = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
-            // now it applies feedforward but target is same, so it will update slightly when shooting kinda like sotm.
-//            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity());
-//            robot.setAzimuthThetaVelocity(values);
-            double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
-            robot.setAzimuthThetaVelocity(values);
+            if (isTrackingFar) {
+                double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(new Pose(currentShootPose.getX(), currentShootPose.getY(), follower.getPose().getHeading()), new Vector(), follower.getAngularVelocity());
+                robot.setAzimuthThetaVelocity(values);
+            } else {
+                double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentShootPose, new Vector(), follower.getAngularVelocity());
+                robot.setAzimuthThetaVelocity(values);
+            }
             robot.turret.setFeedforward(0);
-            // robot.setAzimuthThetaVelocity(new double[] {turretValues[0], shooterValues[1], shooterValues[2]});
-            // robot.turret.setFeedforward(turretValues[3]*0);
         }
 
         stateMachine.update();
