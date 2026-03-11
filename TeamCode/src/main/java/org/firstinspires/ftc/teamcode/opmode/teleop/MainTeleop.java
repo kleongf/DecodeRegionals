@@ -264,7 +264,7 @@ public class MainTeleop {
         }
 
         // relocalization: left stick OVERRIDE with webcam
-        if (gamepad1.leftStickButtonWasPressed()) {
+        if (gamepad2.leftStickButtonWasPressed()) {
             Pose webcamPose = robot.webcamLocalizer.getCurrentPose();
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
                 robot.webcamLocalizer.flashLED();
@@ -273,7 +273,7 @@ public class MainTeleop {
         }
 
         // corner relocalization: right stick
-        if (gamepad1.rightStickButtonWasPressed()) {
+        if (gamepad2.rightStickButtonWasPressed()) {
             if (alliance == Alliance.BLUE) {
                 drivetrain.follower.setPose(PoseConstants.BLUE_RELOCALIZATION_POSE);
             } else {
