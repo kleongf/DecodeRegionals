@@ -36,6 +36,7 @@ public class MainTeleop {
     private Pose gatePose, parkPose, goalPose, gateIntakePose;
     private Gamepad gamepad1, gamepad2;
     public SOTM sotm;
+    public SOTM sotm2;
     private boolean automateRobot = false;
     private boolean automateTurretReset = true;
     private Telemetry telemetry;
@@ -73,6 +74,7 @@ public class MainTeleop {
         this.alliance = alliance;
 
         this.sotm = new SOTM(goalPose);
+        this.sotm2 = new SOTM(goalPose);
         this.sotm.latencyScaleFactor = 0;
         this.sotm.timeScaleFactor = 0;
         this.sotm.latencyScaleFactorRadial = 0;
@@ -310,6 +312,7 @@ public class MainTeleop {
         }
 
         double[] values = sotm.calculateAzimuthThetaVelocityFRCBetter(currentPose, drivetrain.getVelocity(), drivetrain.getAngularVelocity());
+        double[] valuesFeedforward = sotm2.calculateAzimuthThetaVelocityFRCBetter(currentPose, drivetrain.getVelocity(), drivetrain.getAngularVelocity());
 
         if (endgameOn) {
             robot.turret.setTarget(Math.toRadians(-15));
@@ -324,7 +327,7 @@ public class MainTeleop {
                 } else {
                     robot.turret.setTarget(values[0]+turretOffset);
                 }
-                robot.turret.setFeedforward(values[3]);
+                robot.turret.setFeedforward(valuesFeedforward[3]);
                 robot.shooter.setShooterPitch(values[1]);
                 robot.shooter.setTargetVelocity(values[2]);
             } else {
