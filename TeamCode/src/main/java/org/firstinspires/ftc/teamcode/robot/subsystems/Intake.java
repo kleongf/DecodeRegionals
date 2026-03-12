@@ -120,6 +120,19 @@ public class Intake extends Subsystem {
 //        return false;
         return detectionState == DetectionState.THIRD_TRIGGERED;
     }
+    public boolean intakeMostlyFull() {
+        // return false;
+        // return !top.getState() && !middle.getState() && !bottom.getState();
+        // ah yes don't you just love my naming conventions?
+        // we are checking this first, because there has to be a certain number of currents first
+
+//        if (rollingCurrents.size() >= 6) {
+//            boolean rollingCurrentIsHigh = rollingCurrents.stream().allMatch(n -> n > CURRENT_LIMIT);
+//            return rollingCurrentIsHigh;
+//        }
+//        return false;
+        return detectionState == DetectionState.SECOND_TRIGGERED;
+    }
 
     public void resetDetection() { // call this method at the end of every time we shoot
         detectionState = DetectionState.EMPTY;

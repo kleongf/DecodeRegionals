@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 @Config
 @TeleOp(name="BEST and ONLY sotm tuner: p, d, offset, kf")
 public class TurretFeedForwardTuner extends OpMode {
-    private MainTeleop2 teleop;
+    private MainTeleop teleop;
     private Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
     public static double p = 0.004; // tune
     public static double d = 0.0004; // tune
@@ -25,7 +25,7 @@ public class TurretFeedForwardTuner extends OpMode {
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        teleop = new MainTeleop2(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2, true);
+        teleop = new MainTeleop(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2, true);
     }
 
     @Override

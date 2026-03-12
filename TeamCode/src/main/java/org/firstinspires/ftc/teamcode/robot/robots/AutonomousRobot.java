@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision2;
+import org.firstinspires.ftc.teamcode.robot.subsystems.WebcamLocalizer;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ArtifactVision;
 import org.firstinspires.ftc.teamcode.robot.subsystems.BulkRead;
@@ -30,6 +31,8 @@ public class AutonomousRobot {
     public StateMachine shootCommand;
     public StateMachine shootCommandSlow;
 
+//    public final WebcamLocalizer webcamLocalizer;
+
     public AutonomousRobot(HardwareMap hardwareMap, Alliance alliance) {
         subsystems = new ArrayList<>();
         light = hardwareMap.get(Servo.class, "light");
@@ -52,6 +55,9 @@ public class AutonomousRobot {
         subsystems.add(vision);
 
         commands = new ArrayList<>();
+
+//        webcamLocalizer = new WebcamLocalizer(hardwareMap);
+//        subsystems.add(webcamLocalizer);
 
         // putting it here because why not. prob should go after shooting but whatever, this gives us more time
         // besides intake is always called right after shoot

@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.robot.robots.AutonomousRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.robot.subsystems.WebcamLocalizer;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTM;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
@@ -32,6 +33,8 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 @Autonomous(name="Blue Close and Far 27 Side Spike MTI V3", group="!")
 public class BlueClose27MTIV3 extends OpMode {
+
+    private Intake.DetectionState prevDetectState;
     private Follower follower;
     private StateMachine stateMachine;
     private AutonomousRobot robot;
@@ -339,8 +342,8 @@ public class BlueClose27MTIV3 extends OpMode {
                             currentShootPose = new Pose(60,12,Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .maxTime(200),
+//                new State()
+//                        .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
@@ -358,8 +361,8 @@ public class BlueClose27MTIV3 extends OpMode {
                             currentShootPose = new Pose(60, 12, Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .maxTime(200),
+//                new State()
+//                        .maxTime(200),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
@@ -384,8 +387,8 @@ public class BlueClose27MTIV3 extends OpMode {
                             follower.followPath(shootGate2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .maxTime(200),
+//                new State()
+//                        .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
@@ -441,6 +444,10 @@ public class BlueClose27MTIV3 extends OpMode {
     }
     @Override
     public void loop() {
+//        if (robot.intake.isFull() && prevDetectState != robot.intake.detectionState) {
+//            robot.webcamLocalizer.ledState = WebcamLocalizer.LedState.INTAKE_FULL;
+//            robot.webcamLocalizer.flashLEDMultipleTimes();
+//        }
         // ALSO TODO: change the position to be a bit lower as we are slightly over the line
 
         if (holdingTurret) {
