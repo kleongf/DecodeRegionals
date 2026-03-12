@@ -315,7 +315,7 @@ public class BlueClose27MTIV3 extends OpMode {
                             follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> robot.intake.intakeFull()))
+                        .transition(new Transition(() -> robot.intake.intakeMostlyFull()))
                         .maxTime(1200),
                 new State()
                         .onEnter(() -> {
@@ -380,7 +380,7 @@ public class BlueClose27MTIV3 extends OpMode {
                             follower.holdPoint(new BezierPoint(PoseConstants.BLUE_GATE_AUTO_POSE_IN), PoseConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> robot.intake.intakeFull()))
+                        .transition(new Transition(() -> robot.intake.intakeMostlyFull()))
                         .maxTime(1500),
                 new State()
                         .onEnter(() -> {
