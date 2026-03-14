@@ -318,8 +318,8 @@ public class MainTeleop {
             robot.shooter.setTargetVelocity(0);
         } else {
             if (robot.resetTurretCommand.isFinished()) {
-                if (getDistance(currentPose, goalPose) > 120) {
-                    double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(2) : Math.toRadians(-2);
+                if (getDistance(currentPose, goalPose) < 100 && currentPose.getX() < 72) {//only works for blue tele, but whatever since it's just a stupid solution for mti
+                    double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(3) : -Math.toRadians(3);
                     robot.turret.setTarget(values[0]+xtraOffset+turretOffset);
                 } else {
                     robot.turret.setTarget(values[0]+turretOffset);
@@ -358,6 +358,7 @@ public class MainTeleop {
         telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
         telemetry.addLine("Current turret pos: " + robot.turret.getCurrent());
         telemetry.addLine("Target turret pos: " + robot.turret.getTarget());
+        telemetry.addLine("Turret error: " + (robot.turret.getCurrent()-robot.turret.getTarget())%1381);
         telemetry.update();
     }
 

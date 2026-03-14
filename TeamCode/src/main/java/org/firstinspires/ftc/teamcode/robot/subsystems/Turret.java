@@ -38,7 +38,8 @@ public class Turret extends Subsystem {
 
         //turretController = new PIDFController(0.005, 0, 0.00005, 0);
         // TODO: retune turret. doesn't need to be strong just needs to follow goal
-        turretController = new PIDFController(0.005, 0, 0.000, 0);
+        //turretController = new PIDFController(0.005, 0, 0.000, 0);
+        turretController = new PIDFController(0.005, 0, 0.0004, 0.07);
     }
 
     // the turret does not tend to drift too much

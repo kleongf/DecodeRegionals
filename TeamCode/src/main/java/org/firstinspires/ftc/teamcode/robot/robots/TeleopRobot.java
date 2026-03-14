@@ -92,7 +92,7 @@ public class TeleopRobot {
                             intake.state = Intake.IntakeState.INTAKE_FAST;
                             intake.resetDetection();
                         })
-                        .maxTime(800)
+                        .maxTime(1000)
         );
         commands.add(shootCommandSlow);
 

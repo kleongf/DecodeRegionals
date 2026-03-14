@@ -17,7 +17,7 @@ public class SOTM {
     public double latencyScaleFactor = 1.1;
     public double latencyScaleFactorRadial = 2.8;
     public double timeScaleFactor = 1;
-    public double offsetFactor = 12; // offset in inches to goal, i would prob set to 10
+    public double offsetFactor = 8;//12; // offset in inches to goal, i would prob set to 10
     public double constantTimeFactor = 0;
     private double efficiency = 0.52; // more accurate now bc no c-roller
     private double MAX_ITERATIONS = 200;
