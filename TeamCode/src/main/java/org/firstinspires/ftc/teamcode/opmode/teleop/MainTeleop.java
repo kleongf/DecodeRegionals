@@ -320,7 +320,7 @@ public class MainTeleop {
             if (robot.resetTurretCommand.isFinished()) {
                 if (getDistance(currentPose, goalPose) < 100 && currentPose.getX() < 72) {//only works for blue tele, but whatever since it's just a stupid solution for mti
                     double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(3) : -Math.toRadians(3);
-                    robot.turret.setTarget(values[0]+xtraOffset+turretOffset);
+                    robot.turret.setTarget(values[0]/*+xtraOffset*/+turretOffset);
                 } else {
                     robot.turret.setTarget(values[0]+turretOffset);
                 }
@@ -335,9 +335,9 @@ public class MainTeleop {
 
         // more solid tracking from far
         if (getDistance(currentPose, goalPose) > 120) {
-            robot.turret.setPDCoefficients(0.008, 0);
+            robot.turret.setPDCoefficients(0.015, 0.0004);
         } else {
-            robot.turret.setPDCoefficients(0.005, 0);
+            robot.turret.setPDCoefficients(0.015, 0.0004);
         }
 
         // population std dev: 28.32

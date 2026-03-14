@@ -39,7 +39,7 @@ public class Turret extends Subsystem {
         //turretController = new PIDFController(0.005, 0, 0.00005, 0);
         // TODO: retune turret. doesn't need to be strong just needs to follow goal
         //turretController = new PIDFController(0.005, 0, 0.000, 0);
-        turretController = new PIDFController(0.005, 0, 0.0004, 0.07);
+        turretController = new PIDFController(0.005, 0, 0.0004, 0);
     }
 
     // the turret does not tend to drift too much
@@ -99,7 +99,7 @@ public class Turret extends Subsystem {
         if (Math.abs(error) > 10) {
             power += kS * Math.signum(error); // kS so that it works better, lots of friction but this is
         }
-        power += feedforward;
+        //power += feedforward;
 
         if (Math.abs(power) > maxPower) {
             power = maxPower * Math.signum(power);

@@ -16,7 +16,7 @@ public class PoseConstants {
     public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose RED_RELOCALIZATION_POSE = new Pose(ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose BLUE_CORNER_AUTO_POSE = new Pose(27.649656674163825, 132.53866930748939, Math.toRadians(144));
-    public static Pose BLUE_GOAL_POSE = new Pose(0, FIELD_WIDTH, Math.toRadians(135));
+    public static Pose BLUE_GOAL_POSE = new Pose(10, FIELD_WIDTH-8, Math.toRadians(135));
     public static Pose RED_GOAL_POSE = new Pose(FIELD_WIDTH, FIELD_WIDTH, Math.toRadians(45));
     public static Pose BLUE_FAR_POSE =  new Pose(54, 12, Math.toRadians(180));
     public static Pose RED_FAR_POSE =  new Pose(144-54, 12, Math.toRadians(0));
