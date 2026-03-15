@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.util.decodeutil;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
+import java.util.function.Function;
+
 public class MathUtil {
     public static double nCr(int n, int r) {
         double num = (double)1.0F;
@@ -130,5 +132,35 @@ public class MathUtil {
     }
     public static Vector getVector(Pose p) {
         return new Vector(p.getX(), p.getY());
+    }
+
+//    \* Find the root of the function f given f, it's derivative, and a starting x guess.
+//            *
+//            * @param f The function to find the root of.
+//            * @param fPrime The derivative of the function.
+//            * @param x The initial guess of the root position.
+//            * @param maxIters The maximum number of iterations before failing.
+//            * @param tolerance The tolerance to a "zero."
+//            * @return The x position of that root.
+//            */
+    public static double findRoot(
+            Function<Double, Double> f,
+            Function<Double, Double> fPrime,
+            double x,
+            int maxIters,
+            double tolerance) {
+        for (int i = 0; i < maxIters; i++) {
+            double fX = f.apply(x);
+            if (Math.abs(fX) < tolerance) {
+                break;
+            }
+            double fPrimeX = fPrime.apply(x);
+            x -= fX / fPrimeX;
+        }
+        return x;
+    }
+    // TODO: implement
+    public static Pose averagePoses(Pose pose1, Pose pose2, double weight1, double weight2) {
+        return new Pose();
     }
 }
