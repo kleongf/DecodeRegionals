@@ -99,7 +99,7 @@ public class Turret extends Subsystem {
         if (Math.abs(error) > 10) {
             power += kS * Math.signum(error); // kS so that it works better, lots of friction but this is
         }
-        //power += feedforward;
+        power += feedforward;
 
         if (Math.abs(power) > maxPower) {
             power = maxPower * Math.signum(power);

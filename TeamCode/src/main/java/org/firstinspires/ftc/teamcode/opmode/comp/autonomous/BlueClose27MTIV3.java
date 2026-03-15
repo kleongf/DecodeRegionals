@@ -39,7 +39,7 @@ public class BlueClose27MTIV3 extends OpMode {
     private StateMachine stateMachine;
     private AutonomousRobot robot;
     private SOTM sotm2;
-    private double firstSpikesOffset = Math.toRadians(3-10);
+    private double firstSpikesOffset = Math.toRadians(5);
     private boolean holdingTurret = true;
     private boolean isTrackingFar = false;
     private final Pose startPose = PoseConstants.BLUE_CLOSE_AUTO_POSE;
@@ -82,14 +82,14 @@ public class BlueClose27MTIV3 extends OpMode {
                                 new Pose(32.00, 108.000),
                                 new Pose(25, 82.000),
                                 new Pose(24, 72.000),
-                                new Pose(23.500, 62.000)
+                                new Pose(23, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(23.500, 64.000),
+                                new Pose(23, 62.000),
                                 new Pose(56.000, 75.000)
                         )
                 )
@@ -140,7 +140,7 @@ public class BlueClose27MTIV3 extends OpMode {
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
                                 new Pose(55, 36),
-                                new Pose(12.000, 36.000)
+                                new Pose(15.000, 36.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-160), Math.toRadians(180))
                 .build();
@@ -148,7 +148,7 @@ public class BlueClose27MTIV3 extends OpMode {
         shootThird = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 36.000),
+                                new Pose(15.000, 36.000),
                                 new Pose(60.000, 12.000)
                         )
                 )
@@ -159,7 +159,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(60, 12),
-                                new Pose(12, 12)
+                                new Pose(10, 12)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -168,7 +168,7 @@ public class BlueClose27MTIV3 extends OpMode {
         shootPile1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12, 12.000),
+                                new Pose(10, 12.000),
                                 new Pose(60.000, 12.000)
                         )
                 )
@@ -226,7 +226,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(60, 12),
-                                new Pose(12.000, 12.000)
+                                new Pose(12, 12.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -235,7 +235,7 @@ public class BlueClose27MTIV3 extends OpMode {
         shootPile3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 12.000),
+                                new Pose(12, 12.000),
                                 new Pose(60, 12)
                         )
                 )
@@ -263,7 +263,10 @@ public class BlueClose27MTIV3 extends OpMode {
                         })
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(200))),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
+                        .onEnter(() -> {
+                            robot.shootCommand.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
+                        })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
@@ -279,19 +282,20 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
                         })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(intakeSecond, true);
                             robot.intakeCommand.start();
-                            robot.turret.setPDCoefficients(0.005, 0.0004);
+                            robot.turret.setPDCoefficients(0.01, 0.0004);
                         })
                         .maxTime(400),
                 new State()
                         .onEnter(() -> {
                             holdingTurret = false;
-                            currentShootPose = new Pose(56, 75, Math.toRadians(-160));
+                            currentShootPose = new Pose(56, 75, Math.toRadians(-160-6));
                         })
                         // if no open gate, go to shoot second state
                         .transition(new Transition(() -> follower.atParametricEnd())),
@@ -301,14 +305,17 @@ public class BlueClose27MTIV3 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
+                        .onEnter(() -> {
+                            robot.shootCommand.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
+                        })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // gate cycle 1
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.followPath(intakeGate1, true);
-                            currentShootPose = new Pose(56, 75, Math.toRadians(-160)-Math.toRadians(2));
+                            currentShootPose = new Pose(56, 75, Math.toRadians(-160-6));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -324,7 +331,10 @@ public class BlueClose27MTIV3 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        .onEnter(() -> robot.shootCommand.start())
+                        .onEnter(() -> {
+                            robot.shootCommand.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
+                        })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // gate cycle 2
                 new State()
@@ -337,16 +347,19 @@ public class BlueClose27MTIV3 extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootThird, true);
                             isTrackingFar = true;
-                            robot.turret.setPDCoefficients(0.005, 0.0004);
+                            robot.turret.setPDCoefficients(0.01, 0.0004);
                             sotm2.latencyScaleFactor = 0;
                             sotm2.latencyScaleFactorRadial = 0;
-                            currentShootPose = new Pose(60-5,12-10,Math.toRadians(180));
+                            currentShootPose = new Pose(60,12,Math.toRadians(180-5));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .maxTime(100),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .onEnter(() -> {
+                            robot.shootCommandSlow.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
+                        })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // intake pile 1
                 new State()
@@ -359,7 +372,6 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile1, true);
-                            //currentShootPose = new Pose(60, 12, Math.toRadians(180+3));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -367,6 +379,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
                         })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // gate cycle 3
@@ -386,13 +399,16 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate2, true);
-                            currentShootPose = new Pose(60-12,12+5,Math.toRadians(180));
+                            currentShootPose = new Pose(60,12,Math.toRadians(180-5));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
+                        .onEnter(() -> {
+                            robot.shootCommandSlow.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
+                        })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
 
                 // pile intake 2
@@ -414,6 +430,7 @@ public class BlueClose27MTIV3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
+                            robot.turret.resetEncoderWithAbsoluteReading();
                         })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 // pile intake 3
@@ -464,7 +481,7 @@ public class BlueClose27MTIV3 extends OpMode {
         } else {
             if (isTrackingFar) {
                 double[] values = sotm2.calculateAzimuthThetaVelocityFRCBetter(new Pose(currentShootPose.getX(), currentShootPose.getY(), follower.getPose().getHeading()), new Vector(), follower.getAngularVelocity());
-                //values[2] += 80; //just want balls to go in bruh
+                values[2] += 40; //in case inconsistency --> undershooting
                 robot.setAzimuthThetaVelocity(values);
             }
             else {

@@ -36,46 +36,41 @@ public class SOTM {
         this.goal = goal;
 
         thetaLUT = new LUT();
-        thetaLUT.addData(168, Math.toRadians(50));
-        thetaLUT.addData(158, Math.toRadians(50));
         thetaLUT.addData(145, Math.toRadians(50));
         thetaLUT.addData(138, Math.toRadians(50));
         thetaLUT.addData(130, Math.toRadians(50));
-        thetaLUT.addData(118, Math.toRadians(48));
-        thetaLUT.addData(108, Math.toRadians(48));
+        thetaLUT.addData(118, Math.toRadians(50));
+        thetaLUT.addData(108, Math.toRadians(50));
         thetaLUT.addData(98, Math.toRadians(48));
         thetaLUT.addData(88, Math.toRadians(48));
         thetaLUT.addData(78, Math.toRadians(47));
-        thetaLUT.addData(68, Math.toRadians(45.5));
-        thetaLUT.addData(63, Math.toRadians(43));
+        thetaLUT.addData(68, Math.toRadians(47));
+        thetaLUT.addData(63, Math.toRadians(45));
         // 63: 43, 1490
         // 58: 41, 1440
         // 53: 39, 1400
         // 48: 35 1340
         // 43: 27 1300
-        thetaLUT.addData(58, Math.toRadians(41));
-        thetaLUT.addData(53, Math.toRadians(39));
-        thetaLUT.addData(48, Math.toRadians(35));
-        thetaLUT.addData(43, Math.toRadians(27));
+        thetaLUT.addData(58, Math.toRadians(43));
+        thetaLUT.addData(53, Math.toRadians(41));
+        thetaLUT.addData(48, Math.toRadians(39));
+        thetaLUT.addData(43, Math.toRadians(35));
 
         velocityLUT = new LUT();
-        velocityLUT.addData(168, 2200);
-        velocityLUT.addData(158, 2100);
-        velocityLUT.addData(152, 2080);
-        velocityLUT.addData(145, 2000);
-        velocityLUT.addData(138, 1960);
-        velocityLUT.addData(128, 1900);
-        velocityLUT.addData(118, 1850);
-        velocityLUT.addData(108, 1760);
-        velocityLUT.addData(98, 1700);
-        velocityLUT.addData(88, 1640);
-        velocityLUT.addData(78, 1580);
-        velocityLUT.addData(68, 1520);
-        velocityLUT.addData(63, 1480);
-        velocityLUT.addData(58, 1440);
-        velocityLUT.addData(53, 1400);
-        velocityLUT.addData(48, 1340);
-        velocityLUT.addData(43, 1300);
+        velocityLUT.addData(145, 2100+80);
+        velocityLUT.addData(138, 2040+80);
+        velocityLUT.addData(130, 1940+80);
+        velocityLUT.addData(118, 1860+80);
+        velocityLUT.addData(108, 1820+40);
+        velocityLUT.addData(98, 1740);
+        velocityLUT.addData(88, 1680);
+        velocityLUT.addData(78, 1640);
+        velocityLUT.addData(68, 1600);
+        velocityLUT.addData(63, 1540);
+        velocityLUT.addData(58, 1480);
+        velocityLUT.addData(53, 1460);
+        velocityLUT.addData(48, 1420);
+        velocityLUT.addData(43, 1380);
 
     }
 
@@ -267,7 +262,7 @@ public class SOTM {
         double dy = virtualGoal.getY() - robotPose.getY();
         double dist = Math.hypot(dx, dy);
 
-        boolean isBlue = goal.getX() == 0;
+        boolean isBlue = goal.getX() < 42;
         double angleToGoal = Math.atan2(-dx, dy);
         double offset = caluclateOffset(isBlue, angleToGoal, dist);
 
@@ -342,7 +337,7 @@ public class SOTM {
         // tangent = sine over cosine, magnitudes cancel out
 
         // TODO: checking to see if red works by negating feedforward on red. maybe it will work.
-        boolean isBlue = goal.getX() == 0;
+        boolean isBlue = goal.getX() < 72;
         double feedforward = isBlue ? Math.atan2(crossProduct, dotProduct) : -Math.atan2(crossProduct, dotProduct);
 
         // Log.d("feedforward dir", "" + feedforward);

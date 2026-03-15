@@ -21,6 +21,7 @@ public class TurretFollowTest extends OpMode {
     private Turret turret;
     public static double shooterSpeed;
     public static double shooterPitch;
+
     public static double offset = 0;
     private Follower follower;
     private Intake intake;
@@ -28,18 +29,21 @@ public class TurretFollowTest extends OpMode {
     private Shooter shooter;
     private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
     // i don't think angle matters here in the sotm calculation
-    private final Pose goalPose = new Pose(0, 141, Math.toRadians(45));
+
+
+    private Pose goalPose = new Pose(15, PoseConstants.FIELD_WIDTH-10, Math.toRadians(45));
     @Override
     public void loop() {
 
         shooter.setTargetVelocity(shooterSpeed);
         shooter.setShooterPitch(Math.toRadians(shooterPitch));
+
         // for tuning we are gonna explicitly offset
         // sotm2.offsetFactor = offset; // in case we get off
         double[] target = sotm2.calculateAzimuthThetaVelocityFRCBetter(follower.getPose(), new Vector(), follower.getAngularVelocity());
         // set azimuth
         turret.setTarget(target[0]+offset);
-        // turret.setFeedforward(target[3]);
+        //turret.setFeedforward(target[3]);
 
 
         double dx = goalPose.getX()-follower.getPose().getX();
