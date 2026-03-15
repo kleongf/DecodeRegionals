@@ -9,14 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.decode2026.opmode.teleop.MainTeleop;
-import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
 @TeleOp(name="SOTM teleop tuning BLUE", group="?")
 public class SOTMTuningTeleopBlue extends OpMode {
     private MainTeleop teleop;
-    private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
+    private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
     public static double p = 0.005; // tune
     public static double d = 0.000; // tune
     public static double kV = 0.03;

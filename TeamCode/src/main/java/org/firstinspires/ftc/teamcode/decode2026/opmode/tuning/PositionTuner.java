@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 
 @Config
@@ -20,11 +20,11 @@ public class PositionTuner extends OpMode {
     public DcMotorEx intakeMotor;
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
-    public static double latchTarget = RobotConstants.LATCH_CLOSED;
+    public static double latchTarget = ShooterConstants.LATCH_CLOSED;
     public static double shooterPower = 0;
     public static double intakePower = 0;
     public static double liftTarget = 0;
-    public static double pitchTarget = RobotConstants.PITCH_SERVO_MIN;
+    public static double pitchTarget = ShooterConstants.PITCH_SERVO_MIN;
 
     private FeedForwardController controller;
 

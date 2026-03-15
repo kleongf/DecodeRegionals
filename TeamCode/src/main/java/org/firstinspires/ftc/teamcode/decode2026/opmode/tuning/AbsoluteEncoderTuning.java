@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
-import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 
 @Config
 @TeleOp(name="Absolute Encoder Tuner")
@@ -136,9 +136,8 @@ public class AbsoluteEncoderTuning extends OpMode {
         telemetry.addLine("If there is a physical discrepancy between the encoder value and external encoder value, you can add an offset in ticks until it is correct.");
         telemetry.addLine("Tune this until the encoder position and the external encoder position are the same. also restart program if turret position is just off.");
         telemetry.addLine("If the positions are moving in opposite directions then check the box saying 'isReversed' and keep going.");
-        telemetry.addData("Turret encoder position", turret.turretMotor.getCurrentPosition());
+        telemetry.addData("Turret encoder position", turret.currentPositionTicks);
         telemetry.addData("External encoder position", pos);
-        telemetry.addData("External encoder position adjusted", externalToMotorTicks(pos, turret.turretMotor.getCurrentPosition()));
         telemetry.addData("External encoder voltage", voltage);
         telemetry.addData("angle pre gear ratio", rawPos);
         telemetry.addData("angle post gear ratio", rawPos * directionFactor * ticksPerRadian * encoderGearRatio);
@@ -150,8 +149,7 @@ public class AbsoluteEncoderTuning extends OpMode {
     public void init() {
         turret = new Turret(hardwareMap);
         turret.setPDCoefficients(0, 0);
-        turret.setFeedforward(0);
-        turret.resetEncoder();
+        turret.setkV(0);
         encoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }

@@ -6,15 +6,15 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
-import org.firstinspires.ftc.teamcode.robot.constants.RobotConstants;
+
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
 @TeleOp(name="Red Teleop COMP", group="!")
 public class RedTeleop extends OpMode {
     private MainTeleop teleop;
-    private Pose startPose = (Pose) blackboard.getOrDefault(RobotConstants.END_POSE_KEY, PoseConstants.RED_END_AUTO_POSE);
+    private Pose startPose = (Pose) blackboard.getOrDefault(FieldConstants.END_POSE_KEY, FieldConstants.RED_END_AUTO_POSE);
 
     @Override
     public void init() {

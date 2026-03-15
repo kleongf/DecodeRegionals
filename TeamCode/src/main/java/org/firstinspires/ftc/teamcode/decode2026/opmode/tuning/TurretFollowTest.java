@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
@@ -26,8 +26,8 @@ public class TurretFollowTest extends OpMode {
     private Intake intake;
     private SOTMUtil sotm;
     private Shooter shooter;
-    private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
-    private final Pose goalPose = PoseConstants.BLUE_GOAL_POSE;
+    private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
+    private final Pose goalPose = FieldConstants.BLUE_GOAL_POSE;
 
     @Override
     public void loop() {

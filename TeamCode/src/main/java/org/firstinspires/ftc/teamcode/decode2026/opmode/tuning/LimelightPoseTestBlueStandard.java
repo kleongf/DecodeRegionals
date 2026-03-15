@@ -9,15 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 
 @Config
 @TeleOp(name="limelight pose test blue standard start pose")
 public class LimelightPoseTestBlueStandard extends OpMode {
     private Follower follower;
     private Intake intake;
-    private final Pose startPose = PoseConstants.BLUE_STANDARD_START_POSE;
+    private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
 
 
     @Override
@@ -34,7 +34,6 @@ public class LimelightPoseTestBlueStandard extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         intake = new Intake(hardwareMap);
-        intake.state = Intake.IntakeState.INTAKE_FAST;
     }
 
     @Override

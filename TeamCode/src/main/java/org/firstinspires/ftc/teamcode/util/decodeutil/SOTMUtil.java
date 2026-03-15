@@ -53,7 +53,8 @@ public class SOTMUtil {
         velocityLUT.addData(43, 1300);
 
         // TODO: interpolate a function (most likely 2nd degree polynomial) for time of flight based on distance (in) to time (s)
-        distanceToTime = aDouble -> 0.0;
+        // this is just an estimate
+        distanceToTime = aDouble -> aDouble / 100;
     }
 
     /**

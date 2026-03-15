@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.decode2026.constants.CameraLocalizerConstants;
-import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -25,7 +25,7 @@ public class CameraLocalizer extends Subsystem {
     public boolean isGoodDetection;
     private final AprilTagProcessor aprilTag;
     public static Pose toPinpointPose(Pose webcamPose) {
-        return new Pose(PoseConstants.FIELD_WIDTH / 2d + webcamPose.getY(), PoseConstants.FIELD_WIDTH / 2d - webcamPose.getX(), webcamPose.getHeading());
+        return new Pose(FieldConstants.FIELD_WIDTH / 2d + webcamPose.getY(), FieldConstants.FIELD_WIDTH / 2d - webcamPose.getX(), webcamPose.getHeading());
     }
     public CameraLocalizer(HardwareMap hardwareMap) {
         currentPose = new Pose();
