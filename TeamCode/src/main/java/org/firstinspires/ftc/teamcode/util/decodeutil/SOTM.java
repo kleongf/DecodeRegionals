@@ -57,11 +57,11 @@ public class SOTM {
         thetaLUT.addData(43, Math.toRadians(35));
 
         velocityLUT = new LUT();
-        velocityLUT.addData(145, 2100+80);
-        velocityLUT.addData(138, 2040+80);
-        velocityLUT.addData(130, 1940+80);
-        velocityLUT.addData(118, 1860+80);
-        velocityLUT.addData(108, 1820+40);
+        velocityLUT.addData(145, 2100+60);
+        velocityLUT.addData(138, 2040+60);
+        velocityLUT.addData(130, 1940+60);
+        velocityLUT.addData(118, 1860+60);
+        velocityLUT.addData(108, 1820+60);
         velocityLUT.addData(98, 1740);
         velocityLUT.addData(88, 1680);
         velocityLUT.addData(78, 1640);
