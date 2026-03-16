@@ -69,14 +69,14 @@ public class Blue27MTI extends OpMode {
                                 new Pose(32.00, 108.000),
                                 new Pose(25, 82.000),
                                 new Pose(24, 72.000),
-                                new Pose(23.500, 62.000)
+                                new Pose(23, 62.000)
                         )
                 ).setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(23.500, 64.000),
+                                new Pose(23, 62.000),
                                 new Pose(56.000, 75.000)
                         )
                 )
@@ -127,7 +127,7 @@ public class Blue27MTI extends OpMode {
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
                                 new Pose(55, 36),
-                                new Pose(12.000, 36.000)
+                                new Pose(15.000, 36.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-160), Math.toRadians(180))
                 .build();
@@ -135,7 +135,7 @@ public class Blue27MTI extends OpMode {
         shootThird = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 36.000),
+                                new Pose(15.000, 36.000),
                                 new Pose(60.000, 12.000)
                         )
                 )
