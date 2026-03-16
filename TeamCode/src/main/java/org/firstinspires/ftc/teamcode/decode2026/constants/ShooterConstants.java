@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.decode2026.constants;
 
 public class ShooterConstants {
     public static final double nominalVoltage = 12.4;
-    public static final double epsilon = 200;
     public static final double kV = 0.00036;
     public static final double kS = 0.0;
     public static final double kP = 0.002;

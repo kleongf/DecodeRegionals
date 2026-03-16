@@ -319,7 +319,7 @@ public class Blue27MTI extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootThird, true);
-                            currentShootPose = new Pose(60-5,12-10,Math.toRadians(180));
+                            currentShootPose = new Pose(60,12,Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
@@ -365,7 +365,7 @@ public class Blue27MTI extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate2, true);
-                            currentShootPose = new Pose(60-12,12+5,Math.toRadians(180));
+                            currentShootPose = new Pose(60,12,Math.toRadians(180));
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()

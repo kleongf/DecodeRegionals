@@ -112,12 +112,8 @@ public class MathUtil {
         return one.getXComponent() * two.getYComponent() - one.getYComponent() * two.getXComponent();
     }
 
-    public static boolean roughlyEquals(double one, double two, double accuracy) {
-        return one < two + accuracy && one > two - accuracy;
-    }
-
-    public static boolean roughlyEquals(double one, double two) {
-        return roughlyEquals(one, two, 1.0E-4);
+    public static boolean roughlyEquals(double num1, double num2, double epsilon) {
+        return Math.abs(num1-num2) < epsilon;
     }
 
     public static double inToMM(double in) {

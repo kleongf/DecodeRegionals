@@ -13,8 +13,8 @@ public class FieldConstants {
     public static Pose RED_STANDARD_START_POSE = new Pose(FIELD_WIDTH - BLUE_STANDARD_START_POSE.getX(), ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
     public static Pose RED_RELOCALIZATION_POSE = new Pose(ROBOT_WIDTH, ROBOT_BOTTOM_TO_CENTER, Math.toRadians(90));
-    public static Pose BLUE_GOAL_POSE = new Pose(10, FIELD_WIDTH-10, Math.toRadians(135));
-    public static Pose RED_GOAL_POSE = new Pose(FIELD_WIDTH-10, FIELD_WIDTH-10, Math.toRadians(45));
+    public static Pose BLUE_GOAL_POSE = new Pose(12, FIELD_WIDTH-12, Math.toRadians(135));
+    public static Pose RED_GOAL_POSE = new Pose(FIELD_WIDTH-12, FIELD_WIDTH-12, Math.toRadians(45));
 
     public static Pose BLUE_SIDE_GATE_POSE = new Pose(16, 70, Math.toRadians(270));
 

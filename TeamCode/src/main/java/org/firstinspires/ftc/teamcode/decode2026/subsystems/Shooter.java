@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
@@ -26,6 +28,9 @@ public class Shooter extends Subsystem {
     private final DcMotorEx shooterMotor2;
     private final FeedForwardController controller;
     private final VoltageSensor voltageSensor;
+    private double prevWantedVelocity;
+    private ElapsedTime loopTimer;
+    private double kA = 0;
     public Shooter(HardwareMap hardwareMap) {
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
@@ -43,37 +48,39 @@ public class Shooter extends Subsystem {
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
 
         controller = new FeedForwardController(ShooterConstants.kV, ShooterConstants.kS, ShooterConstants.kP);
+        loopTimer = new ElapsedTime();
     }
 
     @Override
     public void reset() {
         wantedMode = Mode.SHOOTER_OFF;
+        loopTimer.reset();
     }
 
     @Override
     public void start() {
         wantedMode = Mode.SHOOTER_ON;
+        loopTimer.reset();
     }
 
     @Override
     public void update() {
         currentVelocity = -shooterMotor.getVelocity();
+        double dt = loopTimer.seconds() <= 0 ? 0.02 : loopTimer.seconds();
+
         switch (wantedMode) {
             case SHOOTER_ON:
-                if (currentVelocity + ShooterConstants.epsilon < wantedVelocity) {
-                    shooterMotor.setPower(1);
-                    shooterMotor2.setPower(1);
-                } else if (currentVelocity - ShooterConstants.epsilon > wantedVelocity) {
-                    shooterMotor.setPower(-1);
-                    shooterMotor2.setPower(-1);
-                } else {
-                    double power = controller.calculate(currentVelocity, wantedVelocity);
-                    if (ShooterConstants.useVoltageCompensation) {
-                        power *= (ShooterConstants.nominalVoltage / voltageSensor.getVoltage());
-                    }
-                    shooterMotor.setPower(power);
-                    shooterMotor2.setPower(power);
+                // TODO: remember to set velocity before update() which i think we do.
+                double power = controller.calculate(currentVelocity, wantedVelocity);
+                power += kA * (wantedVelocity - prevWantedVelocity) / dt;
+
+                if (ShooterConstants.useVoltageCompensation) {
+                    power *= (ShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
+                shooterMotor.setPower(power);
+                shooterMotor2.setPower(power);
+                prevWantedVelocity = wantedVelocity;
+
                 double ticksPerRadian = (ShooterConstants.PITCH_SERVO_F-ShooterConstants.PITCH_SERVO_I)/(ShooterConstants.PITCH_F-ShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - ShooterConstants.PITCH_I;
                 double pos = ShooterConstants.PITCH_SERVO_MIN + adjustedAngle * ticksPerRadian;
@@ -86,6 +93,8 @@ public class Shooter extends Subsystem {
             case SHOOTER_OFF:
                 break;
         }
+
+        loopTimer.reset();
     }
     public void openLatch() {
         latchServo.setPosition(ShooterConstants.LATCH_OPEN);
@@ -96,6 +105,14 @@ public class Shooter extends Subsystem {
 
     public boolean atTarget(double threshold) {
         return Math.abs(currentVelocity - wantedVelocity) < threshold;
+    }
+
+    public void setkA(double ka) {
+        kA = ka;
+    }
+
+    public void setkPkV(double kp, double kv) {
+        controller.setCoefficients(kv, ShooterConstants.kS, kp);
     }
 }
 
