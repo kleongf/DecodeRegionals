@@ -318,10 +318,13 @@ public class MainTeleop {
             robot.shooter.setTargetVelocity(0);
         } else {
             if (robot.resetTurretCommand.isFinished()) {
-                if (getDistance(currentPose, goalPose) < 100 && currentPose.getX() < 72) {
+                if (getDistance(currentPose, goalPose) < 100 && currentPose.getX()<72) {
                     double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(6) : -Math.toRadians(6);
                     robot.turret.setTarget(values[0]+xtraOffset+turretOffset);
-                } else {
+                } else if (getDistance(currentPose, goalPose)>100){
+                    double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(2) : -Math.toRadians(2);
+                    robot.turret.setTarget(values[0]+xtraOffset+turretOffset);
+                } else{
                     robot.turret.setTarget(values[0]+turretOffset);
                 }
                 robot.turret.setFeedforward(values[3]);

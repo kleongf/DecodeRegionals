@@ -47,7 +47,7 @@ public class Shooter extends Subsystem {
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
         // (1.0/2000)
 
-        controller = new FeedForwardController(0.00036, 0, 0.002);//0.0036); // removed kp and it got better, but not great because it doesnt reach target fully
+        controller = new FeedForwardController(0.00036, 0, 0.0024);//0.0036); // removed kp and it got better, but not great because it doesnt reach target fully
     }
     @Override
     public void update() {
