@@ -17,9 +17,9 @@ public class IntakeFullTest extends OpMode {
     public void loop() {
         intake.update();
         telemetry.addData("Is Full:", intake.isFull);
-        telemetry.addData("Bottom Beam", intake.bottomReading);
-        telemetry.addData("Middle Beam", intake.middleReading);
-        telemetry.addData("Top Beam", intake.topReading);
+        telemetry.addData("Bottom Beam", intake.bottomTriggered());
+        telemetry.addData("Middle Beam", intake.middleTriggered());
+        telemetry.addData("Top Beam", intake.topTriggered());
         telemetry.update();
 
     }

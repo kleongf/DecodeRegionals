@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
@@ -425,11 +427,16 @@ public class Blue27MTI extends OpMode {
     }
     @Override
     public void loop() {
-        double[] values = sotm2.calculateAzimuthFeedforwardThetaVelocity(currentShootPose, new Vector(), 0.0, 0.02);
-        robot.turret.wantedAngle = values[0];
-        robot.turret.angularVelocityToGoal = values[1];
-        robot.shooter.wantedPitch = values[2];
-        robot.shooter.wantedVelocity = values[3];
+        ShootingConstants.ShooterOutputs shooterOutputs =
+                RobotConstants.useShootOnTheMove ?
+                        sotm2.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity(), robot.dt) :
+                        sotm2.calculateShooterOutputs(follower.getPose(), new Vector(), 0, robot.dt);
+
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
+        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
+        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+        robot.turret.wantedAngle = shooterOutputs.turretAngle;
+        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
         stateMachine.update();
         follower.update();

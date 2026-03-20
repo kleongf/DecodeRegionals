@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.decode2026;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.decode2026.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandSlow;
@@ -28,8 +30,12 @@ public class CurrentRobot extends Robot {
     public StateMachine intakeCommand;
     public StateMachine shootCommand;
     public StateMachine shootCommandSlow;
+    private ElapsedTime loopTimer;
+    public double dt;
 
     public CurrentRobot(HardwareMap hardwareMap) {
+        loopTimer = new ElapsedTime();
+
         bulkRead = new BulkRead(hardwareMap);
         subsystems = new ArrayList<>();
 
@@ -69,6 +75,7 @@ public class CurrentRobot extends Robot {
         for (Subsystem subsystem : subsystems) {
             subsystem.start();
         }
+        loopTimer.reset();
     }
 
     @Override
@@ -76,10 +83,13 @@ public class CurrentRobot extends Robot {
         for (Subsystem subsystem : subsystems) {
             subsystem.reset();
         }
+        loopTimer.reset();
     }
 
     @Override
     public void update() {
+        dt = loopTimer.seconds() <= 0 ? 0.02 : loopTimer.seconds();
+        loopTimer.reset();
         bulkRead.clearCache();
 
         for (Subsystem subsystem : subsystems) {

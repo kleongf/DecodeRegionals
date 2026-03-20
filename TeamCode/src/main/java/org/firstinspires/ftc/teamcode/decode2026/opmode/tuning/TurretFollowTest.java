@@ -8,6 +8,8 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
@@ -31,11 +33,13 @@ public class TurretFollowTest extends OpMode {
 
     @Override
     public void loop() {
-        double[] target = sotm.calculateAzimuthFeedforwardThetaVelocity(follower.getPose(), new Vector(), 0, 0.02);
-        shooter.wantedVelocity = shooterSpeed;
-        shooter.wantedPitch = shooterPitch;
-        turret.wantedAngle = target[0]+offset;
-        turret.angularVelocityToGoal = 0;
+        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs(follower.getPose(), new Vector(), 0, 0.02);
+        shooter.wantedVelocity = shooterOutputs.wheelVelocity;
+        shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
+        shooter.wantedPitch = shooterOutputs.hoodAngle;
+        turret.wantedAngle = shooterOutputs.turretAngle;
+        turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+
 
         double dx = goalPose.getX()-follower.getPose().getX();
         double dy = goalPose.getY()-follower.getPose().getY();

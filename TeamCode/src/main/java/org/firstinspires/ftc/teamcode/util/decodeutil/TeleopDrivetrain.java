@@ -12,8 +12,8 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.constants.PoseConstants;
 import com.pedropathing.control.PIDFController;
 
 import java.util.function.Supplier;
@@ -58,9 +58,9 @@ public class TeleopDrivetrain {
         this.alliance = alliance;
         state = DrivetrainState.TELEOP_DRIVE;
 
-        this.parkPose = alliance == Alliance.BLUE ? PoseConstants.BLUE_PARK_POSE :  PoseConstants.RED_PARK_POSE;
-        this.gatePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_SIDE_GATE_POSE : PoseConstants.RED_SIDE_GATE_POSE;
-        this.gateIntakePose = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE : PoseConstants.RED_GATE_AUTO_POSE;
+        this.parkPose = alliance == Alliance.BLUE ? FieldConstants.BLUE_PARK_POSE :  FieldConstants.RED_PARK_POSE;
+        this.gatePose = alliance == Alliance.BLUE ? FieldConstants.BLUE_SIDE_GATE_POSE : FieldConstants.RED_SIDE_GATE_POSE;
+        this.gateIntakePose = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE : FieldConstants.RED_GATE_AUTO_POSE;
 
         currentPathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -203,7 +203,7 @@ public class TeleopDrivetrain {
     private double[] calculateDrivetrainPowers(double x, double y, double rx, double currentHeading) {
         if (gateHeadingLock) {
             // added 6 deg
-            targetHeading = alliance == Alliance.BLUE ? PoseConstants.BLUE_GATE_AUTO_POSE.getHeading()+Math.toRadians(6) : PoseConstants.RED_GATE_AUTO_POSE.getHeading()-Math.toRadians(6);
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()+Math.toRadians(6) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()-Math.toRadians(6);
             // we aren't going to update
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);

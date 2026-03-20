@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.decode2026.constants;
 public class TurretConstants {
+    public static final double cachingThreshold = 0.005;
     public static final double ticksPerRevolution = 1381d;
     public static final double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
     public static final double maxPower = 0.75;

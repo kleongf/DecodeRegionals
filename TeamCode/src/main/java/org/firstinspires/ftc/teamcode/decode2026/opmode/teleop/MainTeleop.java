@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
@@ -36,7 +37,6 @@ public class MainTeleop {
     private final Telemetry telemetry;
     private final Alliance alliance;
     private Zone currentZone;
-    private final ElapsedTime loopTimer;
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
     private final ZoneUtil zoneUtil;
@@ -64,14 +64,12 @@ public class MainTeleop {
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
         this.turretResetTimer = new ElapsedTime();
-        this.loopTimer = new ElapsedTime();
     }
     private double normalizeInput(double input) {
         return 1.1 * input;
     }
 
     public void loop() {
-        double dt = loopTimer.seconds() > 0 ? loopTimer.seconds() : 0.02;
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
 
@@ -227,20 +225,21 @@ public class MainTeleop {
                     -normalizeInput(gamepad1.left_stick_x*lateralSpeed),
                     -normalizeInput(gamepad1.right_stick_x*rotationSpeed));
         }
-        double[] values = RobotConstants.useShootOnTheMove ?
-                sotmUtil.calculateAzimuthFeedforwardThetaVelocity(currentPose, drivetrain.getVelocity(), drivetrain.getAngularVelocity(), dt) :
-                sotmUtil.calculateAzimuthFeedforwardThetaVelocity(currentPose, new Vector(), 0, dt);
+        ShootingConstants.ShooterOutputs shooterOutputs =
+                RobotConstants.useShootOnTheMove ?
+                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), drivetrain.getVelocity(), drivetrain.getAngularVelocity(), robot.dt) :
+                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), new Vector(), 0, robot.dt);
 
-        robot.turret.wantedAngle = values[0]+turretOffset;
-        robot.turret.angularVelocityToGoal = values[1];
-        robot.shooter.wantedPitch = values[2];
-        robot.shooter.wantedVelocity = values[3];
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
+        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
+        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+        robot.turret.wantedAngle = shooterOutputs.turretAngle;
+        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
         prevDetectState = robot.intake.detectionState;
-        loopTimer.reset();
         robot.update();
 
-        telemetry.addData("Loop time", dt);
+        telemetry.addData("Loop time", robot.dt);
         telemetry.addData("Pose", currentPose);
         telemetry.addData("Current state", drivetrain.getState());
         telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));

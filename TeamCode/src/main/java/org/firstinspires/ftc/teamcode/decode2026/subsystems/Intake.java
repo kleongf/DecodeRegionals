@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.decode2026.constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
+import org.firstinspires.ftc.teamcode.util.decodeutil.CachedMotor;
 
 public class Intake extends Subsystem {
     public enum Mode {
@@ -22,9 +23,9 @@ public class Intake extends Subsystem {
     }
     public Mode wantedMode;
     public DetectionState detectionState;
-    public boolean topReading, middleReading, bottomReading;
     public boolean isFull;
     private final DcMotorEx intakeMotor;
+    private final CachedMotor intakeMotorCached;
     private final DigitalChannel top, middle, bottom;
 
     public Intake(HardwareMap hardwareMap) {
@@ -32,6 +33,7 @@ public class Intake extends Subsystem {
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotorCached = new CachedMotor(intakeMotor).setCachingTolerance(IntakeConstants.cachingThreshold);
 
         top = hardwareMap.get(DigitalChannel.class, "topSensor");
         middle = hardwareMap.get(DigitalChannel.class, "middleSensor");
@@ -55,35 +57,31 @@ public class Intake extends Subsystem {
 
     @Override
     public void update() {
-        topReading = !top.getState();
-        middleReading = !middle.getState();
-        bottomReading = !bottom.getState();
-
         switch (wantedMode) {
             case INTAKE_FAST:
-                intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
+                intakeMotorCached.setPower(IntakeConstants.INTAKE_FAST_POWER);
                 break;
             case INTAKE_SLOW:
-                intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
+                intakeMotorCached.setPower(IntakeConstants.INTAKE_SLOW_POWER);
                 break;
             case INTAKE_OFF:
-                intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
+                intakeMotorCached.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
                 break;
         }
 
         switch (detectionState) {
             case EMPTY:
-                if (topReading) {
+                if (topTriggered()) {
                     detectionState = DetectionState.FIRST_TRIGGERED;
                 }
                 break;
             case FIRST_TRIGGERED:
-                if (middleReading) {
+                if (middleTriggered()) {
                     detectionState = DetectionState.SECOND_TRIGGERED;
                 }
                 break;
             case SECOND_TRIGGERED:
-                if (bottomReading) {
+                if (bottomTriggered()) {
                     detectionState = DetectionState.THIRD_TRIGGERED;
                 }
                 break;
@@ -92,5 +90,17 @@ public class Intake extends Subsystem {
         }
 
         isFull = detectionState == DetectionState.THIRD_TRIGGERED;
+    }
+
+    public boolean topTriggered() {
+        return !top.getState();
+    }
+
+    public boolean middleTriggered() {
+        return !middle.getState();
+    }
+
+    public boolean bottomTriggered() {
+        return !bottom.getState();
     }
 }

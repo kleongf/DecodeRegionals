@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.PIDFController;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
+import org.firstinspires.ftc.teamcode.util.decodeutil.CachedMotor;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
 public class Turret extends Subsystem {
@@ -21,9 +22,10 @@ public class Turret extends Subsystem {
     public double currentVelocityTicks;
     public double wantedAngle;
     public double offset;
-    public double angularVelocityToGoal;
+    public double wantedAngularVelocity;
     public Mode wantedMode;
     private final DcMotorEx turretMotor;
+    private final CachedMotor turretMotorCached;
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
     private final PIDFController turretController;
@@ -33,6 +35,8 @@ public class Turret extends Subsystem {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        turretMotorCached = new CachedMotor(turretMotor).setCachingTolerance(TurretConstants.cachingThreshold);
+
         externalEncoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
@@ -63,17 +67,17 @@ public class Turret extends Subsystem {
             case TURRET_ON:
                 double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
                 double error = t-currentPositionTicks;
-                if (Math.abs(error) > TurretConstants.epsilonTicks) {
-                    double power = MathUtil.clamp(
-                            turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + kV * angularVelocityToGoal,
+
+                double power = MathUtil.clamp(
+                            turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + kV * wantedAngularVelocity,
                             -TurretConstants.maxPower,
                             TurretConstants.maxPower
-                    );
-                    if (TurretConstants.useVoltageCompensation) {
-                        power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
-                    }
-                    turretMotor.setPower(power);
+                );
+                if (TurretConstants.useVoltageCompensation) {
+                    power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
+                turretMotorCached.setPower(power);
+
                 break;
             case TURRET_OFF:
                 break;

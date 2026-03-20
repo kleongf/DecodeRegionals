@@ -40,7 +40,7 @@ public class SOTMTuningTeleopRed extends OpMode {
         teleop.loop();
         // graphing these could make it a lot easier to tune.
         telemetry.addData("robot velocity magnitude", teleop.drivetrain.getVelocity().getMagnitude());
-        telemetry.addData("feedforward power", kV * teleop.robot.turret.angularVelocityToGoal);
+        telemetry.addData("feedforward power", kV * teleop.robot.turret.wantedAngularVelocity);
         telemetry.addData("current pos", teleop.robot.turret.currentPositionTicks);
         telemetry.addData("target pos", teleop.robot.turret.wantedAngle * TurretConstants.ticksPerRadian);
         telemetry.addData("current flywheel speed", teleop.robot.shooter.currentVelocity);
