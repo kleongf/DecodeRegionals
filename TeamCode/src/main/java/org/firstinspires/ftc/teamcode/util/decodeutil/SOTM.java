@@ -6,7 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
 public class SOTM {
-    private Pose goal;
+    public Pose goal;
     private LUT thetaLUT;
     private LUT velocityLUT;
     private double radius = 0.036; // 36 mm radius, 72mm wheel
@@ -57,11 +57,11 @@ public class SOTM {
         thetaLUT.addData(43, Math.toRadians(35));
 
         velocityLUT = new LUT();
-        velocityLUT.addData(145, 2100+80);
-        velocityLUT.addData(138, 2040+80);
-        velocityLUT.addData(130, 1940+80);
-        velocityLUT.addData(118, 1860+80);
-        velocityLUT.addData(108, 1820+80);
+        velocityLUT.addData(145, 2100+180);
+        velocityLUT.addData(138, 2040+160);
+        velocityLUT.addData(130, 1940+140);
+        velocityLUT.addData(118, 1860+120);
+        velocityLUT.addData(108, 1820+120);
         velocityLUT.addData(98, 1740);
         velocityLUT.addData(88, 1680);
         velocityLUT.addData(78, 1640);

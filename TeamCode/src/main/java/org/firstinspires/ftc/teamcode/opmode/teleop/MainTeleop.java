@@ -289,6 +289,16 @@ public class MainTeleop {
             turretOffset += Math.toRadians(2);
         }
 
+        if (gamepad2.dpadRightWasPressed()) {
+            goalPose = new Pose(goalPose.getX(),goalPose.getY()+2,goalPose.getHeading());
+            sotm.goal = goalPose;
+        }
+
+        if (gamepad2.dpadLeftWasPressed()) {
+            goalPose = new Pose(goalPose.getX(),goalPose.getY()-2,goalPose.getHeading());
+            sotm.goal = goalPose;
+        }
+
         // close zone: dpad up
         if (gamepad2.dpadUpWasPressed()) {
             currentZone = Zone.CLOSE;
@@ -319,7 +329,7 @@ public class MainTeleop {
         } else {
             if (robot.resetTurretCommand.isFinished()) {
                 if (getDistance(currentPose, goalPose) < 100 && currentPose.getX()<72) {
-                    double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(6) : -Math.toRadians(6);
+                    double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(4) : -Math.toRadians(4);
                     robot.turret.setTarget(values[0]+xtraOffset+turretOffset);
                 } else if (getDistance(currentPose, goalPose)>100){
                     double xtraOffset = alliance == Alliance.BLUE ? Math.toRadians(2) : -Math.toRadians(2);
