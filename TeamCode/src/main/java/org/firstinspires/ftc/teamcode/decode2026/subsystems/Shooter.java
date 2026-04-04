@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
-import org.firstinspires.ftc.teamcode.util.decodeutil.CachedMotor;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
 public class Shooter extends Subsystem {
@@ -26,8 +25,6 @@ public class Shooter extends Subsystem {
     private final Servo pitchServo;
     private final DcMotorEx shooterMotor;
     private final DcMotorEx shooterMotor2;
-    private final CachedMotor shooterMotorCached;
-    private final CachedMotor shooterMotor2Cached;
     private final FeedForwardController controller;
     private final VoltageSensor voltageSensor;
     private double kA = ShooterConstants.kA;
@@ -38,13 +35,11 @@ public class Shooter extends Subsystem {
         shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterMotorCached = new CachedMotor(shooterMotor).setCachingTolerance(ShooterConstants.cachingThreshold);
 
         shooterMotor2 = hardwareMap.get(DcMotorEx.class, "shooterMotor2");
         shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterMotor2Cached = new CachedMotor(shooterMotor2).setCachingTolerance(ShooterConstants.cachingThreshold);
 
         latchServo = hardwareMap.get(Servo.class, "latchServo");
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
@@ -64,7 +59,7 @@ public class Shooter extends Subsystem {
 
     @Override
     public void update() {
-        currentVelocity = -shooterMotorCached.getVelocity();
+        currentVelocity = -shooterMotor.getVelocity();
 
         switch (wantedMode) {
             case SHOOTER_ON:
@@ -75,8 +70,8 @@ public class Shooter extends Subsystem {
                 if (ShooterConstants.useVoltageCompensation) {
                     power *= (ShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
-                shooterMotorCached.setPower(power);
-                shooterMotor2Cached.setPower(power);
+                shooterMotor.setPower(power);
+                shooterMotor2.setPower(power);
 
                 double ticksPerRadian = (ShooterConstants.PITCH_SERVO_F-ShooterConstants.PITCH_SERVO_I)/(ShooterConstants.PITCH_F-ShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - ShooterConstants.PITCH_I;

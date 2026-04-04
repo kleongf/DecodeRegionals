@@ -429,8 +429,8 @@ public class Blue27MTI extends OpMode {
     public void loop() {
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
-                        sotm2.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAngularVelocity(), robot.dt) :
-                        sotm2.calculateShooterOutputs(follower.getPose(), new Vector(), 0, robot.dt);
+                        sotm2.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
+                        sotm2.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;

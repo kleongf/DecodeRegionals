@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.decode2026.constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
-import org.firstinspires.ftc.teamcode.util.decodeutil.CachedMotor;
 
 public class Intake extends Subsystem {
     public enum Mode {
@@ -25,7 +24,6 @@ public class Intake extends Subsystem {
     public DetectionState detectionState;
     public boolean isFull;
     private final DcMotorEx intakeMotor;
-    private final CachedMotor intakeMotorCached;
     private final DigitalChannel top, middle, bottom;
 
     public Intake(HardwareMap hardwareMap) {
@@ -33,7 +31,6 @@ public class Intake extends Subsystem {
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotorCached = new CachedMotor(intakeMotor).setCachingTolerance(IntakeConstants.cachingThreshold);
 
         top = hardwareMap.get(DigitalChannel.class, "topSensor");
         middle = hardwareMap.get(DigitalChannel.class, "middleSensor");
@@ -59,13 +56,13 @@ public class Intake extends Subsystem {
     public void update() {
         switch (wantedMode) {
             case INTAKE_FAST:
-                intakeMotorCached.setPower(IntakeConstants.INTAKE_FAST_POWER);
+                intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
                 break;
             case INTAKE_SLOW:
-                intakeMotorCached.setPower(IntakeConstants.INTAKE_SLOW_POWER);
+                intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
                 break;
             case INTAKE_OFF:
-                intakeMotorCached.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
+                intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
                 break;
         }
 

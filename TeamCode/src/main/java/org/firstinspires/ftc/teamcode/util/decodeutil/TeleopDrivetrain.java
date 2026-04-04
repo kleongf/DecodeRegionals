@@ -98,6 +98,7 @@ public class TeleopDrivetrain {
     public double getAngularVelocity() {
         return follower.poseTracker.getAngularVelocity();
     }
+    public Vector getAcceleration() {return follower.poseTracker.getAcceleration();}
 
     public void kick(Pose closestPose) {
         currentPathChain = () -> follower.pathBuilder()

@@ -227,8 +227,8 @@ public class MainTeleop {
         }
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
-                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), drivetrain.getVelocity(), drivetrain.getAngularVelocity(), robot.dt) :
-                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), new Vector(), 0, robot.dt);
+                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), drivetrain.getVelocity(), drivetrain.getAcceleration(), drivetrain.getAngularVelocity(), RobotConstants.dt) :
+                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;

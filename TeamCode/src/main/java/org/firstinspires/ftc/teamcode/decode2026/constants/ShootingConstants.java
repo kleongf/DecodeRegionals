@@ -26,8 +26,8 @@ public class ShootingConstants {
             this.hoodAngle = hoodAngle;
         }
     }
-    public static final double TOF_MAX_ITERATIONS = 10;
-    public static final double SAMPLING_DT = 0.001;
+    public static final double TOF_ITERATIONS = 10;
+    public static final double SAMPLING_DT = 0.02;
     public static final double DEFAULT_TOF = 1.0;
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
@@ -39,18 +39,31 @@ public class ShootingConstants {
         tofLUT.addData(distance, tof);
     }
 
-    public static double calculateTOF(LUT tofLUT, Vector robotVelocity, Pose robotPose, Pose goalPose) {
-        Pose currentPose = robotPose;
-        double currentTOF = DEFAULT_TOF;
-        for (int i = 0; i < TOF_MAX_ITERATIONS; i++) {
-            double distance = currentPose.distanceFrom(goalPose);
-            currentTOF = tofLUT.getValue(distance);
-            currentPose = new Pose(robotPose.getX() + robotVelocity.getXComponent() * currentTOF, robotPose.getY() + robotVelocity.getYComponent() * currentTOF);
+    public static double calculateTOF(
+            LUT tofLUT,
+            Pose robotPose,
+            Pose targetPose,
+            Vector robotVelocity
+    ) {
+        double runningX = robotPose.getX();
+        double runningY = robotPose.getY();
+
+        double tof = 0;
+
+        for (int i = 0; i < TOF_ITERATIONS; i++) {
+            // get distance
+            double dx = targetPose.getX() - runningX;
+            double dy = targetPose.getY() - runningY;
+            double distance = Math.hypot(dx, dy);
+            // get tof
+            tof = tofLUT.getValue(distance);
+            // update running tof
+            runningX = robotPose.getX() + robotVelocity.getXComponent() * tof;
+            runningY = robotPose.getY() + robotVelocity.getYComponent() * tof;
         }
-        return currentTOF;
+
+        return tof;
     }
-
-
 
     static {
         // TODO: tune TOF

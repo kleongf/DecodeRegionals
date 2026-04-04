@@ -25,7 +25,6 @@ public class Turret extends Subsystem {
     public double wantedAngularVelocity;
     public Mode wantedMode;
     private final DcMotorEx turretMotor;
-    private final CachedMotor turretMotorCached;
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
     private final PIDFController turretController;
@@ -35,7 +34,6 @@ public class Turret extends Subsystem {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        turretMotorCached = new CachedMotor(turretMotor).setCachingTolerance(TurretConstants.cachingThreshold);
 
         externalEncoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
@@ -76,7 +74,7 @@ public class Turret extends Subsystem {
                 if (TurretConstants.useVoltageCompensation) {
                     power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
-                turretMotorCached.setPower(power);
+                turretMotor.setPower(power);
 
                 break;
             case TURRET_OFF:

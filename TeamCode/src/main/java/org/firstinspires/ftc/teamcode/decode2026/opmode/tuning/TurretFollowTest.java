@@ -9,6 +9,7 @@ import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -33,7 +34,7 @@ public class TurretFollowTest extends OpMode {
 
     @Override
     public void loop() {
-        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs(follower.getPose(), new Vector(), 0, 0.02);
+        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
         shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         shooter.wantedPitch = shooterOutputs.hoodAngle;

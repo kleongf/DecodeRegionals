@@ -18,12 +18,12 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 public class SOTMTuningTeleopBlue extends OpMode {
     private MainTeleop teleop;
     private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
-    public static double p = 0.01; // tune
-    public static double d = 0.000; // tune
-    public static double kV = 0.03;
+    public static double p = TurretConstants.kP; // tune
+    public static double d = TurretConstants.kD; // tune
+    public static double kV = TurretConstants.kV;
     public static double pShooter = ShooterConstants.kP;
     public static double vShooter = ShooterConstants.kV;
-    public static double aShooter = 0;
+    public static double aShooter = ShooterConstants.kA;
 
     @Override
     public void init() {

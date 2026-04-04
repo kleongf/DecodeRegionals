@@ -68,6 +68,9 @@ public class CameraLocalizer extends Subsystem {
                     if (detection.metadata != null) {
                         if (!detection.metadata.name.contains("Obelisk")) {
                             if (detection.metadata.name.contains("BlueTarget")) {
+                                // TODO: for pose averaging
+                                // large distance -> less weight, so weight by 1/distance or something
+                                double distance = detection.ftcPose.range;
                                 currentPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
                                 isGoodDetection = true;
                             }

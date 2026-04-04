@@ -22,30 +22,37 @@ public class SOTMUtil {
                 / ShootingConstants.SAMPLING_DT;
     }
 
-    public ShootingConstants.ShooterOutputs calculateShooterOutputs(Pose robotPose, Vector robotVelocity, double angularVelocity, double dt) {
-        double tof = ShootingConstants.calculateTOF(tofLUT, robotVelocity, robotPose, goal);
+    public ShootingConstants.ShooterOutputs calculateShooterOutputs(Pose robotPose, Vector robotVelocity, Vector robotAcceleration, double angularVelocity, double dt) {
+        double tof = ShootingConstants.calculateTOF(tofLUT, robotPose, goal, robotVelocity);
 
-        Pose virtualGoal = new Pose(goal.getX()-robotVelocity.getXComponent()*tof, goal.getY()-robotVelocity.getYComponent()*tof);
+        Vector currentSpeeds = robotVelocity;
+        Vector futureSpeeds = new Vector(currentSpeeds.getXComponent() + robotAcceleration.getXComponent() * dt, currentSpeeds.getYComponent() + robotAcceleration.getYComponent() * dt);
 
-        double dx = goal.getX() - robotPose.getX();
-        double dy = goal.getY() - robotPose.getY();
-        double dist = Math.hypot(dx, dy);
+        Pose virtualGoal = new Pose(goal.getX()-currentSpeeds.getXComponent()*tof, goal.getY()-currentSpeeds.getYComponent()*tof);
+        Pose futureVirtualGoal = new Pose(goal.getX() - futureSpeeds.getXComponent() * tof, goal.getY() - futureSpeeds.getYComponent() * tof);
 
-        double dxVirtual = virtualGoal.getX() - robotPose.getX();
-        double dyVirtual = virtualGoal.getY() - robotPose.getY();
-        double distVirtual = Math.hypot(dxVirtual, dyVirtual);
+        Pose turretPose = robotPose;
+        Pose futureTurretPose = new Pose(turretPose.getX() + currentSpeeds.getXComponent() * dt, turretPose.getY() + currentSpeeds.getYComponent() * dt, turretPose.getHeading() + angularVelocity * dt);
 
-        double turretAngle = Math.atan2(-dx, dy) - robotPose.getHeading() + Math.toRadians(90);
-        double futureTurretAngle = Math.atan2(-dxVirtual, dyVirtual) - robotPose.getHeading() + Math.toRadians(90);
+        double distance = virtualGoal.distanceFrom(turretPose);
+        double futureDistance = futureVirtualGoal.distanceFrom(futureTurretPose);
 
-        double theta = thetaLUT.getValue(distVirtual);
-        double velocity = velocityLUT.getValue(distVirtual);
-        // distanceVelocity: change in goal distance over time.
+        double turretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90);
+        double futureTurretAngle = Math.atan2(-(futureVirtualGoal.getX() - futureTurretPose.getX()), futureVirtualGoal.getY() - futureTurretPose.getY()) - futureTurretPose.getHeading() + Math.toRadians(90);
 
-        double wantedWheelAcceleration = sampleRate(velocityLUT, distVirtual, (distVirtual-dist) / dt);
-        // angular velocity is subtracted, but i'll take it away for testing to see if the direction is correct
-        double wantedTurretVelocity = MathUtil.getSmallestAngleDifference(turretAngle, futureTurretAngle) / dt - angularVelocity;
+        double wantedHoodAngle = thetaLUT.getValue(distance);
+        double wantedWheelSpeed = velocityLUT.getValue(distance);
 
-        return new ShootingConstants.ShooterOutputs(futureTurretAngle, wantedTurretVelocity, velocity, wantedWheelAcceleration, theta);
+        double wantedWheelAcceleration = sampleRate(velocityLUT, distance, (futureDistance - distance) / dt);
+
+        double wantedTurretVelocity = MathUtil.getSmallestAngleDifference(turretAngle, futureTurretAngle) / dt;
+
+        return new ShootingConstants.ShooterOutputs(
+                turretAngle,
+                wantedTurretVelocity,
+                wantedWheelSpeed,
+                wantedWheelAcceleration,
+                wantedHoodAngle
+        );
     }
 }

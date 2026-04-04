@@ -9,4 +9,5 @@ public class RobotConstants {
     public static final double robotRelocalizationTimeSeconds = 20.0;
     public static final double farShootingDistanceThreshold = 120.0;
     public static final int robotRadius = 8;
+    public static final double dt = 0.02;
 }
