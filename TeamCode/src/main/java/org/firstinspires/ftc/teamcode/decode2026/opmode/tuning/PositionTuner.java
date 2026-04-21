@@ -26,16 +26,12 @@ public class PositionTuner extends OpMode {
     public static double liftTarget = 0;
     public static double pitchTarget = ShooterConstants.PITCH_SERVO_MIN;
 
-    private FeedForwardController controller;
 
     @Override
     public void init() {
         leftLatch = hardwareMap.get(Servo.class, "latchServo");
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
         liftServo = hardwareMap.get(Servo.class, "hang1");
-
-        // open 0.3 (not hung), close 0.54 (hung)
-
 
         leftLatch.setDirection(Servo.Direction.FORWARD);
         pitchServo.setDirection(Servo.Direction.FORWARD);

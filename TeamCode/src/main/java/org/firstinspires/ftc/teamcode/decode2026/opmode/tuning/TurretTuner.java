@@ -17,7 +17,6 @@ public class TurretTuner extends OpMode {
     private double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
     @Override
     public void loop() {
-        turret.setPDCoefficients(kP, kD);
         turret.wantedAngle = target;
 
         turret.update();

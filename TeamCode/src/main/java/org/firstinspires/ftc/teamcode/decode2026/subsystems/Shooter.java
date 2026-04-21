@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
@@ -27,7 +28,6 @@ public class Shooter extends Subsystem {
     private final DcMotorEx shooterMotor2;
     private final FeedForwardController controller;
     private final VoltageSensor voltageSensor;
-    private double kA = ShooterConstants.kA;
     public Shooter(HardwareMap hardwareMap) {
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
@@ -59,13 +59,14 @@ public class Shooter extends Subsystem {
 
     @Override
     public void update() {
+        controller.setCoefficients(ShooterConstants.kV, ShooterConstants.kS, ShooterConstants.kP);
         currentVelocity = -shooterMotor.getVelocity();
 
         switch (wantedMode) {
             case SHOOTER_ON:
                 // TODO: remember to set velocity before update() which i think we do.
                 double power = controller.calculate(currentVelocity, wantedVelocity);
-                power += kA * wantedAcceleration;
+                power += ShooterConstants.kA * wantedAcceleration;
 
                 if (ShooterConstants.useVoltageCompensation) {
                     power *= (ShooterConstants.nominalVoltage / voltageSensor.getVoltage());
@@ -95,14 +96,6 @@ public class Shooter extends Subsystem {
 
     public boolean atTarget(double threshold) {
         return Math.abs(currentVelocity - wantedVelocity) < threshold;
-    }
-
-    public void setkA(double ka) {
-        kA = ka;
-    }
-
-    public void setkPkV(double kp, double kv) {
-        controller.setCoefficients(kv, ShooterConstants.kS, kp);
     }
 }
 

@@ -21,7 +21,7 @@ public class LEDIndicator extends Subsystem {
         timer = new ElapsedTime();
         flashingTimer = new ElapsedTime();
         light = hardwareMap.get(Servo.class, "light");
-        light.setPosition(0);
+        light.setPosition(LEDIndicatorConstants.minBrightness);
     }
 
     @Override

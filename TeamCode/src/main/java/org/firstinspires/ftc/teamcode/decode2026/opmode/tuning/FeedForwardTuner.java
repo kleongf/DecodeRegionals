@@ -53,5 +53,4 @@ public class FeedForwardTuner extends OpMode {
         telemetry.addData("target", target);
         telemetry.update();
     }
-
 }

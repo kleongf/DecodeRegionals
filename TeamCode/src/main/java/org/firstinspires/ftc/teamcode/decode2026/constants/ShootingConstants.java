@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.decode2026.constants;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
-
 import org.firstinspires.ftc.teamcode.util.decodeutil.LUT;
-
+@Config
 public class ShootingConstants {
     public static class ShooterOutputs {
         public final double turretAngle;
@@ -27,8 +27,9 @@ public class ShootingConstants {
         }
     }
     public static final double TOF_ITERATIONS = 10;
-    public static final double SAMPLING_DT = 0.02;
+    public static final double SAMPLING_DT = 0.001;
     public static final double DEFAULT_TOF = 1.0;
+    public static double tofMultiplier = 1.0;
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
     public static final LUT tofLUT = new LUT();

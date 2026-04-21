@@ -148,8 +148,6 @@ public class AbsoluteEncoderTuning extends OpMode {
     @Override
     public void init() {
         turret = new Turret(hardwareMap);
-        turret.setPDCoefficients(0, 0);
-        turret.setkV(0);
         encoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }

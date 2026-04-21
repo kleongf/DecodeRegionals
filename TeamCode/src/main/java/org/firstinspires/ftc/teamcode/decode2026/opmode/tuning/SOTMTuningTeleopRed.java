@@ -18,12 +18,6 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 public class SOTMTuningTeleopRed extends OpMode {
     private MainTeleop teleop;
     private final Pose startPose = FieldConstants.RED_STANDARD_START_POSE;
-    public static double p = TurretConstants.kP; // tune
-    public static double d = TurretConstants.kD; // tune
-    public static double kV = TurretConstants.kV;
-    public static double pShooter = ShooterConstants.kP;
-    public static double vShooter = ShooterConstants.kV;
-    public static double aShooter = ShooterConstants.kA;
 
     @Override
     public void init() {
@@ -33,18 +27,15 @@ public class SOTMTuningTeleopRed extends OpMode {
 
     @Override
     public void loop() {
-        teleop.robot.turret.setPDCoefficients(p, d);
-        teleop.robot.turret.setkV(kV);
-        teleop.robot.shooter.setkPkV(pShooter, vShooter);
-        teleop.robot.shooter.setkA(aShooter);
         teleop.loop();
         // graphing these could make it a lot easier to tune.
         telemetry.addData("robot velocity magnitude", teleop.drivetrain.getVelocity().getMagnitude());
-        telemetry.addData("feedforward power", kV * teleop.robot.turret.wantedAngularVelocity);
-        telemetry.addData("current pos", teleop.robot.turret.currentPositionTicks);
-        telemetry.addData("target pos", teleop.robot.turret.wantedAngle * TurretConstants.ticksPerRadian);
+        telemetry.addData("turret feedforward power", teleop.robot.turret.wantedAngularVelocity * TurretConstants.kV);
+        telemetry.addData("current turret pos", teleop.robot.turret.currentPositionTicks);
+        telemetry.addData("target turret pos", teleop.robot.turret.wantedAngle * TurretConstants.ticksPerRadian);
         telemetry.addData("current flywheel speed", teleop.robot.shooter.currentVelocity);
         telemetry.addData("target flywheel speed", teleop.robot.shooter.wantedVelocity);
+        telemetry.addData("flywheel feedforward power", teleop.robot.shooter.wantedAcceleration * ShooterConstants.kA);
         telemetry.update();
     }
 

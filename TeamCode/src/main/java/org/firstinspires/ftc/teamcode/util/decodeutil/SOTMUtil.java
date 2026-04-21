@@ -23,7 +23,7 @@ public class SOTMUtil {
     }
 
     public ShootingConstants.ShooterOutputs calculateShooterOutputs(Pose robotPose, Vector robotVelocity, Vector robotAcceleration, double angularVelocity, double dt) {
-        double tof = ShootingConstants.calculateTOF(tofLUT, robotPose, goal, robotVelocity);
+        double tof = ShootingConstants.calculateTOF(tofLUT, robotPose, goal, robotVelocity) * ShootingConstants.tofMultiplier;
 
         Vector currentSpeeds = robotVelocity;
         Vector futureSpeeds = new Vector(currentSpeeds.getXComponent() + robotAcceleration.getXComponent() * dt, currentSpeeds.getYComponent() + robotAcceleration.getYComponent() * dt);

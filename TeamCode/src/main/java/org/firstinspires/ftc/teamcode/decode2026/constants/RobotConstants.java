@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.decode2026.constants;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class RobotConstants {
-    public static final boolean useShootOnTheMove = true;
-    public static final boolean useAutomaticRelocalization = false;
-    public static final boolean useAutomaticTurretRelocalization = true;
-    public static final boolean useAutomateRobotDrive = false;
-    public static final double turretResetTimeSeconds = 20.0;
-    public static final double robotRelocalizationTimeSeconds = 20.0;
-    public static final double farShootingDistanceThreshold = 120.0;
-    public static final int robotRadius = 8;
-    public static final double dt = 0.02;
+    public static boolean useShootOnTheMove = true;
+    public static boolean useAutomaticRelocalization = false;
+    public static boolean useAutomaticTurretRelocalization = true;
+    public static boolean useAutomateRobotDrive = false;
+    public static double turretResetTimeSeconds = 20.0;
+    public static double robotRelocalizationTimeSeconds = 20.0;
+    public static double farShootingDistanceThreshold = 120.0;
+    public static int robotRadius = 8;
+    public static double dt = 0.02;
 }

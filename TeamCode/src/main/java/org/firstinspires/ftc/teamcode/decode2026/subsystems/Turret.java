@@ -54,6 +54,8 @@ public class Turret extends Subsystem {
 
     @Override
     public void update() {
+        turretController.setPIDF(TurretConstants.kP, 0, TurretConstants.kD, 0);
+
         if (TurretConstants.useExternalEncoder) {
             currentPositionTicks = calculatePositionTicks(externalEncoder.getVoltage());
         } else {
@@ -67,7 +69,7 @@ public class Turret extends Subsystem {
                 double error = t-currentPositionTicks;
 
                 double power = MathUtil.clamp(
-                            turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + kV * wantedAngularVelocity,
+                            turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + TurretConstants.kV * wantedAngularVelocity,
                             -TurretConstants.maxPower,
                             TurretConstants.maxPower
                 );
@@ -109,13 +111,5 @@ public class Turret extends Subsystem {
         double posToTicksGeared = position * TurretConstants.ticksPerRadian * TurretConstants.encoderGearRatio;
 
         return posToTicksGeared - 2 * TurretConstants.ticksPerRevolution;
-    }
-
-    public void setPDCoefficients(double p, double d) {
-        turretController.setPIDF(p, 0, d, 0);
-    }
-
-    public void setkV(double kv) {
-        kV = kv;
     }
 }

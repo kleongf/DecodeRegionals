@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 public class TurretFollowTest extends OpMode {
     private Turret turret;
     public static double shooterSpeed;
-    public static double shooterPitch;
-    public static double offset = 0;
+    public static double shooterPitchDegrees; // degrees for tuning
+    public static double offsetDegrees = 0; // degrees for tuning
     private Follower follower;
     private Intake intake;
     private SOTMUtil sotm;
@@ -35,12 +35,11 @@ public class TurretFollowTest extends OpMode {
     @Override
     public void loop() {
         ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
-        shooter.wantedVelocity = shooterOutputs.wheelVelocity;
-        shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
-        shooter.wantedPitch = shooterOutputs.hoodAngle;
-        turret.wantedAngle = shooterOutputs.turretAngle;
-        turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
-
+        shooter.wantedVelocity = shooterSpeed;
+        shooter.wantedAcceleration = 0;
+        shooter.wantedPitch = Math.toRadians(shooterPitchDegrees);
+        turret.wantedAngle = shooterOutputs.turretAngle + Math.toRadians(offsetDegrees);
+        turret.wantedAngularVelocity = 0;
 
         double dx = goalPose.getX()-follower.getPose().getX();
         double dy = goalPose.getY()-follower.getPose().getY();
