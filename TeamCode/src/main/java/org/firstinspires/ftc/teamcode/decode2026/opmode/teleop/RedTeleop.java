@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 @TeleOp(name="Red Teleop COMP", group="!")
 public class RedTeleop extends OpMode {
     private MainTeleop teleop;
-    private Pose startPose = (Pose) blackboard.getOrDefault(FieldConstants.END_POSE_KEY, FieldConstants.RED_END_AUTO_POSE);
+    private Pose startPose = (Pose) blackboard.getOrDefault(FieldConstants.END_POSE_KEY, FieldConstants.RED_STANDARD_START_POSE);
 
     @Override
     public void init() {

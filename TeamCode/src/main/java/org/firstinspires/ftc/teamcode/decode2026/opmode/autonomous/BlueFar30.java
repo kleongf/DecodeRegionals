@@ -32,13 +32,13 @@ public class BlueFar30 extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(FieldConstants.BLUE_FAR_AUTO_START_POSE, new Pose(9, 10)))
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .addPath(new BezierLine(FieldConstants.BLUE_FAR_START_AUTO_POSE, new Pose(9, 10)))
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootCorner = follower.pathBuilder()
                 .addPath(new BezierLine(new Pose(9, 10), new Pose(50, 10)))
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakeThird = follower.pathBuilder()
@@ -50,7 +50,7 @@ public class BlueFar30 extends OpMode {
                                 new Pose(10.000, 35.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootThird = follower
@@ -58,7 +58,7 @@ public class BlueFar30 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(10.000, 35.000), new Pose(50, 10))
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePileLowCycle = follower.pathBuilder()
@@ -68,7 +68,7 @@ public class BlueFar30 extends OpMode {
                                 new Pose(9.000, 10.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootPileLowCycle = follower.pathBuilder()
@@ -78,7 +78,7 @@ public class BlueFar30 extends OpMode {
                                 new Pose(50.000, 10.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePileHighCycle = follower.pathBuilder()
@@ -90,7 +90,7 @@ public class BlueFar30 extends OpMode {
                                 new Pose(9.000, 32.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootPileHighCycle = follower.pathBuilder()
@@ -100,7 +100,7 @@ public class BlueFar30 extends OpMode {
                                 new Pose(50.000, 10.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePile1 = Copier.copy(follower, intakePileLowCycle);
@@ -128,14 +128,14 @@ public class BlueFar30 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(50, 10), new Pose(30, 10))
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_AUTO_START_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
     }
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(FieldConstants.BLUE_FAR_AUTO_START_POSE);
+        follower.setStartingPose(FieldConstants.BLUE_FAR_START_AUTO_POSE);
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);

@@ -8,12 +8,10 @@ public class SOTMUtil {
     private final Pose goal;
     private final LUT thetaLUT;
     private final LUT velocityLUT;
-    private final LUT tofLUT;
     public SOTMUtil(Pose goal) {
         this.goal = goal;
         thetaLUT = ShootingConstants.hoodAngleLUT;
         velocityLUT = ShootingConstants.wheelSpeedLUT;
-        tofLUT = ShootingConstants.tofLUT;
     }
     private double sampleRate(
             LUT map, double distance, double distanceVelocity) {
@@ -22,16 +20,14 @@ public class SOTMUtil {
                 / ShootingConstants.SAMPLING_DT;
     }
 
-    public ShootingConstants.ShooterOutputs calculateShooterOutputs(Pose robotPose, Vector robotVelocity, Vector robotAcceleration, double angularVelocity, double dt) {
-        double tof = ShootingConstants.calculateTOF(tofLUT, robotPose, goal, robotVelocity) * ShootingConstants.tofMultiplier;
-
-        Vector currentSpeeds = robotVelocity;
+    public ShootingConstants.ShooterOutputs calculateShooterOutputs(Pose turretPose, Vector currentSpeeds, Vector robotAcceleration, double angularVelocity, double dt) {
+        double tof = ShootingConstants.calculateTOF(ShootingConstants.tofFunction, turretPose, goal, currentSpeeds) * ShootingConstants.tofMultiplier;
+        // future stuff is used for feedforward
         Vector futureSpeeds = new Vector(currentSpeeds.getXComponent() + robotAcceleration.getXComponent() * dt, currentSpeeds.getYComponent() + robotAcceleration.getYComponent() * dt);
 
         Pose virtualGoal = new Pose(goal.getX()-currentSpeeds.getXComponent()*tof, goal.getY()-currentSpeeds.getYComponent()*tof);
         Pose futureVirtualGoal = new Pose(goal.getX() - futureSpeeds.getXComponent() * tof, goal.getY() - futureSpeeds.getYComponent() * tof);
 
-        Pose turretPose = robotPose;
         Pose futureTurretPose = new Pose(turretPose.getX() + currentSpeeds.getXComponent() * dt, turretPose.getY() + currentSpeeds.getYComponent() * dt, turretPose.getHeading() + angularVelocity * dt);
 
         double distance = virtualGoal.distanceFrom(turretPose);

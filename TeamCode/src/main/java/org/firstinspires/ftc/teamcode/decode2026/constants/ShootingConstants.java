@@ -4,6 +4,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import org.firstinspires.ftc.teamcode.util.decodeutil.LUT;
+
+import java.util.function.Function;
+
 @Config
 public class ShootingConstants {
     public static class ShooterOutputs {
@@ -32,16 +35,15 @@ public class ShootingConstants {
     public static double tofMultiplier = 1.0;
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
-    public static final LUT tofLUT = new LUT();
+    public static final Function<Double, Double> tofFunction = x -> 1.0; // function of distance
 
-    private static void addData(double distance, double hoodAngle, double wheelSpeed, double tof) {
+    private static void addData(double distance, double hoodAngle, double wheelSpeed) {
         wheelSpeedLUT.addData(distance, wheelSpeed);
         hoodAngleLUT.addData(distance, hoodAngle);
-        tofLUT.addData(distance, tof);
     }
 
     public static double calculateTOF(
-            LUT tofLUT,
+            Function<Double, Double> tofFunction,
             Pose robotPose,
             Pose targetPose,
             Vector robotVelocity
@@ -57,7 +59,7 @@ public class ShootingConstants {
             double dy = targetPose.getY() - runningY;
             double distance = Math.hypot(dx, dy);
             // get tof
-            tof = tofLUT.getValue(distance);
+            tof = tofFunction.apply(distance);
             // update running tof
             runningX = robotPose.getX() + robotVelocity.getXComponent() * tof;
             runningY = robotPose.getY() + robotVelocity.getYComponent() * tof;
@@ -67,9 +69,9 @@ public class ShootingConstants {
     }
 
     static {
-        // TODO: tune TOF
-        addData(145, Math.toRadians(50), 2180, 1.5);
-        addData(138, Math.toRadians(50), 2120, 1.42);
+        // TODO: tune TOF, put into a quadratic function for least squares, then put that into function
+        addData(145, Math.toRadians(50), 2180); // tof: 1.5
+        addData(138, Math.toRadians(50), 2120);
         // and so on and so forth
     }
 }

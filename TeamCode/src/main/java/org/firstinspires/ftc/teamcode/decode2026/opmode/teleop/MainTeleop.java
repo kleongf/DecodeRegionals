@@ -150,7 +150,7 @@ public class MainTeleop {
 
         // RIGHT TRIGGER: hold for gate heading lock
         drivetrain.gateHeadingLock = Math.abs(gamepad1.right_trigger) > 0.01;
-
+        // LEFT TRIGGER: hold for gate open heading lock
         drivetrain.openGateHeadingLock = Math.abs(gamepad1.left_trigger) > 0.01;
 
         // set robot centric: x

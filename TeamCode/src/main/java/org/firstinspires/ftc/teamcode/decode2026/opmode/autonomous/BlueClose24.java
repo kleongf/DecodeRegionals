@@ -45,10 +45,10 @@ public class BlueClose24 extends OpMode {
     public void buildPaths() {
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
-                        FieldConstants.BLUE_CLOSE_AUTO_POSE,
+                        FieldConstants.BLUE_CLOSE_START_AUTO_POSE,
                         new Pose(32, 108.000)
                 )
-        ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_AUTO_POSE.getHeading()).build();
+        ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading()).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierCurve(
@@ -57,7 +57,7 @@ public class BlueClose24 extends OpMode {
                         new Pose(24, 92),
                         new Pose(23.500, 83.000)
                 )
-        ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_AUTO_POSE.getHeading()).build();
+        ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading()).build();
 
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
@@ -65,7 +65,7 @@ public class BlueClose24 extends OpMode {
                                 new Pose(32, 108)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
                 .build();
 
         intakeSecond = follower.pathBuilder().addPath(
@@ -75,7 +75,7 @@ public class BlueClose24 extends OpMode {
                                 new Pose(22, 72.000),
                                 new Pose(23.500, 62.000)
                         )
-                ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_AUTO_POSE.getHeading())
+                ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
                 .build();
 
         openGate = follower.pathBuilder().addPath(
@@ -267,7 +267,7 @@ public class BlueClose24 extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
-        follower.setStartingPose(FieldConstants.BLUE_CLOSE_AUTO_POSE);
+        follower.setStartingPose(FieldConstants.BLUE_CLOSE_START_AUTO_POSE);
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
         buildPaths();

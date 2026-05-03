@@ -60,8 +60,8 @@ public class Constants {
             .nominalVoltage(12.5);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-4.35)
-            .strafePodX(-2.5197)
+            .forwardPodY(-4.35) // TODO: find new pod offset values
+            .strafePodX(-3.7654610236)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .yawScalar(1.0)
