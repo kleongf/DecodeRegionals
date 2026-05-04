@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
+import org.firstinspires.ftc.teamcode.decode2026.constants.DrivetrainConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
@@ -28,7 +29,6 @@ public class MainTeleop {
     private Intake.DetectionState prevDetectState;
     public TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
-    private double longitudinalSpeed = 1, lateralSpeed = 1, rotationSpeed = 0.35;
     public CurrentRobot robot;
     private final Pose goalPose;
     private final Gamepad gamepad1;
@@ -158,11 +158,6 @@ public class MainTeleop {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
-        // gate open: y
-        if (gamepad1.yWasPressed()) {
-            drivetrain.openGate();
-        }
-
         // stop auto drive: left/right stick
         if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
             drivetrain.breakFollowing();
@@ -217,13 +212,13 @@ public class MainTeleop {
         }
 
         if (alliance == Alliance.BLUE) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
-                    -normalizeInput(gamepad1.left_stick_x*lateralSpeed),
-                    -normalizeInput(gamepad1.right_stick_x*rotationSpeed));
+            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+                    -normalizeInput(gamepad1.left_stick_x),
+                    -normalizeInput(gamepad1.right_stick_x));
         } else if (alliance == Alliance.RED) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y*longitudinalSpeed),
-                    -normalizeInput(gamepad1.left_stick_x*lateralSpeed),
-                    -normalizeInput(gamepad1.right_stick_x*rotationSpeed));
+            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+                    -normalizeInput(gamepad1.left_stick_x),
+                    -normalizeInput(gamepad1.right_stick_x));
         }
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
@@ -233,7 +228,7 @@ public class MainTeleop {
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = shooterOutputs.turretAngle;
+        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
         robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
         prevDetectState = robot.intake.detectionState;

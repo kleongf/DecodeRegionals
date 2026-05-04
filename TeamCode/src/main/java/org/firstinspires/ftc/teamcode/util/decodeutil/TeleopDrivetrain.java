@@ -12,12 +12,14 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.decode2026.constants.DrivetrainConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.decode2026.opmode.teleop.MainTeleop;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.control.PIDFController;
 
 import java.util.function.Supplier;
-
+// TODO: make lockedX for gate cycles and automatic turn (not drive) to closest spot in zone tangentially in best direction
 public class TeleopDrivetrain {
     public enum DrivetrainState {
         TELEOP_DRIVE,
@@ -37,20 +39,19 @@ public class TeleopDrivetrain {
     private double KICK_TIME = 1.0;
     public boolean gateHeadingLock = false;
     public boolean openGateHeadingLock = false;
-    private Alliance alliance;
-    private Pose gatePose;
-    private Pose gateIntakePose;
+    private final Alliance alliance;
     private Pose parkPose;
     private PIDFController headingPIDFController;
+    private PIDFController yController;
 
     public TeleopDrivetrain(HardwareMap hardwareMap, Alliance alliance) {
-
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
         follower.startTeleopDrive(true);
         follower.usePredictiveBraking = true;
 
         headingPIDFController = new PIDFController(new PIDFCoefficients(0.4, 0, 0.03, 0));
+        yController = new PIDFController(new PIDFCoefficients(0.03, 0, 0, 0));
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
@@ -59,8 +60,6 @@ public class TeleopDrivetrain {
         state = DrivetrainState.TELEOP_DRIVE;
 
         this.parkPose = alliance == Alliance.BLUE ? FieldConstants.BLUE_PARK_POSE :  FieldConstants.RED_PARK_POSE;
-        this.gatePose = alliance == Alliance.BLUE ? FieldConstants.BLUE_SIDE_GATE_POSE : FieldConstants.RED_SIDE_GATE_POSE;
-        this.gateIntakePose = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE : FieldConstants.RED_GATE_AUTO_POSE;
 
         currentPathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -131,56 +130,6 @@ public class TeleopDrivetrain {
         follower.followPath(currentPathChain.get(), true);
     }
 
-    public void intakeGate() {
-        currentPathChain = () -> follower.pathBuilder()
-                .addPath(
-                        new Path(
-                                new BezierLine(
-                                        follower.getPose(),
-                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+15: gateIntakePose.getX()-15), gateIntakePose.getY())
-                                )
-                        )
-                )
-                .setLinearHeadingInterpolation(follower.getPose().getHeading(), gateIntakePose.getHeading())
-                .addPath(
-                        new Path(
-                                new BezierLine(
-                                        new Pose((alliance == Alliance.BLUE ? gateIntakePose.getX()+15: gateIntakePose.getX()-15), gateIntakePose.getY()),
-                                        gateIntakePose
-                                )
-                        )
-                )
-                .setConstantHeadingInterpolation(gateIntakePose.getHeading())
-                .build();
-        state = DrivetrainState.INTAKE_GATE;
-        follower.followPath(currentPathChain.get(), true);
-    }
-
-    public void openGate() {
-        currentPathChain = () -> follower.pathBuilder()
-                .addPath(
-                        new Path(
-                                new BezierLine(
-                                        follower.getPose(),
-                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY())
-                                )
-                        )
-                )
-                .setLinearHeadingInterpolation(follower.getPose().getHeading(), gatePose.getHeading())
-                .addPath(
-                        new Path(
-                                new BezierLine(
-                                        new Pose((alliance == Alliance.BLUE ? gatePose.getX()+15: gatePose.getX()-15), gatePose.getY()),
-                                        gatePose
-                                )
-                        )
-                )
-                .setConstantHeadingInterpolation(gatePose.getHeading())
-                .build();
-        state = DrivetrainState.OPEN_GATE;
-        follower.followPath(currentPathChain.get(), true);
-    }
-
     public boolean isBusy() {
         return state != DrivetrainState.TELEOP_DRIVE;
     }
@@ -189,8 +138,6 @@ public class TeleopDrivetrain {
         switch (state) {
             case TELEOP_DRIVE:
                 return "TELEOP_DRIVE";
-            case OPEN_GATE:
-                return "OPENING_GATE";
             case PARK:
                 return "PARKING";
             case KICK:
@@ -205,31 +152,48 @@ public class TeleopDrivetrain {
         if (gateHeadingLock) {
             // added 6 deg
             targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()+Math.toRadians(6) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()-Math.toRadians(6);
-            // we aren't going to update
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
+
+            double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getY() : FieldConstants.RED_GATE_AUTO_POSE.getY();
+            double yError = lockedY - follower.getPose().getY();
+            yController.updateError(yError);
+
+            double outX = x * DrivetrainConstants.xSpeed;
+            double outY = yController.run();
             double outHeading = headingPIDFController.run();
-            return new double[] {x, y, outHeading};
+
+            return new double[] {outX, outY, outHeading};
         } else if (openGateHeadingLock) {
-            targetHeading = alliance == Alliance.BLUE ? Math.toRadians(180) : Math.toRadians(0);
-            // we aren't going to update
+            // find closest angle
+            double[] alignAngles = {0, 0.5 * Math.PI, Math.PI, 1.5 * Math.PI};
+            int bestAlignIndex = 0;
+            double smallestDifference = Double.POSITIVE_INFINITY;
+            for (int i = 0; i < alignAngles.length; i++) {
+                double diff = Math.abs(MathFunctions.getSmallestAngleDifference(currentHeading, alignAngles[i]));
+                if (diff < smallestDifference) {
+                    bestAlignIndex = i;
+                    smallestDifference = diff;
+                }
+            }
+
+            targetHeading = alignAngles[bestAlignIndex];
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
+
+            double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_SIDE_GATE_POSE.getY() : FieldConstants.RED_SIDE_GATE_POSE.getY();
+            double yError = lockedY - follower.getPose().getY();
+            yController.updateError(yError);
+
             double outHeading = headingPIDFController.run();
-            return new double[] {x, y, outHeading};
-        }
-        else {
-            // got rid of normal
+            double outY = yController.run();
+
+            return new double[] {x * DrivetrainConstants.xSpeed, outY, outHeading};
+        } else {
             targetHeading = currentHeading;
-            return new double[] {x, y, rx};
+            return new double[] {x * DrivetrainConstants.xSpeed, y * DrivetrainConstants.ySpeed, rx * DrivetrainConstants.headingSpeed};
         }
     }
-
-    public void setGateHeadingLock(boolean x) {
-        gateHeadingLock = x;
-    }
-
-    public boolean getGateHeadingLock() {return gateHeadingLock;}
 
     public void update(double x, double y, double rx) {
         follower.update();
@@ -245,11 +209,6 @@ public class TeleopDrivetrain {
                 } else {
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric, Math.toRadians(180));
-                }
-                break;
-            case OPEN_GATE:
-                if (!follower.isBusy()) {
-                    breakFollowing();
                 }
                 break;
             case PARK:
