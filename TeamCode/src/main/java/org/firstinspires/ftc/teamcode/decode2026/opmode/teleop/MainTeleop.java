@@ -174,7 +174,7 @@ public class MainTeleop {
         drivetrain.openGateHeadingLock = Math.abs(gamepad1.left_trigger) > 0.05;
 
         // park: x
-        if (gamepad1.yWasPressed()) {
+        if (gamepad1.xWasPressed()) {
             drivetrain.park();
         }
 
