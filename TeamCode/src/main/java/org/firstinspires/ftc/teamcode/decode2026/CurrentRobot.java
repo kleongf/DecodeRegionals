@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.decode2026.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandSlow;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.Tilt;
 import org.firstinspires.ftc.teamcode.lib.robot.Robot;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
@@ -24,6 +25,7 @@ public class CurrentRobot extends Robot {
     public final Intake intake;
     public final Shooter shooter;
     public final Turret turret;
+    public final Tilt tilt;
     public final LEDIndicator ledIndicator;
     public final CameraLocalizer cameraLocalizer;
 
@@ -48,6 +50,9 @@ public class CurrentRobot extends Robot {
 
         turret = new Turret(hardwareMap);
         subsystems.add(turret);
+
+        tilt = new Tilt(hardwareMap);
+        subsystems.add(tilt);
 
         ledIndicator = new LEDIndicator(hardwareMap);
         subsystems.add(ledIndicator);

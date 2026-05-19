@@ -62,6 +62,7 @@ public class CameraLocalizer extends Subsystem {
     @Override
     public void update() {
         switch (wantedMode) {
+            // if multiple detections, use the closest one
             case CAMERA_ON:
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
                 for (AprilTagDetection detection : currentDetections) {

@@ -87,11 +87,6 @@ public class Intake extends Subsystem {
         }
 
         isFull = detectionState == DetectionState.THIRD_TRIGGERED;
-
-        // prevent multi-possession in auto and teleop. todo: will have to remove this for tuning though
-        if (isFull) {
-            wantedMode = Mode.INTAKE_OFF;
-        }
     }
 
     public boolean topTriggered() {

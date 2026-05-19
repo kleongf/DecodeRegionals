@@ -21,6 +21,7 @@ public class Turret extends Subsystem {
     public double currentPositionTicks;
     public double currentVelocityTicks;
     public double wantedAngle;
+    public double currentAngle;
     public double offset;
     public double wantedAngularVelocity;
     public Mode wantedMode;
@@ -28,7 +29,6 @@ public class Turret extends Subsystem {
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
     private final PIDFController turretController;
-    private double kV = TurretConstants.kV;
 
     public Turret(HardwareMap hardwareMap) {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
@@ -61,6 +61,8 @@ public class Turret extends Subsystem {
         } else {
             currentPositionTicks = turretMotor.getCurrentPosition() + offset;
         }
+
+        currentAngle = turretMotor.getCurrentPosition() / TurretConstants.ticksPerRadian;
         currentVelocityTicks = turretMotor.getVelocity();
 
         switch (wantedMode) {

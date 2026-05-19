@@ -99,14 +99,32 @@ public class TeleopDrivetrain {
     }
     public Vector getAcceleration() {return follower.poseTracker.getAcceleration();}
 
-    public void kick(Pose closestPose) {
-        currentPathChain = () -> follower.pathBuilder()
-                .addPath(
-                        new Path(
-                                new BezierLine(follower.getPose(), closestPose)
-                        )
-                )
-                .setConstantHeadingInterpolation(follower.getPose().getHeading()).build();
+    public void kick(Pose targetPose) {
+        Pose currentPose = follower.getPose();
+        double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
+        double angleReversed = angle - Math.PI;
+
+        // find the most efficient turn angle to the zone
+        if (MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading())) {
+            currentPathChain = () -> follower.pathBuilder()
+                    .addPath(
+                            new Path(
+                                    new BezierLine(follower.getPose(), targetPose)
+                            )
+                    )
+                    .setTangentHeadingInterpolation()
+                    .build();
+        } else {
+            currentPathChain = () -> follower.pathBuilder()
+                    .addPath(
+                            new Path(
+                                    new BezierLine(follower.getPose(), targetPose)
+                            )
+                    )
+                    .setTangentHeadingInterpolation()
+                    .setReversed()
+                    .build();
+        }
 
         state = DrivetrainState.KICK;
         follower.followPath(currentPathChain.get(), true);
@@ -150,8 +168,8 @@ public class TeleopDrivetrain {
 
     private double[] calculateDrivetrainPowers(double x, double y, double rx, double currentHeading) {
         if (gateHeadingLock) {
-            // added 6 deg
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()+Math.toRadians(6) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()-Math.toRadians(6);
+            // added angle
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()+FieldConstants.TURN_IN : FieldConstants.RED_GATE_AUTO_POSE.getHeading()-FieldConstants.TURN_IN;
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
 

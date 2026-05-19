@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
-import org.firstinspires.ftc.teamcode.decode2026.constants.DrivetrainConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
@@ -17,7 +16,6 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.TeleopDrivetrain;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
-import org.firstinspires.ftc.teamcode.util.decodeutil.Zone;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
 
 public class MainTeleop {
@@ -36,11 +34,9 @@ public class MainTeleop {
     private final SOTMUtil sotmUtil;
     private final Telemetry telemetry;
     private final Alliance alliance;
-    private Zone currentZone;
+    private ZoneUtil.Zone currentZone;
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
-    private final ZoneUtil zoneUtil;
-    private boolean endgameOn = false;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -58,8 +54,7 @@ public class MainTeleop {
         this.alliance = alliance;
 
         this.sotmUtil = new SOTMUtil(this.goalPose);
-        this.currentZone = Zone.FAR;
-        this.zoneUtil = new ZoneUtil(RobotConstants.robotRadius);
+        this.currentZone = ZoneUtil.Zone.FAR;
 
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
@@ -71,24 +66,48 @@ public class MainTeleop {
 
     public void loop() {
         Pose currentPose = drivetrain.getPose();
-        Pose closestPose = zoneUtil.closestPose(drivetrain.follower.getPose(), currentZone);
+        Pose closestPose = currentZone == ZoneUtil.Zone.CLOSE ?
+                alliance == Alliance.BLUE ?
+                        FieldConstants.BLUE_CLOSE_ZONE_POSE : FieldConstants.RED_CLOSE_ZONE_POSE :
+                alliance == Alliance.BLUE ?
+                        FieldConstants.BLUE_FAR_ZONE_POSE : FieldConstants.RED_FAR_ZONE_POSE;
 
-        RobotState robotState;
-
-        if (robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished()) {
-            robotState = RobotState.IDLE;
-        } else {
-            robotState = RobotState.SHOOTING;
-        }
+        RobotState robotState = robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished() ? RobotState.IDLE : RobotState.SHOOTING;
+        boolean inZone = (ZoneUtil.inCloseZone(currentPose) && currentZone == ZoneUtil.Zone.CLOSE) ||
+                (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);
 
         if (robot.intake.isFull && prevDetectState != robot.intake.detectionState) {
             robot.ledIndicator.indicateIntakeFull();
         }
 
+        // intake full and not shooting: turn intake off
+        if (robot.intake.isFull && (robot.shootCommand.isFinished() || robot.shootCommandSlow.isFinished())) {
+            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+        }
+
+        // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
+        // automatically kick the robot in the correct direction
         if (RobotConstants.useAutomateRobotDrive) {
             // if prev few states were the same, then we didn't shoot anything, therefore no need to auto drive again
-            if (!zoneUtil.inZone(currentPose, currentZone) && robot.intake.isFull && !drivetrain.isBusy() && robotState == RobotState.IDLE && prevDetectState != robot.intake.detectionState) {
+            // not in zone, intake full, not currently auto driving, and intake JUST became full (so we don't
+            if (!inZone &&
+                    robot.intake.isFull &&
+                    !drivetrain.isBusy() &&
+                    prevDetectState != robot.intake.detectionState) {
                 drivetrain.kick(closestPose);
+            }
+        }
+
+        // auto shoot if in zone, intake full, and stuff is at the right positions
+        if (inZone &&
+                robot.intake.isFull &&
+                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
+                Math.abs(MathUtil.getSmallestAngleDifference(robot.turret.currentAngle, robot.turret.wantedAngle)) < RobotConstants.autoShootTurretAngleEpsilon
+        ) {
+            if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
+                robot.shootCommandSlow.start();
+            } else {
+                robot.shootCommand.start();
             }
         }
 
@@ -127,6 +146,7 @@ public class MainTeleop {
 //            }
 //        }
 
+        // hopefully this will not be necessary
         if (RobotConstants.useAutomaticTurretRelocalization) {
             if (turretResetTimer.seconds() > RobotConstants.turretResetTimeSeconds) {
                 if (Math.abs(robot.turret.currentVelocityTicks) < 30 && robot.turret.currentPositionTicks > -1200 && robot.turret.currentPositionTicks < -200) {
@@ -140,7 +160,7 @@ public class MainTeleop {
         /** GAMEPAD 1 (DRIVER) **/
 
         // shoot: right bumper
-        if (gamepad1.rightBumperWasPressed()) {
+        if (gamepad1.rightBumperWasPressed() && robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished()) {
             if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
                 robot.shootCommandSlow.start();
             } else {
@@ -149,18 +169,37 @@ public class MainTeleop {
         }
 
         // RIGHT TRIGGER: hold for gate heading lock
-        drivetrain.gateHeadingLock = Math.abs(gamepad1.right_trigger) > 0.01;
+        drivetrain.gateHeadingLock = Math.abs(gamepad1.right_trigger) > 0.05;
         // LEFT TRIGGER: hold for gate open heading lock
-        drivetrain.openGateHeadingLock = Math.abs(gamepad1.left_trigger) > 0.01;
+        drivetrain.openGateHeadingLock = Math.abs(gamepad1.left_trigger) > 0.05;
 
-        // set robot centric: x
-        if (gamepad1.xWasPressed()) {
-            drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
+        // park: x
+        if (gamepad1.yWasPressed()) {
+            drivetrain.park();
+        }
+
+        // toggle tilt: y
+        if (gamepad1.yWasPressed()) {
+            if (robot.tilt.tilted) {
+                robot.tilt.unTilt();
+            } else {
+                robot.tilt.tilt();
+            }
         }
 
         // stop auto drive: left/right stick
         if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
             drivetrain.breakFollowing();
+        }
+
+        if (alliance == Alliance.BLUE) {
+            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+                    -normalizeInput(gamepad1.left_stick_x),
+                    -normalizeInput(gamepad1.right_stick_x));
+        } else if (alliance == Alliance.RED) {
+            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+                    -normalizeInput(gamepad1.left_stick_x),
+                    -normalizeInput(gamepad1.right_stick_x));
         }
 
         /** GAMEPAD 2 (OPERATOR) **/
@@ -170,10 +209,9 @@ public class MainTeleop {
             robot.turret.resetEncoderWithAbsoluteReading();
         }
 
-        // y: park
+        // y: set robot centric
         if (gamepad2.yWasPressed()) {
-            drivetrain.park();
-            endgameOn = !endgameOn;
+            drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
         // left stick: webcam relocalization
@@ -204,22 +242,13 @@ public class MainTeleop {
 
         // close zone: dpad up
         if (gamepad2.dpadUpWasPressed()) {
-            currentZone = Zone.CLOSE;
+            currentZone = ZoneUtil.Zone.CLOSE;
         }
         // far zone: dpad down
         if (gamepad2.dpadDownWasPressed()) {
-            currentZone = Zone.FAR;
+            currentZone = ZoneUtil.Zone.FAR;
         }
 
-        if (alliance == Alliance.BLUE) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
-                    -normalizeInput(gamepad1.left_stick_x),
-                    -normalizeInput(gamepad1.right_stick_x));
-        } else if (alliance == Alliance.RED) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
-                    -normalizeInput(gamepad1.left_stick_x),
-                    -normalizeInput(gamepad1.right_stick_x));
-        }
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
                         sotmUtil.calculateShooterOutputs(drivetrain.getPose(), drivetrain.getVelocity(), drivetrain.getAcceleration(), drivetrain.getAngularVelocity(), RobotConstants.dt) :
@@ -238,7 +267,7 @@ public class MainTeleop {
         telemetry.addData("Pose", currentPose);
         telemetry.addData("Current state", drivetrain.getState());
         telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
-        telemetry.addLine("Robot in shooting zone: " + zoneUtil.inZone(currentPose, currentZone));
+        telemetry.addLine("Robot in shooting zone: " + inZone);
         telemetry.addLine("Intake full: " + robot.intake.isFull);
         telemetry.addLine("Intake state: "+ robot.intake.detectionState);
         telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());

@@ -1,102 +1,123 @@
 package org.firstinspires.ftc.teamcode.util.decodeutil;
 
 import com.pedropathing.geometry.Pose;
+
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
+
 import java.util.ArrayList;
 
 // handles: closest point in zone AND if u are in zone or not.
 public class ZoneUtil {
-    private int robotRadius;
-    private ArrayList<Pose> closePoses = new ArrayList<>();
-    private ArrayList<Pose> farPoses = new ArrayList<>();
-    public ZoneUtil(int robotRadius) {
-        this.robotRadius = robotRadius;
+    public enum Zone {
+        CLOSE,
+        FAR
+    }
+    private static boolean lineLine(
+            double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+        double uA =
+                ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3))
+                        / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
+        double uB =
+                ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3))
+                        / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
+        return uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1;
+    }
 
-        // CLOSE POSES
-        // starting at 24 inches so that we don't include the edges of the blue goal
-        for (int i = 24; i < 72; i++) {
-            closePoses.add(new Pose(i, (144-i)-robotRadius, Math.toRadians(0)));
+    private static boolean pointRect(double x, double y, double cx, double cy, double w, double h) {
+        return Math.abs(x - cx) <= w / 2 && Math.abs(y - cy) <= h / 2;
+    }
+
+    private static boolean lineRect(
+            double x1, double y1, double x2, double y2, double cx, double cy, double w, double h) {
+        if (pointRect(x1, y1, cx, cy, w, h) || pointRect(x2, y2, cx, cy, w, h)) {
+            return true;
         }
-        // ending at 120 inches so that we don't include the edges of the red goal
-        for (int i = 72; i < 120; i++) {
-            closePoses.add(new Pose(i, i-robotRadius, Math.toRadians(0)));
-        }
+        double xMin = cx - w / 2, xMax = cx + w / 2;
+        double yMin = cy - h / 2, yMax = cy + h / 2;
+        boolean topBottom =
+                lineLine(x1, y1, x2, y2, xMin, yMin, xMax, yMin)
+                        || lineLine(x1, y1, x2, y2, xMin, yMax, xMax, yMax);
+        boolean leftRight =
+                lineLine(x1, y1, x2, y2, xMin, yMin, xMin, yMax)
+                        || lineLine(x1, y1, x2, y2, xMax, yMin, xMax, yMax);
+        return topBottom || leftRight;
+    }
+    private static boolean robotIntersectsLine(Pose pose, double x1, double y1, double x2, double y2) {
+        double cosH = Math.cos(pose.getHeading());
+        double sinH = Math.sin(pose.getHeading());
 
-        // FAR POSES
-        // starting at 48-robotRadius to include more areas. however robot cannot be all up against the wall
-        // so if the y < robotRadius then make y = robotRadius
-        for (int i = 48-robotRadius; i < 72; i++) {
-            if (-48 + robotRadius + i < robotRadius) {
-                farPoses.add(new Pose(i, robotRadius, Math.toRadians(0)));
-            } else {
-                farPoses.add(new Pose(i, -48+robotRadius + i, Math.toRadians(0)));
-            }
-        }
-        for (int i = 72; i < 96+robotRadius; i++) {
-            if (96+robotRadius - i < robotRadius) {
-                farPoses.add(new Pose(i, robotRadius, Math.toRadians(0)));
-            } else {
-                farPoses.add(new Pose(i, 96+robotRadius - i, Math.toRadians(0)));
-            }
-        }
+        double topRightX = FieldConstants.ROBOT_LENGTH / 2 * cosH - FieldConstants.ROBOT_WIDTH * sinH + pose.getX();
+        double topRightY = FieldConstants.ROBOT_LENGTH / 2 * sinH + FieldConstants.ROBOT_WIDTH * cosH + pose.getY();
+
+        double topLeftX = -FieldConstants.ROBOT_LENGTH / 2 * cosH - FieldConstants.ROBOT_WIDTH * sinH + pose.getX();
+        double topLeftY = -FieldConstants.ROBOT_LENGTH / 2 * sinH + FieldConstants.ROBOT_WIDTH * cosH + pose.getY();
+
+        double bottomRightX = FieldConstants.ROBOT_LENGTH / 2 * cosH - (-FieldConstants.ROBOT_WIDTH) * sinH + pose.getX();
+        double bottomRightY = FieldConstants.ROBOT_LENGTH / 2 * sinH + (-FieldConstants.ROBOT_WIDTH) * cosH + pose.getY();
+
+        double bottomLeftX = -FieldConstants.ROBOT_LENGTH / 2 * cosH - (-FieldConstants.ROBOT_WIDTH) * sinH + pose.getX();
+        double bottomLeftY = -FieldConstants.ROBOT_LENGTH / 2 * sinH + (-FieldConstants.ROBOT_WIDTH) * cosH + pose.getY();
+
+        // connecting lines:
+        // topRight to topLeft
+        // topLeft to bottomLeft
+        // bottomLeft to bottomRight
+        // bottomRight to topLeft
+
+        return (lineLine(x1, y1, x2, y2, topRightX, topRightY, topLeftX, topLeftY) ||
+                (lineLine(x1, y1, x2, y2, topLeftX, topLeftY, bottomLeftX, bottomLeftY)) ||
+                (lineLine(x1, y1, x2, y2, bottomLeftX, bottomLeftY, bottomRightX, bottomRightY)) ||
+                (lineLine(x1, y1, x2, y2, bottomRightX, bottomRightY, topRightX, topRightY)));
     }
 
-    public void setRobotRadius(int robotRadius) {
-        this.robotRadius = robotRadius;
+    private static boolean intersectsCloseZoneLeftLine(Pose pose) {
+        return robotIntersectsLine(pose, 0, FieldConstants.FIELD_WIDTH, FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH / 2);
     }
 
-    // think of this like a coordinate system quadrant thing
-    public boolean inQ1(Pose pose) {
-        return pose.getY() > (-robotRadius) + pose.getX() && pose.getX() > 72;
-    }
-    public boolean inQ2(Pose pose) {
-        return pose.getY() > (144-robotRadius) - pose.getX() && pose.getX() <= 72;
+    private static boolean intersectsCloseZoneRightLine(Pose pose) {
+        return robotIntersectsLine(pose, FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH, FieldConstants.FIELD_WIDTH);
     }
 
-    public boolean inQ3(Pose pose) {
-        return pose.getY() < (-48+robotRadius) + pose.getX() && pose.getX() <= 72;
+    private static boolean intersectsFarZoneLeftLine(Pose pose) {
+        return robotIntersectsLine(pose, FieldConstants.FIELD_WIDTH / 3, 0, FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH / 6);
     }
 
-    public boolean inQ4(Pose pose) {
-        return pose.getY() < (96+robotRadius) - pose.getX() && pose.getX() >= 72;
+    private static boolean intersectsFarZoneRightLine(Pose pose) {
+        return robotIntersectsLine(pose, FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH / 6, FieldConstants.FIELD_WIDTH * (2/3d), 0);
     }
 
-    public boolean inZone(Pose pose, Zone zone) {
-        if (zone == Zone.CLOSE) {
-            return inQ1(pose) || inQ2(pose);
-        }
-        return inQ3(pose) || inQ4(pose);
+    private static boolean inBetween(double value, double min, double max) {
+        return value < max && value > min;
     }
 
-    public Pose closestPose(Pose pose, Zone zone) {
-        if (zone == Zone.CLOSE) {
-            return closestPose(pose, closePoses);
-        }
-        return closestPose(pose, farPoses);
+    public static boolean inCloseZone(Pose pose) {
+        boolean inTopLeftZone = inBetween(pose.getX(), 0, FieldConstants.FIELD_WIDTH / 2) &&
+                inBetween(pose.getY(), FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH) &&
+                pose.getY() > FieldConstants.FIELD_WIDTH - pose.getX();
+
+        boolean intersectsTopLeftLine = intersectsCloseZoneLeftLine(pose);
+
+        boolean inTopRightZone = inBetween(pose.getX(), FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH) &&
+                inBetween(pose.getY(), FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH) &&
+                pose.getY() > pose.getX();
+        boolean intersectsTopRightLine = intersectsCloseZoneRightLine(pose);
+
+        return inTopLeftZone || intersectsTopLeftLine || inTopRightZone || intersectsTopRightLine;
     }
 
-    private static Pose closestPose(Pose robotPose, ArrayList<Pose> poses) {
-        ArrayList<Double> distances = new ArrayList<>();
-        for (Pose p: poses) {
-            distances.add(MathUtil.distance(robotPose, p));
-        }
+    public static boolean inFarZone(Pose pose) {
+        boolean inBottomLeftZone = inBetween(pose.getX(), FieldConstants.FIELD_WIDTH / 3, FieldConstants.FIELD_WIDTH / 2) &&
+                inBetween(pose.getY(), 0, FieldConstants.FIELD_WIDTH / 6) &&
+                pose.getY() < pose.getX() - FieldConstants.FIELD_WIDTH / 3;
 
-        int minIndex = 0;
-        double minValue = distances.get(0);
+        boolean intersectsBottomLeftLine = intersectsFarZoneLeftLine(pose);
 
-        for (int i = 1; i < distances.size(); i++) {
-            if (distances.get(i) < minValue) {
-                minValue = distances.get(i);
-                minIndex = i;
-            }
-        }
+        boolean inBottomRightZone = inBetween(pose.getX(), FieldConstants.FIELD_WIDTH / 2, FieldConstants.FIELD_WIDTH * (2/3d)) &&
+                inBetween(pose.getY(), 0, FieldConstants.FIELD_WIDTH / 6) &&
+                pose.getY() < pose.getX() + FieldConstants.FIELD_WIDTH * (2/3d);
+        boolean intersectsBottomRightLine = intersectsFarZoneRightLine(pose);
 
-        return poses.get(minIndex);
+        return inBottomLeftZone || intersectsBottomLeftLine || inBottomRightZone || intersectsBottomRightLine;
     }
-
-
-
-//    y > -radius + x
-//    y > (144-radius) - x
-//    y < 48+radius + x
-//    y < 96 + radius -x
 }
