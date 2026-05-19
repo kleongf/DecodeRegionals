@@ -9,7 +9,9 @@ public class FieldConstants {
     public static double DISTANCE_IN = 15; // if it is not holding/correcting can increase this number
     public static double TURN_IN = Math.toRadians(4); // how much to turn into the gate
     public static double ROBOT_WIDTH = 15.1;
-    public static double ROBOT_LENGTH = 16; // TODO: measure, idk what it is
+    // just counting the drivetrain, without we are 17.0866
+    public static double ROBOT_LENGTH = 17.0866;
+    public static double ROBOT_EFFECTIVE_LENGTH = 13.5111314961;
     public static double HALF_ROBOT_WIDTH = ROBOT_WIDTH / 2;
     public static double ROBOT_BACK_TO_CENTER_DISTANCE = 6.14173; // inches
     public static double GOAL_TO_WALL_DISTANCE = 0.4;
@@ -17,7 +19,7 @@ public class FieldConstants {
     public static double BLUE_WALL_LEFT_DISTANCE = FIELD_WIDTH / 3;
     public static Pose BLUE_STANDARD_START_POSE = new Pose(BLUE_WALL_LEFT_DISTANCE + HALF_ROBOT_WIDTH, ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(90));
     public static Pose RED_STANDARD_START_POSE = Flipper.flip(BLUE_STANDARD_START_POSE);
-    public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - HALF_ROBOT_WIDTH, ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(90));
+    public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - (ROBOT_LENGTH - ROBOT_BACK_TO_CENTER_DISTANCE), ROBOT_WIDTH, Math.toRadians(0));
     public static Pose RED_RELOCALIZATION_POSE = Flipper.flip(BLUE_RELOCALIZATION_POSE);
     public static Pose BLUE_GOAL_POSE = new Pose(12, FIELD_WIDTH-10);
     public static Pose RED_GOAL_POSE = Flipper.flip(BLUE_GOAL_POSE);

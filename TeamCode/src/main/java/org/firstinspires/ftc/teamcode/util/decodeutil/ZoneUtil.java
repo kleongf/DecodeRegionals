@@ -47,17 +47,17 @@ public class ZoneUtil {
         double cosH = Math.cos(pose.getHeading());
         double sinH = Math.sin(pose.getHeading());
 
-        double topRightX = FieldConstants.ROBOT_LENGTH / 2 * cosH - FieldConstants.ROBOT_WIDTH * sinH + pose.getX();
-        double topRightY = FieldConstants.ROBOT_LENGTH / 2 * sinH + FieldConstants.ROBOT_WIDTH * cosH + pose.getY();
+        double topRightX = FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * cosH - FieldConstants.ROBOT_WIDTH * sinH + pose.getX();
+        double topRightY = FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * sinH + FieldConstants.ROBOT_WIDTH * cosH + pose.getY();
 
-        double topLeftX = -FieldConstants.ROBOT_LENGTH / 2 * cosH - FieldConstants.ROBOT_WIDTH * sinH + pose.getX();
-        double topLeftY = -FieldConstants.ROBOT_LENGTH / 2 * sinH + FieldConstants.ROBOT_WIDTH * cosH + pose.getY();
+        double topLeftX = -FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * cosH - FieldConstants.ROBOT_WIDTH * sinH + pose.getX();
+        double topLeftY = -FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * sinH + FieldConstants.ROBOT_WIDTH * cosH + pose.getY();
 
-        double bottomRightX = FieldConstants.ROBOT_LENGTH / 2 * cosH - (-FieldConstants.ROBOT_WIDTH) * sinH + pose.getX();
-        double bottomRightY = FieldConstants.ROBOT_LENGTH / 2 * sinH + (-FieldConstants.ROBOT_WIDTH) * cosH + pose.getY();
+        double bottomRightX = FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * cosH - (-FieldConstants.ROBOT_WIDTH) * sinH + pose.getX();
+        double bottomRightY = FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * sinH + (-FieldConstants.ROBOT_WIDTH) * cosH + pose.getY();
 
-        double bottomLeftX = -FieldConstants.ROBOT_LENGTH / 2 * cosH - (-FieldConstants.ROBOT_WIDTH) * sinH + pose.getX();
-        double bottomLeftY = -FieldConstants.ROBOT_LENGTH / 2 * sinH + (-FieldConstants.ROBOT_WIDTH) * cosH + pose.getY();
+        double bottomLeftX = -FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * cosH - (-FieldConstants.ROBOT_WIDTH) * sinH + pose.getX();
+        double bottomLeftY = -FieldConstants.ROBOT_EFFECTIVE_LENGTH / 2 * sinH + (-FieldConstants.ROBOT_WIDTH) * cosH + pose.getY();
 
         // connecting lines:
         // topRight to topLeft
