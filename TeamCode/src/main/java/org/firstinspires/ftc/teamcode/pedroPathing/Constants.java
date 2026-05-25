@@ -20,10 +20,10 @@ public class Constants {
 
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(11)
-            .forwardZeroPowerAcceleration((-38.04 + (-32) + (-40.17)) / 3.0)
-            .lateralZeroPowerAcceleration(((-70.57) + (-66.93) + (-67.08)) / 3.0)
+            .forwardZeroPowerAcceleration((-33 + (-30)) / 2.0)
+            .lateralZeroPowerAcceleration(((-50) + (-62) + (-58)) / 3.0)
             // TODO: test again with predictive braking hmmm lowkey linear could be stronger? probably not, but have to retune velocity and zpam
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.05, 0.11, 0.0008))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.10, 0.10, 0.001))
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
@@ -53,15 +53,15 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity((83.17 + 82.67 + 81.52) / 3.0)
-            .yVelocity((65.62 + 67.52 + 65.74) / 3.0)
+            .xVelocity(87.67)
+            .yVelocity(58.98)
             .useBrakeModeInTeleOp(true)
             .useVoltageCompensation(true)
-            .nominalVoltage(12.5);
+            .nominalVoltage(12.0);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-4.35) // TODO: find new pod offset values
-            .strafePodX(-3.7654610236)
+            .forwardPodY(-3.30709)
+            .strafePodX(-3.77953)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .yawScalar(1.0)

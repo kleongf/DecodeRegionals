@@ -52,9 +52,15 @@ public class MathUtil {
         }
         return radians;
     }
-
+    // this one bad
     public static double getSmallestAngleDifference(double one, double two) {
         return Math.min(normalizeAngle(one - two), normalizeAngle(two - one));
+    }
+
+    public static double getSmallestAngleDifferenceBetter(double one, double two) {
+        double t1 = normalizeAngle(one - two);
+        double t2 = normalizeAngle(two - one);
+        return Math.abs(t1) < Math.abs(t2) ? t1 : t2;
     }
 
     public static double getTurnDirection(double startHeading, double endHeading) {

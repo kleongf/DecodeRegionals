@@ -57,8 +57,8 @@ public class CurrentRobot extends Robot {
         ledIndicator = new LEDIndicator(hardwareMap);
         subsystems.add(ledIndicator);
 
-        cameraLocalizer = new CameraLocalizer(hardwareMap);
-        subsystems.add(cameraLocalizer);
+         cameraLocalizer = new CameraLocalizer(hardwareMap);
+         subsystems.add(cameraLocalizer);
 
         commands = new ArrayList<>();
         // this is called last to ensure everything is initialized

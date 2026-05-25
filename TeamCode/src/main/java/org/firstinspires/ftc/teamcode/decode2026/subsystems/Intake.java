@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 public class Intake extends Subsystem {
     public enum Mode {
         INTAKE_FAST,
+        INTAKE_MEDIUM,
         INTAKE_SLOW,
         INTAKE_OFF
     }
@@ -57,6 +58,9 @@ public class Intake extends Subsystem {
         switch (wantedMode) {
             case INTAKE_FAST:
                 intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
+                break;
+            case INTAKE_MEDIUM:
+                intakeMotor.setPower(IntakeConstants.INTAKE_MEDIUM_POWER);
                 break;
             case INTAKE_SLOW:
                 intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);

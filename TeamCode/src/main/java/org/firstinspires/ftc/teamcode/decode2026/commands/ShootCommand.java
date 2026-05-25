@@ -20,7 +20,10 @@ public class ShootCommand extends Command {
                             robot.shooter.openLatch();
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                         })
-                        .onExit(() -> robot.intake.detectionState = Intake.DetectionState.EMPTY)
+                        .onExit(() -> {
+                            robot.intake.detectionState = Intake.DetectionState.EMPTY;
+                            robot.shooter.closeLatch();
+                        })
                         .maxTime(400)
         );
     }

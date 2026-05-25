@@ -56,16 +56,16 @@ public class BlueFar30 extends OpMode {
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(10.000, 35.000), new Pose(50, 10))
+                        new BezierLine(new Pose(10.000, 35.000), new Pose(50, 12))
                 )
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePileLowCycle = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Pose(50.000, 10.000),
-                                new Pose(9.000, 10.000)
+                        new BezierLine(
+                                new Pose(50.000, 12.000),
+                                new Pose(9.000, 12.000)
                         )
                 )
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
@@ -73,9 +73,9 @@ public class BlueFar30 extends OpMode {
 
         shootPileLowCycle = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Pose(9.000, 10.000),
-                                new Pose(50.000, 10.000)
+                        new BezierLine(
+                                new Pose(9.000, 12.000),
+                                new Pose(50.000, 12.000)
                         )
                 )
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
@@ -84,10 +84,10 @@ public class BlueFar30 extends OpMode {
         intakePileHighCycle = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50.000, 10.000),
-                                new Pose(40.000, 32.000),
-                                new Pose(30.000, 32.000),
-                                new Pose(9.000, 32.000)
+                                new Pose(50.000, 12.000),
+                                new Pose(40.000, 34.000),
+                                new Pose(30.000, 34.000),
+                                new Pose(9.000, 34.000)
                         )
                 )
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
@@ -95,9 +95,9 @@ public class BlueFar30 extends OpMode {
 
         shootPileHighCycle = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Pose(9.000, 32.000),
-                                new Pose(50.000, 10.000)
+                        new BezierLine(
+                                new Pose(9.000, 34.000),
+                                new Pose(50.000, 12.000)
                         )
                 )
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
@@ -126,7 +126,7 @@ public class BlueFar30 extends OpMode {
 
         park = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(50, 10), new Pose(30, 10))
+                        new BezierLine(new Pose(50, 12), new Pose(30, 12))
                 )
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();

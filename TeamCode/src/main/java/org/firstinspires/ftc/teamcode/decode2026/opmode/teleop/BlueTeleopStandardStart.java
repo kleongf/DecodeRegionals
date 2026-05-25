@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 @TeleOp(name="Blue Teleop Standard Start", group="!")
 public class BlueTeleopStandardStart extends OpMode {
     private MainTeleop teleop;
-    private Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
+    private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
 
     @Override
     public void init() {

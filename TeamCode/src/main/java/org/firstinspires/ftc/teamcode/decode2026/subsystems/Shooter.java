@@ -50,6 +50,7 @@ public class Shooter extends Subsystem {
     @Override
     public void reset() {
         wantedMode = Mode.SHOOTER_OFF;
+        closeLatch();
     }
 
     @Override
@@ -71,8 +72,8 @@ public class Shooter extends Subsystem {
                 if (ShooterConstants.useVoltageCompensation) {
                     power *= (ShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
-                shooterMotor.setPower(power);
-                shooterMotor2.setPower(power);
+                shooterMotor.setPower(-power);
+                shooterMotor2.setPower(-power);
 
                 double ticksPerRadian = (ShooterConstants.PITCH_SERVO_F-ShooterConstants.PITCH_SERVO_I)/(ShooterConstants.PITCH_F-ShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - ShooterConstants.PITCH_I;

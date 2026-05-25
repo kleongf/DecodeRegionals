@@ -54,7 +54,7 @@ public class MainTeleop {
         this.alliance = alliance;
 
         this.sotmUtil = new SOTMUtil(this.goalPose);
-        this.currentZone = ZoneUtil.Zone.FAR;
+        this.currentZone = ZoneUtil.Zone.CLOSE;
 
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
@@ -62,6 +62,13 @@ public class MainTeleop {
     }
     private double normalizeInput(double input) {
         return 1.1 * input;
+    }
+    private void shoot(Pose currentPose, Pose goalPose) {
+        if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
+            robot.shootCommandSlow.start();
+        } else {
+            robot.shootCommand.start();
+        }
     }
 
     public void loop() {
@@ -76,13 +83,15 @@ public class MainTeleop {
         boolean inZone = (ZoneUtil.inCloseZone(currentPose) && currentZone == ZoneUtil.Zone.CLOSE) ||
                 (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);
 
+
         if (robot.intake.isFull && prevDetectState != robot.intake.detectionState) {
             robot.ledIndicator.indicateIntakeFull();
         }
 
-        // intake full and not shooting: turn intake off
-        if (robot.intake.isFull && (robot.shootCommand.isFinished() || robot.shootCommandSlow.isFinished())) {
-            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+        if (robot.intake.isFull && robotState == RobotState.IDLE) {
+            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+        } else {
+            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
         }
 
         // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
@@ -99,16 +108,14 @@ public class MainTeleop {
         }
 
         // auto shoot if in zone, intake full, and stuff is at the right positions
-        if (inZone &&
-                robot.intake.isFull &&
+        if (
+                inZone &&
+                        (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
+                        robotState != RobotState.SHOOTING &&
                 Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
                 Math.abs(MathUtil.getSmallestAngleDifference(robot.turret.currentAngle, robot.turret.wantedAngle)) < RobotConstants.autoShootTurretAngleEpsilon
         ) {
-            if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
-                robot.shootCommandSlow.start();
-            } else {
-                robot.shootCommand.start();
-            }
+            shoot(currentPose, this.goalPose);
         }
 
 //        if (relocalizationTimer.seconds() > relocalizationTime) {
@@ -146,7 +153,7 @@ public class MainTeleop {
 //            }
 //        }
 
-        // hopefully this will not be necessary
+        // hopefully this will not be necessary todo: fix encoder from slipping
         if (RobotConstants.useAutomaticTurretRelocalization) {
             if (turretResetTimer.seconds() > RobotConstants.turretResetTimeSeconds) {
                 if (Math.abs(robot.turret.currentVelocityTicks) < 30 && robot.turret.currentPositionTicks > -1200 && robot.turret.currentPositionTicks < -200) {
@@ -160,12 +167,8 @@ public class MainTeleop {
         /** GAMEPAD 1 (DRIVER) **/
 
         // shoot: right bumper
-        if (gamepad1.rightBumperWasPressed() && robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished()) {
-            if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
-                robot.shootCommandSlow.start();
-            } else {
-                robot.shootCommand.start();
-            }
+        if (gamepad1.rightBumperWasPressed()) {
+            shoot(currentPose, this.goalPose);
         }
 
         // RIGHT TRIGGER: hold for gate heading lock
@@ -192,15 +195,9 @@ public class MainTeleop {
             drivetrain.breakFollowing();
         }
 
-        if (alliance == Alliance.BLUE) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
-                    -normalizeInput(gamepad1.left_stick_x),
-                    -normalizeInput(gamepad1.right_stick_x));
-        } else if (alliance == Alliance.RED) {
-            drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
-                    -normalizeInput(gamepad1.left_stick_x),
-                    -normalizeInput(gamepad1.right_stick_x));
-        }
+        drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+                -normalizeInput(gamepad1.left_stick_x),
+                -normalizeInput(gamepad1.right_stick_x));
 
         /** GAMEPAD 2 (OPERATOR) **/
 
@@ -209,12 +206,13 @@ public class MainTeleop {
             robot.turret.resetEncoderWithAbsoluteReading();
         }
 
-        // y: set robot centric
+        // y: set robot centric todo: test robot centric
         if (gamepad2.yWasPressed()) {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
-        // left stick: webcam relocalization
+        // left stick: webcam relocalization todo: uncomment when done, also
+        // maybe it is a good idea to have reloc and reset turret on same button idk
         if (gamepad2.leftStickButtonWasPressed()) {
             Pose webcamPose = robot.cameraLocalizer.currentPose;
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
@@ -251,8 +249,17 @@ public class MainTeleop {
 
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
-                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), drivetrain.getVelocity(), drivetrain.getAcceleration(), drivetrain.getAngularVelocity(), RobotConstants.dt) :
-                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                        sotmUtil.calculateShooterOutputs(
+                                drivetrain.getPose(),
+                                drivetrain.getVelocity(),
+                                drivetrain.getAcceleration(),
+                                drivetrain.getAngularVelocity(),
+                                RobotConstants.dt) :
+                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(),
+                                new Vector(),
+                                new Vector(),
+                                0,
+                                RobotConstants.dt);
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
@@ -262,6 +269,8 @@ public class MainTeleop {
 
         prevDetectState = robot.intake.detectionState;
         robot.update();
+
+        blackboard.put(FieldConstants.END_POSE_KEY, drivetrain.follower.getPose());
 
         telemetry.addData("Loop time", robot.dt);
         telemetry.addData("Pose", currentPose);

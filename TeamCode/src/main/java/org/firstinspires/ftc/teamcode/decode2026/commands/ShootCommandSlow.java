@@ -18,9 +18,12 @@ public class ShootCommandSlow extends Command {
                 new State()
                         .onEnter(() -> {
                             robot.shooter.openLatch();
-                            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            robot.intake.wantedMode = Intake.Mode.INTAKE_MEDIUM;
                         })
-                        .onExit(() -> robot.intake.detectionState = Intake.DetectionState.EMPTY)
+                        .onExit(() -> {
+                            robot.intake.detectionState = Intake.DetectionState.EMPTY;
+                            robot.shooter.closeLatch();
+                        })
                         .maxTime(550)
         );
     }

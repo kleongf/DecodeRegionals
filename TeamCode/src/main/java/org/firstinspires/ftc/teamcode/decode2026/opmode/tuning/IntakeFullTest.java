@@ -27,6 +27,7 @@ public class IntakeFullTest extends OpMode {
     @Override
     public void init() {
         intake = new Intake(hardwareMap);
+        intake.reset();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 

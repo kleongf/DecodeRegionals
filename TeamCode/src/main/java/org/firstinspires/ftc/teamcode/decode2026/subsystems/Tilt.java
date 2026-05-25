@@ -14,7 +14,7 @@ public class Tilt extends Subsystem {
     private final Servo tiltServo;
     public boolean tilted;
     public Tilt(HardwareMap hardwareMap) {
-        tiltServo = hardwareMap.get(Servo.class, "tiltServo");
+        tiltServo = hardwareMap.get(Servo.class, "hang1");
         tiltServo.setPosition(TiltConstants.TILT_SERVO_UNTILTED);
         tilted = false;
         wantedMode = Mode.TILT_OFF;
@@ -39,7 +39,6 @@ public class Tilt extends Subsystem {
         tilted = true;
     }
     public void unTilt() {
-
         tiltServo.setPosition(TiltConstants.TILT_SERVO_UNTILTED);
         tilted = false;
     }

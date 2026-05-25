@@ -36,7 +36,7 @@ public class TeleopDrivetrain {
     private ElapsedTime elapsedTime;
     private DrivetrainState state;
     private boolean robotCentric = false;
-    private double KICK_TIME = 1.0;
+    private double KICK_TIME = 0.8;
     public boolean gateHeadingLock = false;
     public boolean openGateHeadingLock = false;
     private final Alliance alliance;
@@ -51,7 +51,7 @@ public class TeleopDrivetrain {
         follower.usePredictiveBraking = true;
 
         headingPIDFController = new PIDFController(new PIDFCoefficients(0.4, 0, 0.03, 0));
-        yController = new PIDFController(new PIDFCoefficients(0.03, 0, 0, 0));
+        yController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
@@ -165,6 +165,15 @@ public class TeleopDrivetrain {
         }
         return "TELEOP_DRIVE";
     }
+//
+//            if (alliance == Alliance.BLUE) {
+//        drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+//                -normalizeInput(gamepad1.left_stick_x),
+//                -normalizeInput(gamepad1.right_stick_x));
+//    } else if (alliance == Alliance.RED) {
+//        drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
+//                -normalizeInput(gamepad1.left_stick_x),
+//                -normalizeInput(gamepad1.right_stick_x));
 
     private double[] calculateDrivetrainPowers(double x, double y, double rx, double currentHeading) {
         if (gateHeadingLock) {
@@ -176,11 +185,13 @@ public class TeleopDrivetrain {
             double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getY() : FieldConstants.RED_GATE_AUTO_POSE.getY();
             double yError = lockedY - follower.getPose().getY();
             yController.updateError(yError);
-
+            // fixed x and y bug
             double outX = x * DrivetrainConstants.xSpeed;
-            double outY = yController.run();
+            double outY = -yController.run();
             double outHeading = headingPIDFController.run();
-
+            // wait i think that x and y outputs are actually reversed,
+            // since from human pov, x is sideways, but from coord sys,
+            // that's actually y error that.
             return new double[] {outX, outY, outHeading};
         } else if (openGateHeadingLock) {
             // find closest angle
@@ -204,9 +215,10 @@ public class TeleopDrivetrain {
             yController.updateError(yError);
 
             double outHeading = headingPIDFController.run();
-            double outY = yController.run();
+            double outX = x * DrivetrainConstants.xSpeed;
+            double outY = -yController.run();
 
-            return new double[] {x * DrivetrainConstants.xSpeed, outY, outHeading};
+            return new double[] {outX, outY, outHeading};
         } else {
             targetHeading = currentHeading;
             return new double[] {x * DrivetrainConstants.xSpeed, y * DrivetrainConstants.ySpeed, rx * DrivetrainConstants.headingSpeed};
@@ -221,7 +233,8 @@ public class TeleopDrivetrain {
                 // todo: swap forward backward up down robot centric
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
                 if (alliance == Alliance.BLUE) {
-
+                    // hold up... these are different?
+                    // ok: so the x power given to robot is really based off of y controller.
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric);
                 } else {
@@ -237,6 +250,16 @@ public class TeleopDrivetrain {
             case KICK:
                 if (!follower.isBusy() || kickTimer.seconds() > KICK_TIME) {
                     breakFollowing();
+                    double[] powers2 = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
+                    if (alliance == Alliance.BLUE) {
+                        // hold up... these are different?
+                        // ok: so the x power given to robot is really based off of y controller.
+                        follower.setTeleOpDrive(powers2[0], powers2[1], powers2[2], robotCentric, Math.toRadians(180));
+                        // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric);
+                    } else {
+                        follower.setTeleOpDrive(powers2[0], powers2[1], powers2[2], robotCentric);
+                        // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric, Math.toRadians(180));
+                    }
                 }
                 break;
             case INTAKE_GATE:

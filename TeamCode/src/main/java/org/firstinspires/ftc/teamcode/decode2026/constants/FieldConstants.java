@@ -5,8 +5,11 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Flipper;
 
 public class FieldConstants {
+//            12, 60, 142
+//                    16, 70
     public static String END_POSE_KEY = "END_POSE";
-    public static double DISTANCE_IN = 15; // if it is not holding/correcting can increase this number
+    // was 15
+    public static double DISTANCE_IN = 12; // if it is not holding/correcting can increase this number
     public static double TURN_IN = Math.toRadians(4); // how much to turn into the gate
     public static double ROBOT_WIDTH = 15.1;
     // just counting the drivetrain, without we are 17.0866
@@ -21,7 +24,7 @@ public class FieldConstants {
     public static Pose RED_STANDARD_START_POSE = Flipper.flip(BLUE_STANDARD_START_POSE);
     public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - (ROBOT_LENGTH - ROBOT_BACK_TO_CENTER_DISTANCE), ROBOT_WIDTH, Math.toRadians(0));
     public static Pose RED_RELOCALIZATION_POSE = Flipper.flip(BLUE_RELOCALIZATION_POSE);
-    public static Pose BLUE_GOAL_POSE = new Pose(12, FIELD_WIDTH-10);
+    public static Pose BLUE_GOAL_POSE = new Pose(12, FIELD_WIDTH-12);
     public static Pose RED_GOAL_POSE = Flipper.flip(BLUE_GOAL_POSE);
 
     public static Pose BLUE_SIDE_GATE_POSE = new Pose(16, 70, Math.toRadians(270));
@@ -37,9 +40,10 @@ public class FieldConstants {
     public static Pose RED_CLOSE_START_AUTO_POSE = Flipper.flip(BLUE_CLOSE_START_AUTO_POSE);
     public static Pose BLUE_FAR_START_AUTO_POSE = new Pose(FIELD_WIDTH / 3 - ROBOT_BACK_TO_CENTER_DISTANCE, HALF_ROBOT_WIDTH, Math.toRadians(180));
     public static Pose RED_FAR_START_AUTO_POSE = Flipper.flip(BLUE_FAR_START_AUTO_POSE);
-    public static Pose BLUE_GATE_AUTO_POSE = new Pose(14, 59, Math.toRadians(147));
+    public static Pose BLUE_GATE_AUTO_POSE = new Pose(12, 61, Math.toRadians(142));
     public static Pose RED_GATE_AUTO_POSE = Flipper.flip(BLUE_GATE_AUTO_POSE);
-    public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY()+Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getHeading()+TURN_IN);
+    // Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN
+    public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY(), BLUE_GATE_AUTO_POSE.getHeading()+TURN_IN);
     public static Pose RED_GATE_AUTO_POSE_IN = Flipper.flip(BLUE_GATE_AUTO_POSE_IN);
 
     public static Pose BLUE_CLOSE_ZONE_POSE = new Pose(60, 84);

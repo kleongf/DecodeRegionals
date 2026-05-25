@@ -53,6 +53,7 @@ public class TurretFollowTest extends OpMode {
 
         telemetry.addData("distance", dist);
         telemetry.addData("shooter speed", shooter.currentVelocity);
+        telemetry.addData("pose", follower.getPose());
         telemetry.update();
     }
 
@@ -69,6 +70,10 @@ public class TurretFollowTest extends OpMode {
 
     @Override
     public void start() {
+        turret.reset();
+        intake.reset();
+        shooter.reset();
+
         intake.start();
         turret.start();
         shooter.start();

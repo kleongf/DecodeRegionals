@@ -41,7 +41,7 @@ public class SOTMUtil {
 
         double wantedWheelAcceleration = sampleRate(velocityLUT, distance, (futureDistance - distance) / dt);
 
-        double wantedTurretVelocity = MathUtil.getSmallestAngleDifference(turretAngle, futureTurretAngle) / dt;
+        double wantedTurretVelocity = MathUtil.getSmallestAngleDifferenceBetter(turretAngle, futureTurretAngle) / dt;
 
         return new ShootingConstants.ShooterOutputs(
                 turretAngle,

@@ -43,6 +43,7 @@ public class CameraLocalizer extends Subsystem {
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"));
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        // todo: comment out because wastes cpu
         builder.enableLiveView(true);
         builder.addProcessor(aprilTag);
 
@@ -62,27 +63,34 @@ public class CameraLocalizer extends Subsystem {
     @Override
     public void update() {
         switch (wantedMode) {
-            // if multiple detections, use the closest one
+            // if multiple detections, use the closest one because it will be the most accurate
+            // apparently aprilTag.getFreshDetections() is more efficient
             case CAMERA_ON:
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//                List<AprilTagDetection> currentDetections2 = aprilTag.getDetections();
+//                List<AprilTagDetection> allDetections = Lis
+                double bestDistance = Integer.MAX_VALUE;
+                Pose bestPose = null;
+
                 for (AprilTagDetection detection : currentDetections) {
                     if (detection.metadata != null) {
-                        if (!detection.metadata.name.contains("Obelisk")) {
-                            if (detection.metadata.name.contains("BlueTarget")) {
-                                // TODO: for pose averaging
-                                // large distance -> less weight, so weight by 1/distance or something
-                                double distance = detection.ftcPose.range;
-                                currentPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
-                                isGoodDetection = true;
-                            }
-                            if (detection.metadata.name.contains("RedTarget")) {
-                                currentPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
-                                isGoodDetection = true;
+                        if (detection.metadata.name.contains("BlueTarget") || detection.metadata.name.contains("RedTarget")) {
+                            isGoodDetection = true;
+                            double distance = detection.ftcPose.range;
+                            if (distance < bestDistance) {
+                                bestDistance = distance;
+                                bestPose = toPinpointPose(new Pose(
+                                        detection.robotPose.getPosition().x,
+                                        detection.robotPose.getPosition().y,
+                                        detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
                             }
                         }
                     }
                 }
-                if (currentDetections.isEmpty()) {
+
+                if (bestPose != null) {
+                    currentPose = bestPose;
+                } else {
                     isGoodDetection = false;
                 }
                 break;

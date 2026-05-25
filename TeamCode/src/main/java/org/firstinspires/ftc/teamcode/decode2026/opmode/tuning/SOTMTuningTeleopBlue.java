@@ -32,7 +32,8 @@ public class SOTMTuningTeleopBlue extends OpMode {
         telemetry.addData("robot velocity magnitude", teleop.drivetrain.getVelocity().getMagnitude());
         telemetry.addData("turret feedforward power", teleop.robot.turret.wantedAngularVelocity * TurretConstants.kV);
         telemetry.addData("current turret pos", teleop.robot.turret.currentPositionTicks);
-        telemetry.addData("target turret pos", teleop.robot.turret.wantedAngle * TurretConstants.ticksPerRadian);
+        telemetry.addData("target turret pos", teleop.robot.turret.wantedAngle * TurretConstants.ticksPerRadian - TurretConstants.ticksPerRevolution);
+        telemetry.addData("turret target velocity", teleop.robot.turret.wantedAngularVelocity);
         telemetry.addData("current flywheel speed", teleop.robot.shooter.currentVelocity);
         telemetry.addData("target flywheel speed", teleop.robot.shooter.wantedVelocity);
         telemetry.addData("flywheel feedforward power", teleop.robot.shooter.wantedAcceleration * ShooterConstants.kA);

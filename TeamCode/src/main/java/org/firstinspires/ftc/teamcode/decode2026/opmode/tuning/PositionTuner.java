@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.TiltConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 
 @Config
@@ -23,7 +24,7 @@ public class PositionTuner extends OpMode {
     public static double latchTarget = ShooterConstants.LATCH_CLOSED;
     public static double shooterPower = 0;
     public static double intakePower = 0;
-    public static double liftTarget = 0;
+    public static double liftTarget = TiltConstants.TILT_SERVO_UNTILTED;
     public static double pitchTarget = ShooterConstants.PITCH_SERVO_MIN;
 
 
@@ -55,7 +56,6 @@ public class PositionTuner extends OpMode {
     public void loop() {
         shooterMotor.setPower(shooterPower);
         shooterMotor2.setPower(shooterPower);
-
 
         intakeMotor.setPower(intakePower);
 

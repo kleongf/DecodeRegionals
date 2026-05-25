@@ -45,6 +45,7 @@ public class Turret extends Subsystem {
     public void reset() {
         wantedMode = Mode.TURRET_OFF;
         resetEncoderWithAbsoluteReading();
+        // resetMotorEncoder();
     }
 
     @Override

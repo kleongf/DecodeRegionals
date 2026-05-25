@@ -10,8 +10,6 @@ import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 @TeleOp(name="Turret PIDF Tuner")
 public class TurretTuner extends OpMode {
     private Turret turret;
-    public static double kP = 0.004;
-    public static double kD = 0.00000;
     public static double target = 0;
     private double ticksPerRevolution = 1381; // 383.6*5
     private double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);

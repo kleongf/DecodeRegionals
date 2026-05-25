@@ -230,7 +230,7 @@ public class BlueClose24 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
-                                new Pose(5.000, 56.755),
+                                new Pose(18.000, 56.755),
                                 new Pose(14.000, 48.479),
                                 new Pose(10.000, 30.000)
                         )
@@ -317,7 +317,7 @@ public class BlueClose24 extends OpMode {
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
-                        .maxTime(100),
+                        .maxTime(1000),
                 new State("shootSecond")
                         .onEnter(() -> {
                             if (doOpenGate) {
