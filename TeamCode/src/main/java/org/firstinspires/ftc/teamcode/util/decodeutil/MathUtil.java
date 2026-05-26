@@ -43,6 +43,13 @@ public class MathUtil {
         return angle < (double)0.0F ? angle + (Math.PI * 2D) : angle;
     }
 
+    public static double normalizeAngleSigned(double angleRadians) {
+        double angle = angleRadians % (Math.PI * 2D);
+        if (angle > Math.PI)  angle -= Math.PI * 2D;
+        if (angle <= -Math.PI) angle += Math.PI * 2D;
+        return angle;
+    }
+
     public static double angleWrap(double radians) {
         while (radians > Math.PI) {
             radians -= 2 * Math.PI;
@@ -57,9 +64,9 @@ public class MathUtil {
         return Math.min(normalizeAngle(one - two), normalizeAngle(two - one));
     }
 
-    public static double getSmallestAngleDifferenceBetter(double one, double two) {
-        double t1 = normalizeAngle(one - two);
-        double t2 = normalizeAngle(two - one);
+    public static double getSmallestAngleDifferenceSigned(double one, double two) {
+        double t1 = normalizeAngleSigned(one - two);
+        double t2 = normalizeAngleSigned(two - one);
         return Math.abs(t1) < Math.abs(t2) ? t1 : t2;
     }
 

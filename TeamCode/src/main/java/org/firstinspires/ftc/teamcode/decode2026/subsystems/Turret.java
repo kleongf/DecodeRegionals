@@ -99,7 +99,7 @@ public class Turret extends Subsystem {
         return Math.abs(turretMotor.getCurrentPosition()-weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian) < threshold;
     }
 
-    public double weirdAngleWrap(double radians) {
+    public static double weirdAngleWrap(double radians) {
         while (radians > 0) {
             radians -= 2 * Math.PI;
         }

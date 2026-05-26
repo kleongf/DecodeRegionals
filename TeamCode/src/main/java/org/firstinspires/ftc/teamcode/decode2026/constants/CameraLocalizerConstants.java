@@ -33,18 +33,25 @@ public class CameraLocalizerConstants {
      * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
      */
 
-//    pos = -5, -3, 4
-//    pitch = -70
-//    yaw = 90
-//    roll = 0
-    // camera is 120mm back, 169mm to the right, and 130mm up
-    public static final Position cameraPosition = new Position(DistanceUnit.MM,
+    public static final Position cameraPositionRight = new Position(DistanceUnit.MM,
             169, -120, 130, 0);
-    public static final YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+    public static final YawPitchRollAngles cameraOrientationRight = new YawPitchRollAngles(AngleUnit.DEGREES,
             -90, -70, 0, 0);
-    public static final double fx = 915.89533774;
-    public static final double fy = 916.57002166;
-    public static final double cx = 665.64617643;
-    public static final double cy = 423.48045066;
-    public static final Size cameraResolution = new Size(1280, 800);
+    public static final Position cameraPositionLeft = new Position(DistanceUnit.MM,
+            -169, -120, 130, 0);
+    public static final YawPitchRollAngles cameraOrientationLeft = new YawPitchRollAngles(AngleUnit.DEGREES,
+            90, -70, 0, 0);
+//  [[938.60008119   0.         602.16868966]
+// [  0.         937.20744359 353.82015718]
+// [  0.           0.           1.        ]]
+    public static final double fxLeft = 938.60008119;
+    public static final double fyLeft = 937.20744359;
+    public static final double cxLeft = 602.16868966;
+    public static final double cyLeft = 353.82015718;
+    public static final double fxRight = 915.89533774;
+    public static final double fyRight = 916.57002166;
+    public static final double cxRight = 665.64617643;
+    public static final double cyRight = 423.48045066;
+    public static final Size cameraResolutionRight = new Size(1280, 800);
+    public static final Size cameraResolutionLeft = new Size(1280, 800);
 }

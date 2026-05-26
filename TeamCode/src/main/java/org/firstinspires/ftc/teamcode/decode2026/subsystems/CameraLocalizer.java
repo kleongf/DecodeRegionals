@@ -31,15 +31,15 @@ public class CameraLocalizer extends Subsystem {
         currentPose = new Pose();
 
         aprilTag = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(CameraLocalizerConstants.fx, CameraLocalizerConstants.fy, CameraLocalizerConstants.cx, CameraLocalizerConstants.cy)
+                .setLensIntrinsics(CameraLocalizerConstants.fxRight, CameraLocalizerConstants.fyRight, CameraLocalizerConstants.cxRight, CameraLocalizerConstants.cyRight)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-                .setCameraPose(CameraLocalizerConstants.cameraPosition, CameraLocalizerConstants.cameraOrientation)
+                .setCameraPose(CameraLocalizerConstants.cameraPositionRight, CameraLocalizerConstants.cameraOrientationRight)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCameraResolution(CameraLocalizerConstants.cameraResolution);
+        builder.setCameraResolution(CameraLocalizerConstants.cameraResolutionRight);
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"));
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);

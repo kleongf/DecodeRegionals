@@ -34,7 +34,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 @Autonomous(name="Blue Close 24", group="!")
 public class BlueClose24 extends OpMode {
     private boolean doThirdSpike = false;
-    private boolean doOpenGate = false;
+    private boolean doOpenGate = true;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -230,18 +230,19 @@ public class BlueClose24 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
-                                new Pose(18.000, 56.755),
-                                new Pose(14.000, 48.479),
-                                new Pose(10.000, 30.000)
+                                new Pose(12.000, 55.000),
+                                new Pose(12.000, 46.000),
+                                new Pose(12.000, 30.000),
+                                new Pose(12.000, 20.000)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-160), Math.toRadians(-90))
+                .setTangentHeadingInterpolation()
                 .build();
 
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(10.000, 30.000),
+                                new Pose(12.000, 20.000),
                                 new Pose(56.000, 100.000)
                         )
                 )
@@ -317,7 +318,7 @@ public class BlueClose24 extends OpMode {
                         })
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
-                        .maxTime(1000),
+                        .maxTime(500),
                 new State("shootSecond")
                         .onEnter(() -> {
                             if (doOpenGate) {

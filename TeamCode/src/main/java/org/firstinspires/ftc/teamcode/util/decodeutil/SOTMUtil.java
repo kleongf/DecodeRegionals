@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util.decodeutil;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 
 public class SOTMUtil {
     private final Pose goal;
@@ -36,12 +37,19 @@ public class SOTMUtil {
         double turretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90);
         double futureTurretAngle = Math.atan2(-(futureVirtualGoal.getX() - futureTurretPose.getX()), futureVirtualGoal.getY() - futureTurretPose.getY()) - futureTurretPose.getHeading() + Math.toRadians(90);
 
+        // need to do weird angle wrap to make the feedforward correct NO MATTER WHAT. at least thats what i think... may be wrong
+//        double turretAngleWrapped = Turret.weirdAngleWrap(turretAngle);
+//        double futureTurretAngleWrapped = Turret.weirdAngleWrap(futureTurretAngle);
+        // hmm no this doesnt do anything
+        // idea: if this don't work, first wrap both and then take difference (but not the smallest angle)
+        // but ts lowk not feedforward fault and stuff
+
         double wantedHoodAngle = thetaLUT.getValue(distance);
         double wantedWheelSpeed = velocityLUT.getValue(distance);
 
         double wantedWheelAcceleration = sampleRate(velocityLUT, distance, (futureDistance - distance) / dt);
 
-        double wantedTurretVelocity = MathUtil.getSmallestAngleDifferenceBetter(turretAngle, futureTurretAngle) / dt;
+        double wantedTurretVelocity = MathUtil.getSmallestAngleDifferenceSigned(futureTurretAngle, turretAngle) / dt;
 
         return new ShootingConstants.ShooterOutputs(
                 turretAngle,
