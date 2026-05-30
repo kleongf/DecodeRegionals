@@ -37,6 +37,7 @@ public class MainTeleop {
     private ZoneUtil.Zone currentZone;
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
+    private final ElapsedTime intakeTimer;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -59,6 +60,7 @@ public class MainTeleop {
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
         this.turretResetTimer = new ElapsedTime();
+        this.intakeTimer = new ElapsedTime();
     }
     private double normalizeInput(double input) {
         return 1.1 * input;
@@ -84,14 +86,24 @@ public class MainTeleop {
                 (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);
 
 
-        if (robot.intake.isFull && prevDetectState != robot.intake.detectionState) {
+        if (robot.intake.isFull && prevDetectState != robot.intake.detectionState && robotState != RobotState.SHOOTING) {
             robot.ledIndicator.indicateIntakeFull();
+            intakeTimer.reset();
         }
 
-        if (robot.intake.isFull && robotState == RobotState.IDLE) {
-            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
-        } else {
-            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+//        if (robot.intake.isFull && robotState == RobotState.IDLE) {
+//            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+//
+//        } else {
+//            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+//        }
+        robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+
+        if(intakeTimer.seconds() > 0.3 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
+            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+        }
+        if(intakeTimer.seconds() > 0.4 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
+            robot.shooter.openLatch();
         }
 
         // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
@@ -102,21 +114,22 @@ public class MainTeleop {
             if (!inZone &&
                     robot.intake.isFull &&
                     !drivetrain.isBusy() &&
-                    prevDetectState != robot.intake.detectionState) {
+                    prevDetectState != robot.intake.detectionState &&
+                    robotState != RobotState.SHOOTING) {
                 drivetrain.kick(closestPose);
             }
         }
 
         // auto shoot if in zone, intake full, and stuff is at the right positions
-        if (
-                inZone &&
-                        (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
-                        robotState != RobotState.SHOOTING &&
-                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
-                Math.abs(MathUtil.getSmallestAngleDifference(robot.turret.currentAngle, robot.turret.wantedAngle)) < RobotConstants.autoShootTurretAngleEpsilon
-        ) {
-            shoot(currentPose, this.goalPose);
-        }
+//        if (
+//                inZone &&
+//                        (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
+//                        robotState != RobotState.SHOOTING &&
+//                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
+//                Math.abs(MathUtil.getSmallestAngleDifference(robot.turret.currentAngle, robot.turret.wantedAngle)) < RobotConstants.autoShootTurretAngleEpsilon
+//        ) {
+//            shoot(currentPose, this.goalPose);
+//        }//todo: commented out for now
 
 //        if (relocalizationTimer.seconds() > relocalizationTime) {
 //            // TODO: test automatic relocalization

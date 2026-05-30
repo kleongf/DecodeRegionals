@@ -11,11 +11,11 @@ public class ShooterConstants {
     public static double kP = 0.003;
     public static double kA = -0.00005;
     public static boolean useVoltageCompensation = true;
-    public static double PITCH_I = Math.toRadians(27);
-    public static double PITCH_F = Math.toRadians(50);
-    public static double PITCH_SERVO_MIN = 0.19;
-    public static double PITCH_SERVO_I = 0.19;
-    public static double PITCH_SERVO_F = 0.85;
-    public static double LATCH_CLOSED = 0.62;//0.56;
-    public static double LATCH_OPEN = 0.8;
+    public static double PITCH_I = Math.toRadians(26);
+    public static double PITCH_F = Math.toRadians(53);
+    public static double PITCH_SERVO_MIN = 0.23;
+    public static double PITCH_SERVO_I = 0.23;
+    public static double PITCH_SERVO_F = 0.97;
+    public static double LATCH_CLOSED = 0.58;//0.56;
+    public static double LATCH_OPEN = 0.75;
 }
