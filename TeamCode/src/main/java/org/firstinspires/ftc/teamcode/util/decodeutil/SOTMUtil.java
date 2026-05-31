@@ -45,7 +45,7 @@ public class SOTMUtil {
         // but ts lowk not feedforward fault and stuff
 
         double wantedHoodAngle = thetaLUT.getValue(distance);
-        double wantedWheelSpeed = velocityLUT.getValue(distance);
+        double wantedWheelSpeed = velocityLUT.getValue(distance) * ShootingConstants.wheelSpeedMultiplier;
 
         double wantedWheelAcceleration = sampleRate(velocityLUT, distance, (futureDistance - distance) / dt);
 

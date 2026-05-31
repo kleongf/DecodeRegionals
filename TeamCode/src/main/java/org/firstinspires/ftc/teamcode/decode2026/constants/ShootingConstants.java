@@ -32,6 +32,7 @@ public class ShootingConstants {
     public static final double TOF_ITERATIONS = 10;
     public static final double SAMPLING_DT = 0.001;
     public static final double DEFAULT_TOF = 1.0;
+    public static double wheelSpeedMultiplier = 1.03; // idk dont seem like we have enough power
     public static double tofMultiplier = 0.8;
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
