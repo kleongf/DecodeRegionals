@@ -6,10 +6,10 @@ import com.acmerobotics.dashboard.config.Config;
 public class ShooterConstants {
     public static double nominalVoltage = 12.4;
     public static double cachingThreshold = 0.005;
-    public static double kV = 0.00036;
+    public static double kV = 0.0001;
     public static double kS = 0.0;
-    public static double kP = 0.003;
-    public static double kA = -0.00005;
+    public static double kP = 0.012;
+    public static double kA = -0.00001;
     public static boolean useVoltageCompensation = true;
     public static double PITCH_I = Math.toRadians(26);
     public static double PITCH_F = Math.toRadians(53);

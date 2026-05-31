@@ -230,8 +230,8 @@ public class BlueClose24 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
-                                new Pose(12.000, 55.000),
-                                new Pose(12.000, 46.000),
+                                new Pose(14.000, 55.000),
+                                new Pose(13.000, 46.000),
                                 new Pose(12.000, 30.000),
                                 new Pose(12.000, 20.000)
                         )

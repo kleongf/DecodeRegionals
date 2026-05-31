@@ -37,12 +37,18 @@ public class TeleopDrivetrain {
     private DrivetrainState state;
     private boolean robotCentric = false;
     private double KICK_TIME = 0.8;
+    private double KICK_DISTANCE_EPSILON = 4;
     public boolean gateHeadingLock = false;
     public boolean openGateHeadingLock = false;
+    public boolean kicking = false;
     private final Alliance alliance;
     private Pose parkPose;
     private PIDFController headingPIDFController;
     private PIDFController yController;
+
+    private PIDFController xController;
+    private PIDFController strongHeadingPIDFController;
+    private Pose targetPose = FieldConstants.BLUE_CLOSE_ZONE_POSE;
 
     public TeleopDrivetrain(HardwareMap hardwareMap, Alliance alliance) {
         follower = Constants.createFollower(hardwareMap);
@@ -51,7 +57,10 @@ public class TeleopDrivetrain {
         follower.usePredictiveBraking = true;
 
         headingPIDFController = new PIDFController(new PIDFCoefficients(0.4, 0, 0.03, 0));
+
+        strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(0.8, 0, 0.04, 0));
         yController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
+        xController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
 
         elapsedTime = new ElapsedTime();
         kickTimer = new ElapsedTime();
@@ -100,34 +109,40 @@ public class TeleopDrivetrain {
     public Vector getAcceleration() {return follower.poseTracker.getAcceleration();}
 
     public void kick(Pose targetPose) {
-        Pose currentPose = follower.getPose();
-        double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
-        double angleReversed = angle - Math.PI;
-
-        // find the most efficient turn angle to the zone
-        if (MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading())) {
-            currentPathChain = () -> follower.pathBuilder()
-                    .addPath(
-                            new Path(
-                                    new BezierLine(follower.getPose(), targetPose)
-                            )
-                    )
-                    .setTangentHeadingInterpolation()
-                    .build();
-        } else {
-            currentPathChain = () -> follower.pathBuilder()
-                    .addPath(
-                            new Path(
-                                    new BezierLine(follower.getPose(), targetPose)
-                            )
-                    )
-                    .setTangentHeadingInterpolation()
-                    .setReversed()
-                    .build();
-        }
-
-        state = DrivetrainState.KICK;
-        follower.followPath(currentPathChain.get(), true);
+//        Pose currentPose = follower.getPose();
+//        double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
+//        double angleReversed = angle - Math.PI;
+//
+//        double targetAngle = MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading()) ? angle : angleReversed;
+//
+//
+//
+//        // find the most efficient turn angle to the zone
+//        if (MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading())) {
+//            currentPathChain = () -> follower.pathBuilder()
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(follower.getPose(), targetPose)
+//                            )
+//                    )
+//                    .setTangentHeadingInterpolation()
+//                    .build();
+//        } else {
+//            currentPathChain = () -> follower.pathBuilder()
+//                    .addPath(
+//                            new Path(
+//                                    new BezierLine(follower.getPose(), targetPose)
+//                            )
+//                    )
+//                    .setTangentHeadingInterpolation()
+//                    .setReversed()
+//                    .build();
+//        }
+//
+//        state = DrivetrainState.KICK;
+//        follower.followPath(currentPathChain.get(), true);
+        this.targetPose = targetPose;
+        kicking = true;
         kickTimer.reset();
     }
 
@@ -219,6 +234,29 @@ public class TeleopDrivetrain {
             double outY = -yController.run();
 
             return new double[] {outX, outY, outHeading};
+        } else if (kicking) {
+            Pose currentPose = follower.getPose();
+            if (kickTimer.seconds() > KICK_TIME || MathUtil.distance(currentPose, targetPose) < KICK_DISTANCE_EPSILON) {
+                kicking = false;
+                return new double[] {x * DrivetrainConstants.xSpeed, y * DrivetrainConstants.ySpeed, rx * DrivetrainConstants.headingSpeed};
+            }
+            double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
+            double angleReversed = angle - Math.PI;
+            double targetAngle = MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading()) ? angle : angleReversed;
+
+            double headingError = MathFunctions.getTurnDirection(currentPose.getHeading(), targetAngle) * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetAngle);
+            strongHeadingPIDFController.updateError(headingError);
+            double outHeading = strongHeadingPIDFController.run();
+
+            double yError = targetPose.getY() - follower.getPose().getY();
+            yController.updateError(yError);
+            double outY = -yController.run();
+
+            double xError = targetPose.getX() - follower.getPose().getX();
+            xController.updateError(xError);
+            double outX = -xController.run();
+
+            return new double[] {outX, outY, outHeading};
         } else {
             targetHeading = currentHeading;
             return new double[] {x * DrivetrainConstants.xSpeed, y * DrivetrainConstants.ySpeed, rx * DrivetrainConstants.headingSpeed};
@@ -250,16 +288,8 @@ public class TeleopDrivetrain {
             case KICK:
                 if (!follower.isBusy() || kickTimer.seconds() > KICK_TIME) {
                     breakFollowing();
-                    double[] powers2 = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
-                    if (alliance == Alliance.BLUE) {
-                        // hold up... these are different?
-                        // ok: so the x power given to robot is really based off of y controller.
-                        follower.setTeleOpDrive(powers2[0], powers2[1], powers2[2], robotCentric, Math.toRadians(180));
-                        // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric);
-                    } else {
-                        follower.setTeleOpDrive(powers2[0], powers2[1], powers2[2], robotCentric);
-                        // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric, Math.toRadians(180));
-                    }
+//                    follower.breakFollowing();
+//                    state = DrivetrainState.TELEOP_DRIVE;
                 }
                 break;
             case INTAKE_GATE:

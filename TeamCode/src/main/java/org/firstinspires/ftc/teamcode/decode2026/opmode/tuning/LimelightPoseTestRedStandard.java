@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 
 @Config
-@TeleOp(name="limelight pose test red standard start pose")
+@TeleOp(name="limelight pose test red")
 public class LimelightPoseTestRedStandard extends OpMode {
     private Follower follower;
     private Intake intake;
-    private final Pose startPose = FieldConstants.RED_STANDARD_START_POSE;
+    private final Pose startPose = FieldConstants.RED_CLOSE_START_AUTO_POSE;
 
 
     @Override
@@ -38,6 +38,7 @@ public class LimelightPoseTestRedStandard extends OpMode {
 
     @Override
     public void start() {
-
+        intake.reset();
+        intake.start();
     }
 }

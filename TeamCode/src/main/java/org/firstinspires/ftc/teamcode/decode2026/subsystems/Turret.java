@@ -23,6 +23,7 @@ public class Turret extends Subsystem {
     public double wantedAngle;
     public double currentAngle;
     public double offset;
+    public double errorTicks;
     public double wantedAngularVelocity;
     public Mode wantedMode;
     private final DcMotorEx turretMotor;
@@ -70,6 +71,7 @@ public class Turret extends Subsystem {
             case TURRET_ON:
                 double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
                 double error = t-currentPositionTicks;
+                errorTicks = error;
 
                 double power = MathUtil.clamp(
                             turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + TurretConstants.kV * wantedAngularVelocity,

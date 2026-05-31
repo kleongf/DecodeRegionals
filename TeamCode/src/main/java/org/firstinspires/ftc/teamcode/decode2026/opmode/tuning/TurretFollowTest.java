@@ -77,5 +77,7 @@ public class TurretFollowTest extends OpMode {
         intake.start();
         turret.start();
         shooter.start();
+
+        shooter.openLatch();
     }
 }

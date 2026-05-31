@@ -13,5 +13,6 @@ public class RobotConstants {
     public static double farShootingDistanceThreshold = 120.0;
     public static double dt = 0.02;
     public static double autoShootWheelSpeedEpsilonTicks = 40;
-    public static double autoShootTurretAngleEpsilon = Math.toRadians(5);
+    // 2% error threshold
+    public static double autoShootTurretTicksEpsilon = TurretConstants.ticksPerRevolution * 0.02;
 }

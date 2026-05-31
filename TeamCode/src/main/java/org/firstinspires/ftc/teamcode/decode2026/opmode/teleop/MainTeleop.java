@@ -92,11 +92,11 @@ public class MainTeleop {
         }
 
 //        if (robot.intake.isFull && robotState == RobotState.IDLE) {
-//            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
-//
+//            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
 //        } else {
 //            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
 //        }
+
         robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
 
         if(intakeTimer.seconds() > 0.3 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
@@ -121,15 +121,15 @@ public class MainTeleop {
         }
 
         // auto shoot if in zone, intake full, and stuff is at the right positions
-//        if (
-//                inZone &&
-//                        (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
-//                        robotState != RobotState.SHOOTING &&
-//                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
-//                Math.abs(MathUtil.getSmallestAngleDifference(robot.turret.currentAngle, robot.turret.wantedAngle)) < RobotConstants.autoShootTurretAngleEpsilon
-//        ) {
-//            shoot(currentPose, this.goalPose);
-//        }//todo: commented out for now
+        if (
+                inZone &&
+                        (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
+                        robotState != RobotState.SHOOTING &&
+                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
+                Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon
+        ) {
+            shoot(currentPose, this.goalPose);
+        }//todo: commented out for now
 
 //        if (relocalizationTimer.seconds() > relocalizationTime) {
 //            // TODO: test automatic relocalization
@@ -175,7 +175,6 @@ public class MainTeleop {
                 }
             }
         }
-
 
         /** GAMEPAD 1 (DRIVER) **/
 
@@ -224,7 +223,7 @@ public class MainTeleop {
             drivetrain.setRobotCentric(!drivetrain.getRobotCentric());
         }
 
-        // left stick: webcam relocalization todo: uncomment when done, also
+        // left stick: webcam relocalization
         // maybe it is a good idea to have reloc and reset turret on same button idk
         if (gamepad2.leftStickButtonWasPressed()) {
             Pose webcamPose = robot.cameraLocalizer.currentPose;
@@ -294,6 +293,10 @@ public class MainTeleop {
         telemetry.addLine("Intake state: "+ robot.intake.detectionState);
         telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());
         telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
+        telemetry.addLine("Is full or 2nd triggered: " + (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED));
+        telemetry.addLine("Shooter wheel error ticks: " + Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity));
+        telemetry.addLine("Turret ticks error: " + robot.turret.errorTicks);
+
         telemetry.update();
     }
 
