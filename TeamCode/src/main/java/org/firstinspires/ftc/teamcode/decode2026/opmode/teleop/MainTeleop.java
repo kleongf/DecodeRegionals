@@ -82,14 +82,28 @@ public class MainTeleop {
                         FieldConstants.BLUE_FAR_ZONE_POSE : FieldConstants.RED_FAR_ZONE_POSE;
 
         RobotState robotState = robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished() ? RobotState.IDLE : RobotState.SHOOTING;
-        boolean inZone = (ZoneUtil.inCloseZone(currentPose) && currentZone == ZoneUtil.Zone.CLOSE) ||
+        boolean inZone =
+                (ZoneUtil.inCloseZone(currentPose) && currentZone == ZoneUtil.Zone.CLOSE) ||
                 (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);
 
 
-        if (robot.intake.isFull && prevDetectState != robot.intake.detectionState && robotState != RobotState.SHOOTING) {
+        if (
+                robot.intake.isFull &&
+                        (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED) &&
+                        // prevDetectState != robot.intake.detectionState
+                robotState != RobotState.SHOOTING
+        ) {
             robot.ledIndicator.indicateIntakeFull();
             intakeTimer.reset();
         }
+
+        if (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && robotState == RobotState.IDLE) {
+            // start preparation sequence
+            robot.prepareShootCommand.start();
+        }
+
+        // if 3 and shoot, no close latch
+        // if 0 and shoot, closes latch
 
 //        if (robot.intake.isFull && robotState == RobotState.IDLE) {
 //            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
@@ -97,24 +111,29 @@ public class MainTeleop {
 //            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
 //        }
 
-        robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+        // when changes from 2nd to 3rd detection: trigger the preparation sequence
+        // does nothing for 0.2s then opens the latch
 
-        if(intakeTimer.seconds() > 0.3 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
-            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
-        }
-        if(intakeTimer.seconds() > 0.4 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
-            robot.shooter.openLatch();
-        }
+//        robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+//
+//        if (intakeTimer.seconds() > 0.2 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
+//            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+//        }
+//        if(intakeTimer.seconds() > 0.4 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
+//            robot.shooter.openLatch();
+//        }
 
         // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
         // automatically kick the robot in the correct direction
+        // problem:
         if (RobotConstants.useAutomateRobotDrive) {
             // if prev few states were the same, then we didn't shoot anything, therefore no need to auto drive again
             // not in zone, intake full, not currently auto driving, and intake JUST became full (so we don't
             if (!inZone &&
                     robot.intake.isFull &&
                     !drivetrain.isBusy() &&
-                    prevDetectState != robot.intake.detectionState &&
+                    (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED) &&
+                    // prevDetectState != robot.intake.detectionState &&
                     robotState != RobotState.SHOOTING) {
                 drivetrain.kick(closestPose);
             }
@@ -122,6 +141,9 @@ public class MainTeleop {
 
         // auto shoot if in zone, intake full, and stuff is at the right positions
         if (
+                // if we are not using far zone auto shoot OR we are in far zone and using far zone shooting
+                // i know there is a redundant statement but its more clear to me
+                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
                 inZone &&
                         (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
                         robotState != RobotState.SHOOTING &&
@@ -303,6 +325,7 @@ public class MainTeleop {
 
     public void start() {
         robot.start();
+        robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
     }
 
     public void stop() {

@@ -20,7 +20,7 @@ public class PrepareShootCommand extends Command {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                             robot.shooter.closeLatch();
                         })
-                        .maxTime(300),
+                        .maxTime(200),
                 new State()
                         .onEnter(() -> {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;

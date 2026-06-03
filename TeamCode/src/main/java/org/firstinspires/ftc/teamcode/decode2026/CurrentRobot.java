@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.decode2026.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.decode2026.commands.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandSlow;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Tilt;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.TorqueShooter;
 import org.firstinspires.ftc.teamcode.lib.robot.Robot;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
@@ -23,7 +25,7 @@ public class CurrentRobot extends Robot {
     private final BulkRead bulkRead;
     private final ArrayList<Subsystem> subsystems;
     public final Intake intake;
-    public final Shooter shooter;
+    public final TorqueShooter shooter;
     public final Turret turret;
     public final Tilt tilt;
     public final LEDIndicator ledIndicator;
@@ -33,6 +35,7 @@ public class CurrentRobot extends Robot {
     public StateMachine intakeCommand;
     public StateMachine shootCommand;
     public StateMachine shootCommandSlow;
+    public StateMachine prepareShootCommand;
     private final ElapsedTime loopTimer;
     public double dt;
 
@@ -45,7 +48,7 @@ public class CurrentRobot extends Robot {
         intake = new Intake(hardwareMap);
         subsystems.add(intake);
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new TorqueShooter(hardwareMap);
         subsystems.add(shooter);
 
         turret = new Turret(hardwareMap);
@@ -57,8 +60,8 @@ public class CurrentRobot extends Robot {
         ledIndicator = new LEDIndicator(hardwareMap);
         subsystems.add(ledIndicator);
 
-         cameraLocalizer = new CameraLocalizer(hardwareMap);
-         subsystems.add(cameraLocalizer);
+        cameraLocalizer = new CameraLocalizer(hardwareMap);
+        subsystems.add(cameraLocalizer);
 
         commands = new ArrayList<>();
         // this is called last to ensure everything is initialized
@@ -74,6 +77,9 @@ public class CurrentRobot extends Robot {
 
         shootCommandSlow = new ShootCommandSlow(this).build();
         commands.add(shootCommandSlow);
+
+        prepareShootCommand = new PrepareShootCommand(this).build();
+        commands.add(prepareShootCommand);
     }
 
     @Override

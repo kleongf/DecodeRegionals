@@ -15,4 +15,5 @@ public class RobotConstants {
     public static double autoShootWheelSpeedEpsilonTicks = 40;
     // 2% error threshold
     public static double autoShootTurretTicksEpsilon = TurretConstants.ticksPerRevolution * 0.02;
+    public static boolean useFarZoneAutoShoot = false;
 }

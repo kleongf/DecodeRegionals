@@ -22,9 +22,10 @@ public class ShootCommandSlow extends Command {
                         })
                         .onExit(() -> {
                             robot.intake.detectionState = Intake.DetectionState.EMPTY;
+                            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                             robot.shooter.closeLatch();
                         })
-                        .maxTime(550)
+                        .maxTime(650)
         );
     }
 }
