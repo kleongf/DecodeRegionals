@@ -10,7 +10,7 @@ public class FieldConstants {
     public static String END_POSE_KEY = "END_POSE";
     // was 15
     public static double DISTANCE_IN = 0; // if it is not holding/correcting can increase this number
-    public static double TURN_IN = Math.toRadians(4); // how much to turn into the gate
+    public static double TURN_IN = Math.toRadians(0);//4); // how much to turn into the gate
     public static double ROBOT_WIDTH = 15.1;
     // just counting the drivetrain, without we are 17.0866
     public static double ROBOT_LENGTH = 17.0866;
@@ -40,7 +40,7 @@ public class FieldConstants {
     public static Pose RED_CLOSE_START_AUTO_POSE = Flipper.flip(BLUE_CLOSE_START_AUTO_POSE);
     public static Pose BLUE_FAR_START_AUTO_POSE = new Pose(FIELD_WIDTH / 3 - ROBOT_BACK_TO_CENTER_DISTANCE, HALF_ROBOT_WIDTH, Math.toRadians(180));
     public static Pose RED_FAR_START_AUTO_POSE = Flipper.flip(BLUE_FAR_START_AUTO_POSE);
-    public static Pose BLUE_GATE_AUTO_POSE = new Pose(12.8, 60, Math.toRadians(143));
+    public static Pose BLUE_GATE_AUTO_POSE = new Pose(12.7-.7, 59+1.5, Math.toRadians(147+3+5+5));
     public static Pose RED_GATE_AUTO_POSE = Flipper.flip(BLUE_GATE_AUTO_POSE);
     // Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN
     public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY(), BLUE_GATE_AUTO_POSE.getHeading()+TURN_IN);
