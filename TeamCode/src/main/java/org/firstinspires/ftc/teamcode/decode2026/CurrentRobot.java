@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.decode2026.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.decode2026.commands.PrepareShootCommandLonger;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandSlow;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
@@ -36,6 +37,7 @@ public class CurrentRobot extends Robot {
     public StateMachine shootCommand;
     public StateMachine shootCommandSlow;
     public StateMachine prepareShootCommand;
+    public StateMachine prepareShootCommandLonger;
     private final ElapsedTime loopTimer;
     public double dt;
 
@@ -80,6 +82,9 @@ public class CurrentRobot extends Robot {
 
         prepareShootCommand = new PrepareShootCommand(this).build();
         commands.add(prepareShootCommand);
+
+        prepareShootCommandLonger = new PrepareShootCommandLonger(this).build();
+        commands.add(prepareShootCommandLonger);
     }
 
     @Override
