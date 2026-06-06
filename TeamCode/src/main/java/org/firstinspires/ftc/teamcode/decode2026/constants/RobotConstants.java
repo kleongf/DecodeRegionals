@@ -15,5 +15,7 @@ public class RobotConstants {
     public static double autoShootWheelSpeedEpsilonTicks = 40;
     // 2% error threshold
     public static double autoShootTurretTicksEpsilon = TurretConstants.ticksPerRevolution * 0.02;
+    public static double autoShootTurretRangeEpsilon = 100; // ticks, dont shoot when really close to wraparoud
+    public static final double MIN_SHOOTING_DISTANCE = 45; // inches
     public static boolean useFarZoneAutoShoot = false;
 }

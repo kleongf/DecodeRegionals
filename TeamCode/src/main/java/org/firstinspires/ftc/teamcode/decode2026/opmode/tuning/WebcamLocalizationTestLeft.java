@@ -49,8 +49,8 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "webcam localization test new camera right", group = "Concept")
-public class WebcamLocalizationTest extends LinearOpMode {
+@TeleOp(name = "webcam localization test new camera left side", group = "Concept")
+public class WebcamLocalizationTestLeft extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -176,11 +176,11 @@ public class WebcamLocalizationTest extends LinearOpMode {
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 // i think it may be fx focal length
-                .setLensIntrinsics(CameraLocalizerConstants.fxRight, CameraLocalizerConstants.fyRight, CameraLocalizerConstants.cxRight, CameraLocalizerConstants.cyRight)
+                .setLensIntrinsics(CameraLocalizerConstants.fxLeft, CameraLocalizerConstants.fyLeft, CameraLocalizerConstants.cxLeft, CameraLocalizerConstants.cyLeft)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(getDecodeTagLibraryAdjusted())
-                .setCameraPose(CameraLocalizerConstants.cameraPositionRight, CameraLocalizerConstants.cameraOrientationRight)
+                .setCameraPose(CameraLocalizerConstants.cameraPositionLeft, CameraLocalizerConstants.cameraOrientationLeft)
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
@@ -287,3 +287,4 @@ public class WebcamLocalizationTest extends LinearOpMode {
     }   // end method telemetryAprilTag()
 
 }   // end class
+

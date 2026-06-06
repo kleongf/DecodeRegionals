@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
@@ -44,6 +45,7 @@ public class MainTeleop {
         drivetrain.setStartingPose(startPose);
 
         robot = new CurrentRobot(hardwareMap);
+        robot.cameraLocalizer.setAlliance(alliance);
         robot.reset();
 
         this.goalPose = alliance == Alliance.BLUE ? FieldConstants.BLUE_GOAL_POSE :  FieldConstants.RED_GOAL_POSE;
@@ -145,10 +147,13 @@ public class MainTeleop {
                 // i know there is a redundant statement but its more clear to me
                 (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
                 inZone &&
-                        (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED) &&
+                        (robot.intake.isFull) &&
                         robotState != RobotState.SHOOTING &&
                 Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
-                Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon
+                Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon &&
+                        robot.turret.currentPositionTicks > -TurretConstants.ticksPerRevolution + RobotConstants.autoShootTurretRangeEpsilon &&
+                        robot.turret.currentPositionTicks < -RobotConstants.autoShootTurretRangeEpsilon &&
+                        currentPose.distanceFrom(goalPose) > RobotConstants.MIN_SHOOTING_DISTANCE
         ) {
             shoot(currentPose, this.goalPose);
         }//todo: commented out for now

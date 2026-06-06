@@ -8,7 +8,9 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
+import com.pedropathing.ftc.localization.Encoder;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
+import com.pedropathing.ftc.localization.constants.ThreeWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -59,9 +61,23 @@ public class Constants {
             .useVoltageCompensation(true)
             .nominalVoltage(12.0);
 
+//    public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
+//            .forwardTicksToInches(0.00197895600226)
+//            .strafeTicksToInches(0.00197895600226)
+//            .turnTicksToInches(.001989436789)
+//            .leftPodY(4.3503937)
+//            .rightPodY(-3.30709)
+//            .strafePodX(-3.77953-0.04)
+//            .leftEncoder_HardwareMapName("front_right_drive")
+//            .rightEncoder_HardwareMapName("front_left_drive")
+//            .strafeEncoder_HardwareMapName("intakeMotor")
+//            .leftEncoderDirection(Encoder.REVERSE)
+//            .rightEncoderDirection(Encoder.FORWARD)
+//            .strafeEncoderDirection(Encoder.REVERSE);
+
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-3.30709)
-            .strafePodX(-3.77953)
+            .strafePodX(-3.77953-0.04)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .yawScalar(1.0)

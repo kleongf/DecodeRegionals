@@ -28,7 +28,7 @@ public class BlueFar30 extends OpMode {
     private StateMachine stateMachine;
     private CurrentRobot robot;
     private SOTMUtil sotm;
-    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakePileLowCycle, shootPileLowCycle, intakePileHighCycle, shootPileHighCycle, intakePile1, shootPile1, intakePile2, shootPile2, intakePile3, shootPile3, intakePile4, shootPile4, intakePile5, shootPile5, intakePile6, shootPile6, intakePile7, shootPile7, park;
+    private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakePileLowCycle, shootPileLowCycle, intakePileHighCycle, shootPileHighCycle, intakePile1, shootPile1, intakePile2, shootPile2, intakePile3, shootPile3, intakePile4, shootPile4, intakePile5, shootPile5, intakePile6, shootPile6, intakePile7, shootPile7, intakePile8, shootPile8, intakePile9, shootPile9, park;
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
@@ -124,6 +124,12 @@ public class BlueFar30 extends OpMode {
         intakePile7 = Copier.copy(follower, intakePileLowCycle);
         shootPile7 = Copier.copy(follower, shootPileLowCycle);
 
+        intakePile8 = Copier.copy(follower, intakePileHighCycle);
+        shootPile8 = Copier.copy(follower, shootPileHighCycle);
+
+        intakePile9 = Copier.copy(follower, intakePileLowCycle);
+        shootPile9 = Copier.copy(follower, shootPileLowCycle);
+
         park = follower.pathBuilder()
                 .addPath(
                         new BezierLine(new Pose(50, 12), new Pose(30, 12))
@@ -139,6 +145,7 @@ public class BlueFar30 extends OpMode {
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
+        ShootingConstants.tofMultiplier = 0.35;
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -188,11 +195,13 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(intakePile1, false);
                         })
                         .maxTime(1200)
+                        .onExit(() -> robot.prepareShootCommand.start())
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile1, true);
                         })
+                        
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -203,11 +212,13 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(intakePile2, false);
                         })
                         .maxTime(1200)
+                        .onExit(() -> robot.prepareShootCommand.start())
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile2, true);
                         })
+                        
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -218,11 +229,13 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(intakePile3, false);
                         })
                         .maxTime(1200)
+                        .onExit(() -> robot.prepareShootCommand.start())
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile3, true);
                         })
+                        
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -233,11 +246,13 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(intakePile4, false);
                         })
                         .maxTime(1200)
+                        .onExit(() -> robot.prepareShootCommand.start())
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile4, true);
                         })
+                        
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -248,11 +263,13 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(intakePile5, false);
                         })
                         .maxTime(1200)
+                        .onExit(() -> robot.prepareShootCommand.start())
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile5, true);
                         })
+                        
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -263,6 +280,7 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(intakePile6, false);
                         })
                         .maxTime(1200)
+                        .onExit(() -> robot.prepareShootCommand.start())
                         .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {

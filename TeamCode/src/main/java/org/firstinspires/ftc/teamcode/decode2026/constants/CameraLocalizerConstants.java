@@ -44,14 +44,21 @@ public class CameraLocalizerConstants {
 //  [[938.60008119   0.         602.16868966]
 // [  0.         937.20744359 353.82015718]
 // [  0.           0.           1.        ]]
-    public static final double fxLeft = 938.60008119;
-    public static final double fyLeft = 937.20744359;
-    public static final double cxLeft = 602.16868966;
-    public static final double cyLeft = 353.82015718;
-    public static final double fxRight = 915.89533774;
-    public static final double fyRight = 916.57002166;
-    public static final double cxRight = 665.64617643;
-    public static final double cyRight = 423.48045066;
+
+    // right
+//     [[912.59997673   0.         657.3040482 ]
+//             [  0.         910.71508727 408.55061061]
+//             [  0.           0.           1.        ]]
+
+    public static final double fxLeft = 909.26403429;
+    public static final double fyLeft = 905.63651776;
+    public static final double cxLeft = 628.49810599;
+    public static final double cyLeft = 413.74093954;
+    // todo: needs a bit more tuning but should be fine
+    public static final double fxRight = 912.59997673; //915.89533774;
+    public static final double fyRight = 910.71508727; //916.57002166;
+    public static final double cxRight = 657.3040482; // 665.64617643;
+    public static final double cyRight = 398.55061061; //423.48045066;
     public static final Size cameraResolutionRight = new Size(1280, 800);
     public static final Size cameraResolutionLeft = new Size(1280, 800);
 }
