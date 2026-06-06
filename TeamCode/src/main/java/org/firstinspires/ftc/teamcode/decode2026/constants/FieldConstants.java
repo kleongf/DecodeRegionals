@@ -10,7 +10,7 @@ public class FieldConstants {
     public static String END_POSE_KEY = "END_POSE";
     // was 15
     public static double DISTANCE_IN = 0; // if it is not holding/correcting can increase this number
-    public static double TURN_IN = Math.toRadians(0);//4); // how much to turn into the gate
+    public static double TURN_IN = Math.toRadians(0); // how much to turn into the gate
     public static double ROBOT_WIDTH = 15.1;
     // just counting the drivetrain, without we are 17.0866
     public static double ROBOT_LENGTH = 17.0866;
