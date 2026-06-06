@@ -6,9 +6,9 @@ import org.firstinspires.ftc.teamcode.lib.robot.Command;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 
-public class ShootCommand extends Command {
+public class PrepareShootCommandLonger extends Command {
     private final CurrentRobot robot;
-    public ShootCommand(CurrentRobot robot) {
+    public PrepareShootCommandLonger(CurrentRobot robot) {
         this.robot = robot;
     }
 
@@ -17,15 +17,17 @@ public class ShootCommand extends Command {
         return new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            robot.shooter.openLatch();
-                            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
-                        })
-                        .onExit(() -> {
-                            robot.intake.detectionState = Intake.DetectionState.EMPTY;
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                             robot.shooter.closeLatch();
                         })
-                        .maxTime(325)
+                        .maxTime(350),//longer than 200ms, ts is actually the only difference, kind of, see line 28
+                new State()
+                        .onEnter(() -> {
+                            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                        })
+                        .maxTime(200)//and this is longer so don't shoot ball accidentally?
+                        .onExit(robot.shooter::openLatch)
+
         );
     }
 }

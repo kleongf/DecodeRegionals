@@ -40,7 +40,7 @@ public class FieldConstants {
     public static Pose RED_CLOSE_START_AUTO_POSE = Flipper.flip(BLUE_CLOSE_START_AUTO_POSE);
     public static Pose BLUE_FAR_START_AUTO_POSE = new Pose(FIELD_WIDTH / 3 - ROBOT_BACK_TO_CENTER_DISTANCE, HALF_ROBOT_WIDTH, Math.toRadians(180));
     public static Pose RED_FAR_START_AUTO_POSE = Flipper.flip(BLUE_FAR_START_AUTO_POSE);
-    public static Pose BLUE_GATE_AUTO_POSE = new Pose(12.7-.7, 59+1.5, Math.toRadians(147+3+5+5));
+    public static Pose BLUE_GATE_AUTO_POSE = new Pose(12.7-.7, 59+.5, Math.toRadians(147+3+5+5+3));
     public static Pose RED_GATE_AUTO_POSE = Flipper.flip(BLUE_GATE_AUTO_POSE);
     // Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN
     public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE.getX()+Math.cos(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE.getY(), BLUE_GATE_AUTO_POSE.getHeading()+TURN_IN);
