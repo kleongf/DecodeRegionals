@@ -101,7 +101,7 @@ public class MainTeleop {
 
         if (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && robotState == RobotState.IDLE) {
             // start preparation sequence
-            robot.prepareShootCommand.start();
+            robot.prepareShootCommandLonger.start();
         }
 
         // if 3 and shoot, no close latch
