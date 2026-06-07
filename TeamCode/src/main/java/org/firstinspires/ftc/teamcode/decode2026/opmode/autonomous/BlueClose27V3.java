@@ -291,7 +291,7 @@ public class BlueClose27V3 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
         follower.setMaxPower(1);
-        follower.setStartingPose(FieldConstants.BLUE_CLOSE_START_AUTO_POSE);
+        follower.setStartingPose(new Pose(14.811+1, FieldConstants.FIELD_WIDTH * (5/6d) - FieldConstants.ROBOT_BACK_TO_CENTER_DISTANCE));
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
         ShootingConstants.tofMultiplier = 0.35;
