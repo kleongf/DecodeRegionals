@@ -37,13 +37,6 @@ public class SOTMUtil {
         double turretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90);
         double futureTurretAngle = Math.atan2(-(futureVirtualGoal.getX() - futureTurretPose.getX()), futureVirtualGoal.getY() - futureTurretPose.getY()) - futureTurretPose.getHeading() + Math.toRadians(90);
 
-        // need to do weird angle wrap to make the feedforward correct NO MATTER WHAT. at least thats what i think... may be wrong
-//        double turretAngleWrapped = Turret.weirdAngleWrap(turretAngle);
-//        double futureTurretAngleWrapped = Turret.weirdAngleWrap(futureTurretAngle);
-        // hmm no this doesnt do anything
-        // idea: if this don't work, first wrap both and then take difference (but not the smallest angle)
-        // but ts lowk not feedforward fault and stuff
-
         double wantedHoodAngle = thetaLUT.getValue(distance);
         double wantedWheelSpeed = velocityLUT.getValue(distance) * ShootingConstants.wheelSpeedMultiplier;
 
@@ -53,6 +46,43 @@ public class SOTMUtil {
 
         return new ShootingConstants.ShooterOutputs(
                 turretAngle,
+                wantedTurretVelocity,
+                wantedWheelSpeed,
+                wantedWheelAcceleration,
+                wantedHoodAngle
+        );
+    }
+
+    public ShootingConstants.ShooterOutputs calculateShooterOutputs2(Pose turretPose, Vector currentSpeeds, Vector robotAcceleration, double angularVelocity, double dt) {
+        double tof = ShootingConstants.calculateTOF(ShootingConstants.tofFunction, turretPose, goal, currentSpeeds) * ShootingConstants.tofMultiplier;
+
+        Pose virtualGoal = new Pose(goal.getX()-currentSpeeds.getXComponent()*tof, goal.getY()-currentSpeeds.getYComponent()*tof);
+
+        double dx = virtualGoal.getX() - turretPose.getX();
+        double dy = virtualGoal.getY() - turretPose.getY();
+        double r2 = dx * dx + dy * dy;
+        double distance = Math.sqrt(r2);
+
+        // Derivatives of dx and dy over time
+        double dxDot = currentSpeeds.getXComponent();
+        double dyDot = currentSpeeds.getYComponent();
+
+        // d/dt of atan2(-dx, dy)
+        double turretAngleRate = (dy * (-dxDot) - (-dx) * dyDot) / r2;
+
+        // subtract robot angular velocity since turret angle is robot-relative
+        double wantedTurretVelocity = turretAngleRate - angularVelocity;
+        double wantedTurretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90);
+
+        // take derivative with respect to time of distance (sqrt(dx^2 + dy^2))
+        double distanceRate = -(dx * dxDot + dy * dyDot) / distance;
+
+        double wantedHoodAngle = thetaLUT.getValue(distance);
+        double wantedWheelSpeed = velocityLUT.getValue(distance) * ShootingConstants.wheelSpeedMultiplier;
+        double wantedWheelAcceleration = sampleRate(velocityLUT, distance, distanceRate);
+
+        return new ShootingConstants.ShooterOutputs(
+                wantedTurretAngle,
                 wantedTurretVelocity,
                 wantedWheelSpeed,
                 wantedWheelAcceleration,

@@ -285,16 +285,16 @@ public class MainTeleop {
         if (gamepad2.dpadDownWasPressed()) {
             currentZone = ZoneUtil.Zone.FAR;
         }
-
+        // todo: retune today
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
-                        sotmUtil.calculateShooterOutputs(
+                        sotmUtil.calculateShooterOutputs2(
                                 drivetrain.getPose(),
                                 drivetrain.getVelocity(),
                                 drivetrain.getAcceleration(),
                                 drivetrain.getAngularVelocity(),
                                 RobotConstants.dt) :
-                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(),
+                        sotmUtil.calculateShooterOutputs2(drivetrain.getPose(),
                                 new Vector(),
                                 new Vector(),
                                 0,
