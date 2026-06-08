@@ -31,14 +31,13 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 // last one is going to be a pile cycle, it will always be a pile cycle
 
 
-@Autonomous(name="Blue Close 27 V3 crazy sotm new pathing i guess", group="!")
-public class BlueClose27V3 extends OpMode {
+@Autonomous(name="Blue Close 27 V5 new pathing open gate", group="!")
+public class BlueClose27V5 extends OpMode {
     private boolean doThirdSpike = false;
     private boolean doOpenGate = false;//no time to do this for 27
     private Pose lockedPose = new Pose();
     private boolean lockTurret = true;
     private boolean lockSpeed = true;
-    private final double pathSOTMTValue = 0.7;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -67,20 +66,22 @@ public class BlueClose27V3 extends OpMode {
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(23.500, 83.000),
-                                new Pose(32, 108)
+                                new Pose(56.000, 76.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                // optimal angle trust defined by deriv of curve
+                .setConstantHeadingInterpolation(Math.toRadians(-130.37))
                 .build();
 
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(32.00, 108.000),
-                                new Pose(22, 82.000),
-                                new Pose(22, 72.000),
-                                new Pose(23.500, 62.000)
+                                new Pose(56.000, 76.000),
+                                new Pose(46.741, 65.108),
+                                new Pose(31.688, 59.731),
+                                new Pose(13.000, 64.000)
                         )
-                ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                )
+                .setTangentHeadingInterpolation()
                 .build();
 //        shootPreload = follower.pathBuilder()
 //                // say the bumper is 1 inch off, idk what it really is tho
@@ -296,9 +297,9 @@ public class BlueClose27V3 extends OpMode {
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
                                 new Pose(19.864, 51.595),
-                                new Pose(14.892, 42.784),
-                                new Pose(12.000, 30.000),
-                                new Pose(12.000, 25.000)
+                                new Pose(17, 42.784),
+                                new Pose(15.000, 30.000),
+                                new Pose(15.000, 25.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -356,9 +357,11 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
+                            lockSpeed = false;
+                            lockTurret = false;
                             follower.followPath(shootFirst, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -394,21 +397,15 @@ public class BlueClose27V3 extends OpMode {
                             } else {
                                 follower.followPath(shootSecondNoOpenGate, true);
                             }
-                            ShootingConstants.tofMultiplier = 0.6;
-                            lockedPose = new Pose(56, 75, Math.toRadians(-160));
-                            lockSpeed = false;
-                            lockTurret = false;
-                            // lockShooter = false;
                         })
-                        .onExit(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
-//                new State()
-//                        .onEnter(() -> robot.shootCommand.start())
-//                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> robot.shootCommand.start())
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // gate cycle 1
                 new State()
                         .onEnter(() -> {
-                            ShootingConstants.tofMultiplier = 0.6;
+                            ShootingConstants.tofMultiplier = 0.7;
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
                             follower.followPath(intakeGate1, true);
@@ -419,7 +416,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) || robot.intake.isFull))
+                        .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(1500),
                 new State()
                         .onEnter(() -> {
@@ -427,11 +424,10 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(shootGate1, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .onExit(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
-//                new State()
-//                        .onEnter(() -> robot.shootCommand.start())
-//                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> robot.shootCommand.start())
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // gate cycle 2
                 new State()
                         .onEnter(() -> {
@@ -445,7 +441,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) || robot.intake.isFull))
+                        .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(1500),
                 new State()
                         .onEnter(() -> {
@@ -453,11 +449,10 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(shootGate2, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .onExit(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
-//                new State()
-//                        .onEnter(() -> robot.shootCommand.start())
-//                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> robot.shootCommand.start())
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
 
                 // gate cycle 3
                 new State()
@@ -472,7 +467,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) || robot.intake.isFull))
+                        .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(1500),
                 new State()
                         .onEnter(() -> {
@@ -480,7 +475,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(shootGate3, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        .transition(new Transition(() -> !follower.isBusy())),
                 // DO THIRD SPIKE?
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
@@ -498,7 +493,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(shootThird, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
@@ -518,7 +513,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) || robot.intake.isFull))
+                        .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(1600),
                 new State()
                         .onEnter(() -> {
@@ -526,11 +521,10 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(shootGate4, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .onExit(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
-//                new State()
-//                        .onEnter(() -> robot.shootCommand.start())
-//                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .onEnter(() -> robot.shootCommand.start())
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // gate cycle 5
                 new State()
                         .onEnter(() -> {
@@ -544,7 +538,7 @@ public class BlueClose27V3 extends OpMode {
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) || robot.intake.isFull))
+                        .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(1600),
                 new State()
                         .onEnter(() -> {
@@ -552,14 +546,10 @@ public class BlueClose27V3 extends OpMode {
                             follower.followPath(shootGate5, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .onExit(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
-                new State()
-                        .maxTime(300)
                         .transition(new Transition(() -> !follower.isBusy())),
-//                new State()
-//                        .onEnter(() -> robot.shootCommand.start())
-//                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                new State()
+                        .onEnter(() -> robot.shootCommand.start())
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
 
                 // pile intake
                 new State("intakePile")
@@ -571,16 +561,13 @@ public class BlueClose27V3 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            ShootingConstants.tofMultiplier = .7;
-                            lockSpeed = false;
-                            lockTurret = false;
+                            ShootingConstants.tofMultiplier = 0.7;
                         })
                         .maxTime(300)
-                        .transition(new Transition(() -> (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) || robot.intake.isFull)),
+                        .transition(new Transition(() -> robot.intake.isFull)),
                 new State()
                         .onEnter(() -> robot.prepareShootCommandLonger.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue() > pathSOTMTValue))
-                        .transition(new Transition(() -> ZoneUtil.inCloseZone(follower.getPose()))),//CRAZY SOTTMMM LESGOO
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.8)),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
@@ -616,10 +603,11 @@ public class BlueClose27V3 extends OpMode {
             shooterOutputs.turretAngle = shooterOutputsTurret.turretAngle;
             shooterOutputs.turretFeedforward = shooterOutputsTurret.turretFeedforward;
             // Log.d("turret vel", String.valueOf(robot.turret.currentVelocityTicks));
-        // shooterOutputsTurret.turretFeedforward;
+            // shooterOutputsTurret.turretFeedforward;
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
+                            // removed accel since its lowk trash
                             sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
         }

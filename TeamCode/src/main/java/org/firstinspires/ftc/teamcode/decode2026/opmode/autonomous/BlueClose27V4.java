@@ -31,8 +31,8 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 // last one is going to be a pile cycle, it will always be a pile cycle
 
 
-@Autonomous(name="Blue Close 27 V3 crazy sotm new pathing i guess", group="!")
-public class BlueClose27V3 extends OpMode {
+@Autonomous(name="Blue Close 27 V4 crazy sotm new pathing i guess", group="!")
+public class BlueClose27V4 extends OpMode {
     private boolean doThirdSpike = false;
     private boolean doOpenGate = false;//no time to do this for 27
     private Pose lockedPose = new Pose();
@@ -67,20 +67,21 @@ public class BlueClose27V3 extends OpMode {
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(23.500, 83.000),
-                                new Pose(32, 108)
+                                new Pose(56.000, 76.000)
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(Math.toRadians(-160))
                 .build();
 
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(32.00, 108.000),
-                                new Pose(22, 82.000),
-                                new Pose(22, 72.000),
-                                new Pose(23.500, 62.000)
+                                new Pose(56.000, 76.000),
+                                new Pose(46.741, 65.108),
+                                new Pose(31.688, 59.731),
+                                new Pose(13.000, 64.000)
                         )
-                ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                )
+                .setTangentHeadingInterpolation()
                 .build();
 //        shootPreload = follower.pathBuilder()
 //                // say the bumper is 1 inch off, idk what it really is tho
@@ -296,9 +297,9 @@ public class BlueClose27V3 extends OpMode {
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
                                 new Pose(19.864, 51.595),
-                                new Pose(14.892, 42.784),
-                                new Pose(12.000, 30.000),
-                                new Pose(12.000, 25.000)
+                                new Pose(17, 42.784),
+                                new Pose(15.000, 30.000),
+                                new Pose(15.000, 25.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -359,8 +360,12 @@ public class BlueClose27V3 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
                 new State()
                         .onEnter(() -> {
+                            lockedPose = new Pose(56, 75, Math.toRadians(-160));
+                            lockSpeed = false;
+                            lockTurret = false;
                             follower.followPath(shootFirst, true);
                         })
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue))
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
@@ -394,7 +399,7 @@ public class BlueClose27V3 extends OpMode {
                             } else {
                                 follower.followPath(shootSecondNoOpenGate, true);
                             }
-                            ShootingConstants.tofMultiplier = 0.6;
+                            ShootingConstants.tofMultiplier = 0.7;
                             lockedPose = new Pose(56, 75, Math.toRadians(-160));
                             lockSpeed = false;
                             lockTurret = false;
@@ -408,7 +413,7 @@ public class BlueClose27V3 extends OpMode {
                 // gate cycle 1
                 new State()
                         .onEnter(() -> {
-                            ShootingConstants.tofMultiplier = 0.6;
+                            ShootingConstants.tofMultiplier = 0.7;
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
                             follower.followPath(intakeGate1, true);
@@ -554,9 +559,9 @@ public class BlueClose27V3 extends OpMode {
                         })
                         .onExit(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
-                new State()
-                        .maxTime(300)
-                        .transition(new Transition(() -> !follower.isBusy())),
+//                new State()
+//                        .maxTime(300)
+//                        .transition(new Transition(() -> !follower.isBusy())),
 //                new State()
 //                        .onEnter(() -> robot.shootCommand.start())
 //                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -616,7 +621,7 @@ public class BlueClose27V3 extends OpMode {
             shooterOutputs.turretAngle = shooterOutputsTurret.turretAngle;
             shooterOutputs.turretFeedforward = shooterOutputsTurret.turretFeedforward;
             // Log.d("turret vel", String.valueOf(robot.turret.currentVelocityTicks));
-        // shooterOutputsTurret.turretFeedforward;
+            // shooterOutputsTurret.turretFeedforward;
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?

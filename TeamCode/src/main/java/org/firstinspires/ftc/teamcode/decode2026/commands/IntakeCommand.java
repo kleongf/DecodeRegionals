@@ -18,7 +18,7 @@ public class IntakeCommand extends Command {
                 new State()
                         .onEnter(() -> {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
-                            robot.shooter.closeLatch();
+                            // robot.shooter.closeLatch();
                         })
                         .maxTime(100)
         );

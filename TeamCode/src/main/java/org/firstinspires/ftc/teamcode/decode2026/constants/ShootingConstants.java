@@ -10,10 +10,10 @@ import java.util.function.Function;
 @Config
 public class ShootingConstants {
     public static class ShooterOutputs {
-        public final double turretAngle;
-        public final double turretFeedforward;
-        public final double wheelVelocity;
-        public final double wheelFeedforward;
+        public double turretAngle;
+        public double turretFeedforward;
+        public double wheelVelocity;
+        public double wheelFeedforward;
         public final double hoodAngle;
         public ShooterOutputs(
                 double turretAngle,
