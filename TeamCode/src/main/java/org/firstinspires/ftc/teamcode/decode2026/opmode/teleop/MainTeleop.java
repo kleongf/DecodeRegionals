@@ -83,7 +83,7 @@ public class MainTeleop {
                 alliance == Alliance.BLUE ?
                         FieldConstants.BLUE_FAR_ZONE_POSE : FieldConstants.RED_FAR_ZONE_POSE;
 
-        RobotState robotState = robot.shootCommand.isFinished() && robot.shootCommandSlow.isFinished() ? RobotState.IDLE : RobotState.SHOOTING;
+        RobotState robotState = robot.shootCommandFast.isFinished() && robot.shootCommandSlow.isFinished() ? RobotState.IDLE : RobotState.SHOOTING;
         boolean inZone =
                 (ZoneUtil.inCloseZone(currentPose) && currentZone == ZoneUtil.Zone.CLOSE) ||
                 (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);

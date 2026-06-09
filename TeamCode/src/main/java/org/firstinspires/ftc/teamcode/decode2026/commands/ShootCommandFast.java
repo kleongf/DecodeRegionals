@@ -6,9 +6,9 @@ import org.firstinspires.ftc.teamcode.lib.robot.Command;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 
-public class ShootCommand extends Command {
+public class ShootCommandFast extends Command {
     private final CurrentRobot robot;
-    public ShootCommand(CurrentRobot robot) {
+    public ShootCommandFast(CurrentRobot robot) {
         this.robot = robot;
     }
 
@@ -23,10 +23,9 @@ public class ShootCommand extends Command {
                         .onExit(() -> {
                             robot.intake.detectionState = Intake.DetectionState.EMPTY;
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
-                            // todo: for now, change this for tele or something like call it shootCommandClose or something
-                            // robot.shooter.closeLatch();
+                            robot.shooter.closeLatch();
                         })
-                        .maxTime(325)
+                        .maxTime(400)
         );
     }
 }

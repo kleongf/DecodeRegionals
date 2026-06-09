@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.decode2026.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.PrepareShootCommandLonger;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommand;
+import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandFast;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandSlow;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Tilt;
@@ -33,6 +34,7 @@ public class CurrentRobot extends Robot {
     public final CameraLocalizer cameraLocalizer;
 
     private final ArrayList<StateMachine> commands;
+    public StateMachine shootCommandFast;
     public StateMachine intakeCommand;
     public StateMachine shootCommand;
     public StateMachine shootCommandSlow;
@@ -79,6 +81,9 @@ public class CurrentRobot extends Robot {
 
         shootCommandSlow = new ShootCommandSlow(this).build();
         commands.add(shootCommandSlow);
+
+        shootCommandFast = new ShootCommandFast(this).build();
+        commands.add(shootCommandFast);
 
         prepareShootCommand = new PrepareShootCommand(this).build();
         commands.add(prepareShootCommand);

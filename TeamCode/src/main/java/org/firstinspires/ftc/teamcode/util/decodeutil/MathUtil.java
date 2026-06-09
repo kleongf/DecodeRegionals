@@ -166,4 +166,81 @@ public class MathUtil {
 
         return new Pose(avgX, avgY, avgHeading);
     }
+
+    private static double[] solveLinearSystem(double[][] A, double[] B) {
+        int n = B.length;
+
+        // Build augmented matrix [A | B]
+        double[][] aug = new double[n][n + 1];
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(A[i], 0, aug[i], 0, n);
+            aug[i][n] = B[i];
+        }
+
+        // Forward elimination with partial pivoting
+        for (int col = 0; col < n; col++) {
+            // Find pivot row
+            int pivotRow = col;
+            for (int row = col + 1; row < n; row++) {
+                if (Math.abs(aug[row][col]) > Math.abs(aug[pivotRow][col])) {
+                    pivotRow = row;
+                }
+            }
+
+            // Swap rows
+            double[] temp = aug[col];
+            aug[col] = aug[pivotRow];
+            aug[pivotRow] = temp;
+
+            if (Math.abs(aug[col][col]) < 1e-10) {
+                throw new IllegalArgumentException("Matrix is singular or nearly singular");
+            }
+
+            // Eliminate below
+            for (int row = col + 1; row < n; row++) {
+                double factor = aug[row][col] / aug[col][col];
+                for (int j = col; j <= n; j++) {
+                    aug[row][j] -= factor * aug[col][j];
+                }
+            }
+        }
+
+        // Back substitution
+        double[] X = new double[n];
+        for (int i = n - 1; i >= 0; i--) {
+            X[i] = aug[i][n];
+            for (int j = i + 1; j < n; j++) {
+                X[i] -= aug[i][j] * X[j];
+            }
+            X[i] /= aug[i][i];
+        }
+
+        return X;
+    }
+
+    // Build the normal equations: (X^T * X) * coeffs = X^T * y
+    public static double[] multipleLinearRegression(double[][] X, double[] y) {
+        int m = X.length;    // number of observations
+        int p = X[0].length; // number of predictors (already includes intercept column)
+
+        // Compute X^T * X
+        double[][] XtX = new double[p][p];
+        for (int i = 0; i < p; i++) {
+            for (int j = 0; j < p; j++) {
+                for (int k = 0; k < m; k++) {
+                    XtX[i][j] += X[k][i] * X[k][j];
+                }
+            }
+        }
+
+        // Compute X^T * y
+        double[] Xty = new double[p];
+        for (int i = 0; i < p; i++) {
+            for (int k = 0; k < m; k++) {
+                Xty[i] += X[k][i] * y[k];
+            }
+        }
+
+        return solveLinearSystem(XtX, Xty);
+    }
 }

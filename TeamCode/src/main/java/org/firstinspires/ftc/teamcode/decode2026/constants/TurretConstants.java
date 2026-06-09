@@ -8,11 +8,11 @@ public class TurretConstants {
     public static  double ticksPerRevolution = 1381d;
     public static  double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
     public static  double maxPower = 0.75;
-    public static  double kP = 0.006;
+    public static  double kP = 0.008;
     public static  double kI = 0.0;
-    public static double kD = 0.0;
+    public static double kD = 0.00004;
     public static double kF = 0.0;
-    public static double kV = 0.005;
+    public static double kV = 0.08;
     public static double kS = 0.03;
     public static double epsilonTicks = 5;
     public static double encoderGearRatio = 50/42d;

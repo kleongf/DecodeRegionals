@@ -38,7 +38,7 @@ public class BlueClose27V4 extends OpMode {
     private Pose lockedPose = new Pose();
     private boolean lockTurret = true;
     private boolean lockSpeed = true;
-    private final double pathSOTMTValue = 0.7;
+    private final double pathSOTMTValue = 0.75;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -70,7 +70,7 @@ public class BlueClose27V4 extends OpMode {
                                 new Pose(56.000, 76.000)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(-160))
+                .setConstantHeadingInterpolation(Math.toRadians(-130.37))
                 .build();
 
         intakeSecond = follower.pathBuilder().addPath(
@@ -78,7 +78,7 @@ public class BlueClose27V4 extends OpMode {
                                 new Pose(56.000, 76.000),
                                 new Pose(46.741, 65.108),
                                 new Pose(31.688, 59.731),
-                                new Pose(13.000, 64.000)
+                                new Pose(13.000, 67.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -360,8 +360,9 @@ public class BlueClose27V4 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
                 new State()
                         .onEnter(() -> {
+                            ShootingConstants.tofMultiplier = 1;
                             lockedPose = new Pose(56, 75, Math.toRadians(-160));
-                            lockSpeed = false;
+                            lockSpeed = true;
                             lockTurret = false;
                             follower.followPath(shootFirst, true);
                         })
@@ -382,8 +383,8 @@ public class BlueClose27V4 extends OpMode {
                 new State()
                         .onEnter(() -> {})
                         // if no open gate, go to shoot second state
-                        .transition(new Transition(() -> follower.atParametricEnd() && !doOpenGate, "shootSecond"))
-                        .transition(new Transition(() -> follower.atParametricEnd() && doOpenGate)),
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.9 && !doOpenGate, "shootSecond"))
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.9 && doOpenGate)),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -399,9 +400,8 @@ public class BlueClose27V4 extends OpMode {
                             } else {
                                 follower.followPath(shootSecondNoOpenGate, true);
                             }
-                            ShootingConstants.tofMultiplier = 0.7;
                             lockedPose = new Pose(56, 75, Math.toRadians(-160));
-                            lockSpeed = false;
+                            lockSpeed = true;
                             lockTurret = false;
                             // lockShooter = false;
                         })
@@ -413,7 +413,7 @@ public class BlueClose27V4 extends OpMode {
                 // gate cycle 1
                 new State()
                         .onEnter(() -> {
-                            ShootingConstants.tofMultiplier = 0.7;
+                            ShootingConstants.tofMultiplier = 0.8;
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
                             follower.followPath(intakeGate1, true);
@@ -576,7 +576,7 @@ public class BlueClose27V4 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            ShootingConstants.tofMultiplier = .7;
+                            ShootingConstants.tofMultiplier = .8;
                             lockSpeed = false;
                             lockTurret = false;
                         })
@@ -610,13 +610,13 @@ public class BlueClose27V4 extends OpMode {
         } else if (lockSpeed && !lockTurret) {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(lockedPose, new Vector(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
             ShootingConstants.ShooterOutputs shooterOutputsTurret =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
             shooterOutputs.turretAngle = shooterOutputsTurret.turretAngle;
             shooterOutputs.turretFeedforward = shooterOutputsTurret.turretFeedforward;
@@ -625,8 +625,8 @@ public class BlueClose27V4 extends OpMode {
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
         }
 
 //        if (lockShooter) {

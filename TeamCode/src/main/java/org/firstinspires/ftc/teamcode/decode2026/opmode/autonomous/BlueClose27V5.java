@@ -78,7 +78,7 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 76.000),
                                 new Pose(46.741, 65.108),
                                 new Pose(31.688, 59.731),
-                                new Pose(13.000, 64.000)
+                                new Pose(13.000, 67.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -161,6 +161,21 @@ public class BlueClose27V5 extends OpMode {
                 )
         );
 
+        HeadingInterpolator fromGate = HeadingInterpolator.piecewise(
+                new HeadingInterpolator.PiecewiseNode(
+                        0,
+                        0.1,
+                        //testing straightline path cuz faster
+                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        //HeadingInterpolator.linear(Math.toRadians(-160), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                ),
+                new HeadingInterpolator.PiecewiseNode(
+                        0.1,
+                        1,
+                        HeadingInterpolator.constant(Math.toRadians(-160))
+                )
+        );
+
         intakeGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -180,8 +195,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setHeadingInterpolation(fromGate)
+                // .setTangentHeadingInterpolation()
+                // .setReversed()
                 .build();
 
         intakeGate2 = follower.pathBuilder()
@@ -189,7 +205,7 @@ public class BlueClose27V5 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.1+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),FieldConstants.BLUE_GATE_AUTO_POSE.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -203,8 +219,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setHeadingInterpolation(fromGate)
+                // .setTangentHeadingInterpolation()
+                // .setReversed()
                 .build();
 
         intakeGate3 = follower.pathBuilder()
@@ -212,7 +229,7 @@ public class BlueClose27V5 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.2+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),FieldConstants.BLUE_GATE_AUTO_POSE.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -226,8 +243,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setHeadingInterpolation(fromGate)
+                //.setTangentHeadingInterpolation()
+                //.setReversed()
                 .build();
 
         intakeGate4 = follower.pathBuilder()
@@ -235,7 +253,7 @@ public class BlueClose27V5 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.3+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),FieldConstants.BLUE_GATE_AUTO_POSE.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -249,15 +267,16 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setHeadingInterpolation(fromGate)
+                // .setTangentHeadingInterpolation()
+                // .setReversed()
                 .build();
         intakeGate5 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.4+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),FieldConstants.BLUE_GATE_AUTO_POSE.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -271,8 +290,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setHeadingInterpolation(fromGate)
+                // .setTangentHeadingInterpolation()
+                // .setReversed()
                 .build();
 
         intakeThird = follower.pathBuilder().addPath(
@@ -294,13 +314,17 @@ public class BlueClose27V5 extends OpMode {
 
         intakePile = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Pose(56.000, 75.000),
-                                new Pose(19.864, 51.595),
-                                new Pose(17, 42.784),
-                                new Pose(15.000, 30.000),
-                                new Pose(15.000, 25.000)
+                        new BezierLine(
+                                new Pose(56, 75),
+                                new Pose(12, 20)
                         )
+//                        new BezierCurve(
+//                                new Pose(56.000, 75.000),
+//                                new Pose(19.864, 51.595),
+//                                new Pose(17, 42.784),
+//                                new Pose(15.000, 30.000),
+//                                new Pose(15.000, 25.000)
+//                        )
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -357,14 +381,15 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
-                            lockSpeed = false;
+                            lockedPose = new Pose(56, 75);
+                            lockSpeed = true;
                             lockTurret = false;
                             follower.followPath(shootFirst, true);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.atParametricEnd())),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
@@ -380,8 +405,8 @@ public class BlueClose27V5 extends OpMode {
                 new State()
                         .onEnter(() -> {})
                         // if no open gate, go to shoot second state
-                        .transition(new Transition(() -> follower.atParametricEnd() && !doOpenGate, "shootSecond"))
-                        .transition(new Transition(() -> follower.atParametricEnd() && doOpenGate)),
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.85 && !doOpenGate, "shootSecond"))
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.85 && doOpenGate)),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -405,7 +430,6 @@ public class BlueClose27V5 extends OpMode {
                 // gate cycle 1
                 new State()
                         .onEnter(() -> {
-                            ShootingConstants.tofMultiplier = 0.7;
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
                             follower.followPath(intakeGate1, true);
@@ -561,13 +585,13 @@ public class BlueClose27V5 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            ShootingConstants.tofMultiplier = 0.7;
+                            ShootingConstants.tofMultiplier = 0.75;
                         })
                         .maxTime(300)
                         .transition(new Transition(() -> robot.intake.isFull)),
                 new State()
                         .onEnter(() -> robot.prepareShootCommandLonger.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.8)),
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.6)),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
@@ -585,20 +609,19 @@ public class BlueClose27V5 extends OpMode {
     @Override
     public void loop() {
         ShootingConstants.ShooterOutputs shooterOutputs;
-
         if (lockSpeed && lockTurret) {
             shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt);
             shooterOutputs.wheelVelocity += 20;
         } else if (lockSpeed && !lockTurret) {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(lockedPose, new Vector(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
             ShootingConstants.ShooterOutputs shooterOutputsTurret =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
             shooterOutputs.turretAngle = shooterOutputsTurret.turretAngle;
             shooterOutputs.turretFeedforward = shooterOutputsTurret.turretFeedforward;
@@ -607,9 +630,8 @@ public class BlueClose27V5 extends OpMode {
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            // removed accel since its lowk trash
-                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), new Vector(), follower.getAngularVelocity(), RobotConstants.dt) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
         }
 
 //        if (lockShooter) {
