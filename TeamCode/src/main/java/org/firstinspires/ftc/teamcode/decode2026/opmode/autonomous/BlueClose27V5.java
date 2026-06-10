@@ -417,7 +417,8 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(shootGate1, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        // ooh monke brain idea!
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue && Math.abs(robot.turret.wantedPositionTicks - robot.turret.currentPositionTicks) < 20)),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .maxTime(100),
@@ -444,7 +445,8 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(shootGate2, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        // ooh monke brain idea!
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue && Math.abs(robot.turret.wantedPositionTicks - robot.turret.currentPositionTicks) < 20)),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .maxTime(100),
@@ -471,7 +473,8 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(shootGate3, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        // ooh monke brain idea!
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue && Math.abs(robot.turret.wantedPositionTicks - robot.turret.currentPositionTicks) < 20)),
                 // DO THIRD SPIKE?
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
@@ -489,7 +492,8 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(shootThird, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        // ooh monke brain idea!
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue && Math.abs(robot.turret.wantedPositionTicks - robot.turret.currentPositionTicks) < 20)),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
@@ -518,7 +522,8 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(shootGate4, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        // ooh monke brain idea!
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue && Math.abs(robot.turret.wantedPositionTicks - robot.turret.currentPositionTicks) < 20)),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .maxTime(100),
@@ -544,7 +549,8 @@ public class BlueClose27V5 extends OpMode {
                             follower.followPath(shootGate5, true);
                             robot.prepareShootCommandLonger.start();
                         })
-                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue)),
+                        // ooh monke brain idea!
+                        .transition(new Transition(() -> follower.getCurrentTValue()>pathSOTMTValue && Math.abs(robot.turret.wantedPositionTicks - robot.turret.currentPositionTicks) < 20)),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .maxTime(100),
