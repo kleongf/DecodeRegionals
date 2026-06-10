@@ -71,7 +71,7 @@ public class MainTeleop {
         if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
             robot.shootCommandSlow.start();
         } else {
-            robot.shootCommand.start();
+            robot.shootCommandFast.start();
         }
     }
 

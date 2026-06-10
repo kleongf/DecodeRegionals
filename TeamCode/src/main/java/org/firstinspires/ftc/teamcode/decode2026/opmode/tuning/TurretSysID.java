@@ -37,17 +37,18 @@ public class TurretSysID extends OpMode {
     private double[] coefficients = {0, 0};
 
     @Override
+
     public void loop() {
         if (gamepad1.xWasPressed()) {
             stopped = true;
             // perform the regression and stuff
             int m = accelerations.size();
-            double[][] designMatrix = new double[m][3]; // 3 cols: intercept + 3 vars
+            double[][] designMatrix = new double[m][2]; // 3 cols: intercept + 3 vars
 
             for (int i = 0; i < m; i++) {
-                designMatrix[i][0] = -1.0;   // intercept term
-                designMatrix[i][1] = velocities.get(i);
-                designMatrix[i][2] = voltages.get(i);
+                // designMatrix[i][0] = 1.0;   // intercept term
+                designMatrix[i][0] = velocities.get(i);
+                designMatrix[i][1] = voltages.get(i);
             }
             double[] accelerationsArray = accelerations.stream()
                     .mapToDouble(Double::doubleValue)
@@ -58,8 +59,8 @@ public class TurretSysID extends OpMode {
 
         if (!stopped) {
             turretMotor.setPower(power);
-            double voltage = (voltageSensor.getVoltage() / 12.0) * power;
-            double velocity = turretMotor.getVelocity();
+            double voltage = (voltageSensor.getVoltage() / 12.0) * -power;
+            double velocity = -turretMotor.getVelocity();
             // check before adding it to points, cant divide by 0
             if (elapsedTime.seconds() > 1e-6) {
                 double acceleration = (velocity - prevVelocity) / elapsedTime.seconds();
@@ -72,6 +73,7 @@ public class TurretSysID extends OpMode {
             power -= 0.003;
             elapsedTime.reset();
         } else {
+            turretMotor.setPower(0);
             telemetry.addData("Coefficient A", coefficients[0]);
             telemetry.addData("Coefficient B", coefficients[1]);
         }

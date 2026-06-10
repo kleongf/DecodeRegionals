@@ -202,11 +202,12 @@ public class TeleopDrivetrain {
             yController.updateError(yError);
             // fixed x and y bug
             double outX = x * DrivetrainConstants.xSpeed;
-            double outY = -yController.run();
+            double outY = -yController.run(); // ok we drift too much for it to work
             double outHeading = headingPIDFController.run();
             // wait i think that x and y outputs are actually reversed,
             // since from human pov, x is sideways, but from coord sys,
             // that's actually y error that.
+            outY = y * DrivetrainConstants.ySpeed;
             return new double[] {outX, outY, outHeading};
         } else if (openGateHeadingLock) {
             // find closest angle

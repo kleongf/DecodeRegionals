@@ -29,8 +29,6 @@ public class LQRTurret extends Subsystem {
     private final DcMotorEx turretMotor;
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
-    // lowkey random numbers lol
-    private final double[] K = {0.70710678, 1.72452631};
 
     public LQRTurret(HardwareMap hardwareMap) {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
@@ -73,7 +71,7 @@ public class LQRTurret extends Subsystem {
                 double LQRErrorVelocity = currentVelocityTicks - wantedAngularVelocity * TurretConstants.ticksPerRadian;
 
                 // a lqr controller follows the model u = -K(error)
-                double u = -(K[0] * LQRErrorPosition + K[1] * LQRErrorVelocity);
+                double u = -(TurretConstants.kPos * LQRErrorPosition + TurretConstants.kVel * LQRErrorVelocity);
                 u += TurretConstants.kS * Math.signum(u);
 
                 double power = MathUtil.clamp(

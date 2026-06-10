@@ -33,7 +33,7 @@ public class ShootingConstants {
     public static final double SAMPLING_DT = 0.001;
     public static final double DEFAULT_TOF = 1.0;
     public static double wheelSpeedMultiplier = 0.98; // idk dont seem like we have enough power
-    public static double tofMultiplier = 0.75;
+    public static double tofMultiplier = 0.8;
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
     public static final Function<Double, Double> tofFunction = x -> 0.0026 * x + 0.5134; // function of distance
