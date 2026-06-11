@@ -26,6 +26,7 @@ public class Intake extends Subsystem {
     public boolean isFull;
     private final DcMotorEx intakeMotor;
     private final DigitalChannel top, middle, bottom;
+    private double prevSetPower = 0;
 
     public Intake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
@@ -57,16 +58,33 @@ public class Intake extends Subsystem {
     public void update() {
         switch (wantedMode) {
             case INTAKE_FAST:
-                intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
+                // caching
+                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_FAST_POWER) > 0.03) {
+                    intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
+                    prevSetPower = IntakeConstants.INTAKE_FAST_POWER;
+                }
+                // intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
                 break;
             case INTAKE_MEDIUM:
-                intakeMotor.setPower(IntakeConstants.INTAKE_MEDIUM_POWER);
+                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_MEDIUM_POWER) > 0.03) {
+                    intakeMotor.setPower(IntakeConstants.INTAKE_MEDIUM_POWER);
+                    prevSetPower = IntakeConstants.INTAKE_MEDIUM_POWER;
+                }
+                // intakeMotor.setPower(IntakeConstants.INTAKE_MEDIUM_POWER);
                 break;
             case INTAKE_SLOW:
-                intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
+                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_SLOW_POWER) > 0.03) {
+                    intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
+                    prevSetPower = IntakeConstants.INTAKE_SLOW_POWER;
+                }
+                // intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
                 break;
             case INTAKE_OFF:
-                intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
+                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_STOPPED_POWER) > 0.03) {
+                    intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
+                    prevSetPower = IntakeConstants.INTAKE_STOPPED_POWER;
+                }
+                // intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
                 break;
         }
 

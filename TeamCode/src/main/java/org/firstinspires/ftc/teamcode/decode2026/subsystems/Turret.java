@@ -31,6 +31,7 @@ public class Turret extends Subsystem {
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
     private final PIDFController turretController;
+    private double prevSetPower = 0;
 
     public Turret(HardwareMap hardwareMap) {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
@@ -88,7 +89,13 @@ public class Turret extends Subsystem {
                     if (TurretConstants.useVoltageCompensation) {
                         power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                     }
-                    turretMotor.setPower(power);
+
+                    if (Math.abs(prevSetPower - power) > 0.03) {
+                        turretMotor.setPower(power);
+                        prevSetPower = power;
+                    }
+
+                    // turretMotor.setPower(power);
                 } else {
                     double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
                     double error = t-currentPositionTicks;
@@ -102,7 +109,11 @@ public class Turret extends Subsystem {
                     if (TurretConstants.useVoltageCompensation) {
                         power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                     }
-                    turretMotor.setPower(power);
+                    if (Math.abs(prevSetPower - power) > 0.03) {
+                        turretMotor.setPower(power);
+                        prevSetPower = power;
+                    }
+                    // turretMotor.setPower(power);
                 }
                 break;
             case TURRET_OFF:

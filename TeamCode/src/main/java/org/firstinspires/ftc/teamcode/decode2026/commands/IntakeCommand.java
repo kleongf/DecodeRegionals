@@ -19,9 +19,10 @@ public class IntakeCommand extends Command {
                         .onEnter(() -> {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                         })
-                        // for now
+                        // for now there is a max time
+                        // todo: adapt to this or something lol
                         .onExit(robot.shooter::closeLatch)
-                        .maxTime(100)
+                        .maxTime(300)
         );
     }
 }

@@ -27,6 +27,7 @@ public class TorqueShooter extends Subsystem {
     private final DcMotorEx shooterMotor;
     private final DcMotorEx shooterMotor2;
     private final VoltageSensor voltageSensor;
+    private double prevSetPower = 0;
     private final double R = 9.2 / 0.144; // motor resistance 1.3 ohms ish
     private final double kOmega = 12 / 2800d; // back emf, volts ticks^-1 s^-1
     public TorqueShooter(HardwareMap hardwareMap) {
@@ -76,9 +77,15 @@ public class TorqueShooter extends Subsystem {
                 if (TorqueShooterConstants.useVoltageCompensation) {
                     power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
-                
-                shooterMotor.setPower(power);
-                shooterMotor2.setPower(power);
+
+                if (Math.abs(prevSetPower - power) > 0.03) {
+                    shooterMotor.setPower(power);
+                    shooterMotor2.setPower(power);
+                    prevSetPower = power;
+                }
+//
+//                shooterMotor.setPower(power);
+//                shooterMotor2.setPower(power);
 
                 double ticksPerRadian = (TorqueShooterConstants.PITCH_SERVO_F-TorqueShooterConstants.PITCH_SERVO_I)/(TorqueShooterConstants.PITCH_F-TorqueShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - TorqueShooterConstants.PITCH_I;
