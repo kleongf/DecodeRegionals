@@ -16,6 +16,6 @@ public class ShooterConstants {
     public static double PITCH_SERVO_MIN = 0.23;
     public static double PITCH_SERVO_I = 0.23;
     public static double PITCH_SERVO_F = 0.97;
-    public static double LATCH_CLOSED = 0.58;//0.56;
-    public static double LATCH_OPEN = 0.75;
+    public static double LATCH_CLOSED = 0.63;//0.56;
+    public static double LATCH_OPEN = 0.48;
 }

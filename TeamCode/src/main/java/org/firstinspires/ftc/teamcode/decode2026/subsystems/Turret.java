@@ -58,6 +58,8 @@ public class Turret extends Subsystem {
 
     @Override
     public void update() {
+        turretController.setPIDF(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF);
+
         if (TurretConstants.useExternalEncoder) {
             currentPositionTicks = calculatePositionTicks(externalEncoder.getVoltage());
         } else {

@@ -26,7 +26,6 @@ public class PrepareShootCommand extends Command {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
                         })
                         .maxTime(100)
-                        .onExit(robot.shooter::openLatch)
 
         );
     }

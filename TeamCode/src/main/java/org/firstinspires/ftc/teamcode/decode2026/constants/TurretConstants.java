@@ -14,9 +14,9 @@ public class TurretConstants {
     public static double kF = 0.0;
     public static double kV = 0.08;
     public static double kS = 0.03;
-    public static double kPos = 0.0070711;
-    public static double kVel = 0.0003;
-    public static boolean useLQRController = false;
+    public static double kPos = 0.014;
+    public static double kVel = 0.0001;
+    public static boolean useLQRController = true;
     public static double epsilonTicks = 5;
     public static double encoderGearRatio = 50/42d;
     public static double encoderOffsetDegrees = -96.5;

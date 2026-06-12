@@ -38,7 +38,6 @@ public class MainTeleop {
     private ZoneUtil.Zone currentZone;
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
-    private final ElapsedTime intakeTimer;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -62,7 +61,6 @@ public class MainTeleop {
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
         this.turretResetTimer = new ElapsedTime();
-        this.intakeTimer = new ElapsedTime();
     }
     private double normalizeInput(double input) {
         return 1.1 * input;
@@ -96,34 +94,8 @@ public class MainTeleop {
                 robotState != RobotState.SHOOTING
         ) {
             robot.ledIndicator.indicateIntakeFull();
-            intakeTimer.reset();
-        }
-
-        if (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && robotState == RobotState.IDLE) {
-            // start preparation sequence
             robot.prepareShootCommandLonger.start();
         }
-
-        // if 3 and shoot, no close latch
-        // if 0 and shoot, closes latch
-
-//        if (robot.intake.isFull && robotState == RobotState.IDLE) {
-//            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
-//        } else {
-//            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
-//        }
-
-        // when changes from 2nd to 3rd detection: trigger the preparation sequence
-        // does nothing for 0.2s then opens the latch
-
-//        robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
-//
-//        if (intakeTimer.seconds() > 0.2 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
-//            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
-//        }
-//        if(intakeTimer.seconds() > 0.4 && robot.intake.isFull && robotState != RobotState.SHOOTING) {
-//            robot.shooter.openLatch();
-//        }
 
         // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
         // automatically kick the robot in the correct direction
@@ -317,10 +289,12 @@ public class MainTeleop {
         telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
         telemetry.addLine("Robot in shooting zone: " + inZone);
         telemetry.addLine("Intake full: " + robot.intake.isFull);
+        telemetry.addLine("Top triggered" + robot.intake.topTriggered());
+        telemetry.addLine("Middle triggered" + robot.intake.middleTriggered());
+        telemetry.addLine("Bottom triggered" + robot.intake.bottomTriggered());
         telemetry.addLine("Intake state: "+ robot.intake.detectionState);
         telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());
         telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
-        telemetry.addLine("Is full or 2nd triggered: " + (robot.intake.isFull || robot.intake.detectionState == Intake.DetectionState.SECOND_TRIGGERED));
         telemetry.addLine("Shooter wheel error ticks: " + Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity));
         telemetry.addLine("Turret ticks error: " + robot.turret.errorTicks);
 

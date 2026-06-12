@@ -26,7 +26,7 @@ public class PrepareShootCommandLonger extends Command {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
                         })
                         .maxTime(200)//and this is longer so don't shoot ball accidentally?
-                        .onExit(robot.shooter::openLatch)
+                        //.onExit(robot.shooter::openLatch)
 
         );
     }

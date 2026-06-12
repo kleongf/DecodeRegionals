@@ -163,9 +163,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(64.000, 78.000)
                         )
                 )
-                .setHeadingInterpolation(fromGate)
-                // .setTangentHeadingInterpolation()
-                // .setReversed()
+                //.setHeadingInterpolation(fromGate)
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         intakeGate2 = follower.pathBuilder()
@@ -187,9 +187,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setHeadingInterpolation(fromGate)
-                // .setTangentHeadingInterpolation()
-                // .setReversed()
+                //.setHeadingInterpolation(fromGate)
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         intakeGate3 = follower.pathBuilder()
@@ -211,9 +211,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setHeadingInterpolation(fromGate)
-                //.setTangentHeadingInterpolation()
-                //.setReversed()
+                //.setHeadingInterpolation(fromGate)
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         intakeGate4 = follower.pathBuilder()
@@ -235,9 +235,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setHeadingInterpolation(fromGate)
-                // .setTangentHeadingInterpolation()
-                // .setReversed()
+                //.setHeadingInterpolation(fromGate)
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
         intakeGate5 = follower.pathBuilder()
                 .addPath(
@@ -258,9 +258,9 @@ public class BlueClose27V5 extends OpMode {
                                 new Pose(56.000, 75.000)
                         )
                 )
-                .setHeadingInterpolation(fromGate)
-                // .setTangentHeadingInterpolation()
-                // .setReversed()
+                //.setHeadingInterpolation(fromGate)
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         intakeThird = follower.pathBuilder().addPath(

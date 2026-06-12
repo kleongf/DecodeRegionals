@@ -69,9 +69,9 @@ public class BlueClose24 extends OpMode {
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(32.00, 108.000),
-                                new Pose(22, 82.000),
-                                new Pose(22, 72.000),
-                                new Pose(23.500, 62.000)
+                                new Pose(22.5, 82.000),
+                                new Pose(22.5, 72.000),
+                                new Pose(24.5, 62.000)
                         )
                 ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
                 .build();
@@ -308,7 +308,7 @@ public class BlueClose24 extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        .maxTime(200),
+                        .maxTime(100),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
@@ -476,9 +476,7 @@ public class BlueClose24 extends OpMode {
     @Override
     public void loop() {
         ShootingConstants.ShooterOutputs shooterOutputs =
-                RobotConstants.useShootOnTheMove ?
-                        sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
-                        sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;

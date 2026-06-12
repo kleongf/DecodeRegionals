@@ -24,9 +24,9 @@ public class ShootCommand extends Command {
                             robot.intake.detectionState = Intake.DetectionState.EMPTY;
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                             // todo: for now, change this for tele or something like call it shootCommandClose or something
-                            // robot.shooter.closeLatch();
+                            robot.shooter.closeLatch();
                         })
-                        .maxTime(325)
+                        .maxTime(425)
         );
     }
 }
