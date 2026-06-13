@@ -113,6 +113,8 @@ public class CurrentRobot extends Robot {
         dt = loopTimer.seconds() <= 0 ? RobotConstants.dt : loopTimer.seconds();
         loopTimer.reset();
         bulkRead.clearCache();
+        // adding this here, might be a bad place to put it though
+        turret.flywheelVelocityTicks = shooter.currentVelocity;
 
         for (Subsystem subsystem : subsystems) {
             subsystem.update();

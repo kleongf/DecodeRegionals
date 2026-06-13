@@ -27,6 +27,7 @@ public class Turret extends Subsystem {
     public double errorTicks;
     public double wantedAngularVelocity;
     public Mode wantedMode;
+    public double flywheelVelocityTicks;
     private final DcMotorEx turretMotor;
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
@@ -104,7 +105,11 @@ public class Turret extends Subsystem {
                     errorTicks = error;
 
                     double power = MathUtil.clamp(
-                                turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + TurretConstants.kV * wantedAngularVelocity,
+                                turretController.calculate(currentPositionTicks, t) +
+                                        TurretConstants.kS * Math.signum(error) +
+                                        TurretConstants.kV * wantedAngularVelocity +
+                                        TurretConstants.kAngularProcession * currentVelocityTicks * flywheelVelocityTicks
+                            ,
                                 -TurretConstants.maxPower,
                                 TurretConstants.maxPower
                     );
