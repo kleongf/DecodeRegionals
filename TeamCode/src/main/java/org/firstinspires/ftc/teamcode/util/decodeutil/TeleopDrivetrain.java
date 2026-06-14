@@ -271,13 +271,18 @@ public class TeleopDrivetrain {
             case TELEOP_DRIVE:
                 // todo: swap forward backward up down robot centric
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
+                boolean isAssisted = gateHeadingLock || openGateHeadingLock || kicking;
                 if (alliance == Alliance.BLUE) {
                     // hold up... these are different?
                     // ok: so the x power given to robot is really based off of y controller.
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric);
                 } else {
-                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
+                    if (isAssisted) {
+                        follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
+                    } else {
+                        follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
+                    }
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric, Math.toRadians(180));
                 }
                 break;
