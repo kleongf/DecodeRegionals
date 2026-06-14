@@ -74,6 +74,8 @@ public class MainTeleop {
     }
 
     public void loop() {
+        RobotConstants.useAutomateRobotDrive = (currentZone == ZoneUtil.Zone.CLOSE);
+
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = currentZone == ZoneUtil.Zone.CLOSE ?
                 alliance == Alliance.BLUE ?
@@ -117,7 +119,9 @@ public class MainTeleop {
         if (
                 // if we are not using far zone auto shoot OR we are in far zone and using far zone shooting
                 // i know there is a redundant statement but its more clear to me
-                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
+//                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
+                //todo: commented out above line of code cuz apparently we're not auto shooting for far zone
+                currentZone == ZoneUtil.Zone.CLOSE &&
                 inZone &&
                         (robot.intake.isFull) &&
                         robotState != RobotState.SHOOTING &&
@@ -175,6 +179,8 @@ public class MainTeleop {
             }
         }
 
+
+
         /** GAMEPAD 1 (DRIVER) **/
 
         // shoot: right bumper
@@ -224,7 +230,7 @@ public class MainTeleop {
 
         // left stick: webcam relocalization
         // maybe it is a good idea to have reloc and reset turret on same button idk
-        if (gamepad2.leftStickButtonWasPressed()) {
+        if (gamepad2.leftStickButtonWasPressed() || gamepad1.leftBumperWasPressed()) {
             Pose webcamPose = robot.cameraLocalizer.currentPose;
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
                 robot.ledIndicator.indicateRelocalization();

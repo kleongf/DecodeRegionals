@@ -191,9 +191,36 @@ public class TeleopDrivetrain {
 //                -normalizeInput(gamepad1.right_stick_x));
 
     private double[] calculateDrivetrainPowers(double x, double y, double rx, double currentHeading) {
-        if (gateHeadingLock) {
+        if (kicking) {
+            Pose currentPose = follower.getPose();
+            if (kickTimer.seconds() > KICK_TIME || MathUtil.distance(currentPose, targetPose) < KICK_DISTANCE_EPSILON) {
+                kicking = false;
+                return new double[] {x * DrivetrainConstants.xSpeed, y * DrivetrainConstants.ySpeed, rx * DrivetrainConstants.headingSpeed};
+            }
+            double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
+            double angleReversed = angle - Math.PI;
+            double targetAngle = MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading()) ? angle : angleReversed;
+
+            double headingError = MathFunctions.getTurnDirection(currentPose.getHeading(), targetAngle) * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetAngle);
+            strongHeadingPIDFController.updateError(headingError);
+            double outHeading = strongHeadingPIDFController.run();
+
+            double yError = targetPose.getY() - follower.getPose().getY();
+            yController.updateError(yError);
+            double outY = -yController.run();
+
+            double xError = targetPose.getX() - follower.getPose().getX();
+            xController.updateError(xError);
+            double outX = -xController.run();
+
+            if (alliance == Alliance.RED) {
+                return new double[] {-outX, -outY, outHeading};
+            }
+
+            return new double[] {outX, outY, outHeading};
+        } else if (gateHeadingLock) {
             // added angle
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()+FieldConstants.TURN_IN*2 : FieldConstants.RED_GATE_AUTO_POSE.getHeading() - FieldConstants.TURN_IN * 2;
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()+Math.toRadians(3);
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
 
@@ -208,6 +235,11 @@ public class TeleopDrivetrain {
             // since from human pov, x is sideways, but from coord sys,
             // that's actually y error that.
             outY = y * DrivetrainConstants.ySpeed;
+
+            if (alliance == Alliance.RED) {
+                return new double[] {outX, outY, outHeading};
+            }
+
             return new double[] {outX, outY, outHeading};
         } else if (openGateHeadingLock) {
             // find closest angle
@@ -234,28 +266,9 @@ public class TeleopDrivetrain {
             double outX = x * DrivetrainConstants.xSpeed;
             double outY = -yController.run();
 
-            return new double[] {outX, outY, outHeading};
-        } else if (kicking) {
-            Pose currentPose = follower.getPose();
-            if (kickTimer.seconds() > KICK_TIME || MathUtil.distance(currentPose, targetPose) < KICK_DISTANCE_EPSILON) {
-                kicking = false;
-                return new double[] {x * DrivetrainConstants.xSpeed, y * DrivetrainConstants.ySpeed, rx * DrivetrainConstants.headingSpeed};
+            if (alliance == Alliance.RED) {
+                return new double[] {outX, -outY, outHeading};
             }
-            double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
-            double angleReversed = angle - Math.PI;
-            double targetAngle = MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading()) ? angle : angleReversed;
-
-            double headingError = MathFunctions.getTurnDirection(currentPose.getHeading(), targetAngle) * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetAngle);
-            strongHeadingPIDFController.updateError(headingError);
-            double outHeading = strongHeadingPIDFController.run();
-
-            double yError = targetPose.getY() - follower.getPose().getY();
-            yController.updateError(yError);
-            double outY = -yController.run();
-
-            double xError = targetPose.getX() - follower.getPose().getX();
-            xController.updateError(xError);
-            double outX = -xController.run();
 
             return new double[] {outX, outY, outHeading};
         } else {
@@ -271,13 +284,17 @@ public class TeleopDrivetrain {
             case TELEOP_DRIVE:
                 // todo: swap forward backward up down robot centric
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
+                // boolean isAssisted = gateHeadingLock || openGateHeadingLock || kicking;
                 if (alliance == Alliance.BLUE) {
-                    // hold up... these are different?
-                    // ok: so the x power given to robot is really based off of y controller.
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric);
                 } else {
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
+//                    if (isAssisted) {
+//                        follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
+//                    } else {
+//                        follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);
+//                    }
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric, Math.toRadians(180));
                 }
                 break;

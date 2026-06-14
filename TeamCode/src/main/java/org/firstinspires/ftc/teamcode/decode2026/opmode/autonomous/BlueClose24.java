@@ -222,8 +222,8 @@ public class BlueClose24 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(56.000, 75.000),
-                                new Pose(16.759, 44.568),
-                                new Pose(12.000, 25.000)
+                                new Pose(18.759, 44.568),
+                                new Pose(14.000, 25.000)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -232,7 +232,7 @@ public class BlueClose24 extends OpMode {
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 20.000),
+                                new Pose(14.000, 20.000),
                                 new Pose(56.000, 100.000)
                         )
                 )
@@ -264,6 +264,7 @@ public class BlueClose24 extends OpMode {
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
+                            follower.setMaxPower(0.8);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
                             Constants.followerConstants.coefficientsHeadingPIDF = new PIDFCoefficients(.5, 0, 0.05, 0);
@@ -277,6 +278,7 @@ public class BlueClose24 extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
+                            follower.setMaxPower(1);
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                         })
