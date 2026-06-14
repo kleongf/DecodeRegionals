@@ -9,14 +9,13 @@ public class TurretConstants {
     public static  double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
     public static  double maxPower = 0.75;
     public static  double kP = 0.008;
-    public static  double kI = 0.0;
-    public static double kD = 0.00004;
+    public static  double kI = 0.001;
+    public static double kD = 0.00012;
     public static double kF = 0.0;
-    public static double kV = 0.08;
-    public static double kS = 0.03;
-    public static double kPos = 0.0070711;
-    public static double kVel = 0.0003;
-
+    public static double kV = 0.09;
+    public static double kS = 0.01;
+    public static double kPos = 0.014;
+    public static double kVel = 0.0001;
     public static double kAngularProcession = 0;
     public static boolean useLQRController = false;
     public static double epsilonTicks = 5;

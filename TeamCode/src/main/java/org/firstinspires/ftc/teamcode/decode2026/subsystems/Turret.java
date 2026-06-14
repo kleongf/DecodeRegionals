@@ -59,6 +59,7 @@ public class Turret extends Subsystem {
 
     @Override
     public void update() {
+        turretController.setIntegrationBounds(-0.2, 0.2);
         turretController.setPIDF(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF);
 
         if (TurretConstants.useExternalEncoder) {
@@ -93,12 +94,12 @@ public class Turret extends Subsystem {
                         power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                     }
 
-                    if (Math.abs(prevSetPower - power) > 0.03) {
-                        turretMotor.setPower(power);
-                        prevSetPower = power;
-                    }
+//                    if (Math.abs(prevSetPower - power) > 0.03) {
+//                        turretMotor.setPower(power);
+//                        prevSetPower = power;
+//                    }
 
-                    // turretMotor.setPower(power);
+                    turretMotor.setPower(power);
                 } else {
                     double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
                     double error = t-currentPositionTicks;
@@ -116,11 +117,11 @@ public class Turret extends Subsystem {
                     if (TurretConstants.useVoltageCompensation) {
                         power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                     }
-                    if (Math.abs(prevSetPower - power) > 0.03) {
-                        turretMotor.setPower(power);
-                        prevSetPower = power;
-                    }
-                    // turretMotor.setPower(power);
+//                    if (Math.abs(prevSetPower - power) > 0.03) {
+//                        turretMotor.setPower(power);
+//                        prevSetPower = power;
+//                    }
+                    turretMotor.setPower(power);
                 }
                 break;
             case TURRET_OFF:

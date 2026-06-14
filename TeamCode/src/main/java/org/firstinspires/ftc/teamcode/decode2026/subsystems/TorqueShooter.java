@@ -78,14 +78,14 @@ public class TorqueShooter extends Subsystem {
                     power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
 
-                if (Math.abs(prevSetPower - power) > 0.03) {
-                    shooterMotor.setPower(power);
-                    shooterMotor2.setPower(power);
-                    prevSetPower = power;
-                }
+//                if (Math.abs(prevSetPower - power) > 0.03) {
+//                    shooterMotor.setPower(power);
+//                    shooterMotor2.setPower(power);
+//                    prevSetPower = power;
+//                }
 //
-//                shooterMotor.setPower(power);
-//                shooterMotor2.setPower(power);
+                shooterMotor.setPower(power);
+                shooterMotor2.setPower(power);
 
                 double ticksPerRadian = (TorqueShooterConstants.PITCH_SERVO_F-TorqueShooterConstants.PITCH_SERVO_I)/(TorqueShooterConstants.PITCH_F-TorqueShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - TorqueShooterConstants.PITCH_I;

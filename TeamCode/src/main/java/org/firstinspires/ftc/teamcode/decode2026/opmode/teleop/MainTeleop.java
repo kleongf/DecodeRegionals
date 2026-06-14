@@ -290,19 +290,19 @@ public class MainTeleop {
         blackboard.put(FieldConstants.END_POSE_KEY, drivetrain.follower.getPose());
 
         telemetry.addData("Loop time", robot.dt);
-        telemetry.addData("Pose", currentPose);
-        telemetry.addData("Current state", drivetrain.getState());
-        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
-        telemetry.addLine("Robot in shooting zone: " + inZone);
-        telemetry.addLine("Intake full: " + robot.intake.isFull);
-        telemetry.addLine("Top triggered" + robot.intake.topTriggered());
-        telemetry.addLine("Middle triggered" + robot.intake.middleTriggered());
-        telemetry.addLine("Bottom triggered" + robot.intake.bottomTriggered());
-        telemetry.addLine("Intake state: "+ robot.intake.detectionState);
-        telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());
-        telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
-        telemetry.addLine("Shooter wheel error ticks: " + Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity));
-        telemetry.addLine("Turret ticks error: " + robot.turret.errorTicks);
+//        telemetry.addData("Pose", currentPose);
+//        telemetry.addData("Current state", drivetrain.getState());
+//        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
+//        telemetry.addLine("Robot in shooting zone: " + inZone);
+//        telemetry.addLine("Intake full: " + robot.intake.isFull);
+//        telemetry.addLine("Top triggered" + robot.intake.topTriggered());
+//        telemetry.addLine("Middle triggered" + robot.intake.middleTriggered());
+//        telemetry.addLine("Bottom triggered" + robot.intake.bottomTriggered());
+//        telemetry.addLine("Intake state: "+ robot.intake.detectionState);
+//        telemetry.addLine("Drivetrain Busy: " + drivetrain.isBusy());
+//        telemetry.addLine("Robot idle: " + (robotState == RobotState.IDLE));
+//        telemetry.addLine("Shooter wheel error ticks: " + Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity));
+//        telemetry.addLine("Turret ticks error: " + robot.turret.errorTicks);
 
         telemetry.update();
     }
