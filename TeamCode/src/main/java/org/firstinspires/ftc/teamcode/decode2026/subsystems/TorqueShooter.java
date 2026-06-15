@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.TorqueShooterConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
@@ -67,16 +69,25 @@ public class TorqueShooter extends Subsystem {
         switch (wantedMode) {
             case SHOOTER_ON:
                 double error = wantedVelocity - currentVelocity;
-                double wantedTorque = TorqueShooterConstants.kP * error;
-                double power = calculateVoltageOutput(wantedTorque, currentVelocity) / TorqueShooterConstants.nominalVoltage;
-                power = power + 
-                        TorqueShooterConstants.kS * Math.signum(error) + 
-                        TorqueShooterConstants.kV * wantedVelocity + 
-                        TorqueShooterConstants.kA * wantedAcceleration;
+                double power = ShooterConstants.kS * Math.signum(error) +
+                        ShooterConstants.kV * wantedVelocity +
+                        ShooterConstants.kA * wantedAcceleration;
 
                 if (TorqueShooterConstants.useVoltageCompensation) {
                     power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
+
+//                double error = wantedVelocity - currentVelocity;
+//                double wantedTorque = TorqueShooterConstants.kP * error;
+//                double power = calculateVoltageOutput(wantedTorque, currentVelocity) / TorqueShooterConstants.nominalVoltage;
+//                power = power +
+//                        TorqueShooterConstants.kS * Math.signum(error) +
+//                        TorqueShooterConstants.kV * wantedVelocity +
+//                        TorqueShooterConstants.kA * wantedAcceleration;
+//
+//                if (TorqueShooterConstants.useVoltageCompensation) {
+//                    power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
+//                }
 
 //                if (Math.abs(prevSetPower - power) > 0.03) {
 //                    shooterMotor.setPower(power);
