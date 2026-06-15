@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.TorqueShooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 
 @Config
 @TeleOp(name="Shooter Tuner")
-public class TurretFollowTest extends OpMode {
+public class ShooterTuner extends OpMode {
     private Turret turret;
     public static double shooterSpeed;
     public static double shooterPitchDegrees; // degrees for tuning
@@ -28,12 +29,13 @@ public class TurretFollowTest extends OpMode {
     private Follower follower;
     private Intake intake;
     private SOTMUtil sotm;
-    private Shooter shooter;
+    private TorqueShooter shooter;
     private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
     private final Pose goalPose = FieldConstants.BLUE_GOAL_POSE;
 
     @Override
     public void loop() {
+        shooter.openLatch();
         ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
         shooter.wantedVelocity = shooterSpeed;
         shooter.wantedAcceleration = 0;
@@ -63,7 +65,7 @@ public class TurretFollowTest extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         turret = new Turret(hardwareMap);
-        shooter = new Shooter(hardwareMap);
+        shooter = new TorqueShooter(hardwareMap);
         intake = new Intake(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }

@@ -224,7 +224,7 @@ public class MainTeleop {
 
         // left stick: webcam relocalization
         // maybe it is a good idea to have reloc and reset turret on same button idk
-        if (gamepad2.leftStickButtonWasPressed()) {
+        if (gamepad2.leftStickButtonWasPressed() || gamepad1.leftBumperWasPressed()) {
             Pose webcamPose = robot.cameraLocalizer.currentPose;
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
                 robot.ledIndicator.indicateRelocalization();

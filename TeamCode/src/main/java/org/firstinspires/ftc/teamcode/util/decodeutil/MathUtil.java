@@ -243,4 +243,8 @@ public class MathUtil {
 
         return solveLinearSystem(XtX, Xty);
     }
+
+    public static double lerp(double start, double end, double t) {
+        return start + (end - start) * MathUtil.clamp(t, 0, 1);
+    }
 }

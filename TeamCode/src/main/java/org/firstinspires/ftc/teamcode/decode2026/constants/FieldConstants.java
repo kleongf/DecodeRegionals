@@ -24,7 +24,7 @@ public class FieldConstants {
     public static Pose RED_STANDARD_START_POSE = Flipper.flip(BLUE_STANDARD_START_POSE);
     public static Pose BLUE_RELOCALIZATION_POSE = new Pose(FIELD_WIDTH - (ROBOT_LENGTH - ROBOT_BACK_TO_CENTER_DISTANCE), ROBOT_WIDTH, Math.toRadians(0));
     public static Pose RED_RELOCALIZATION_POSE = Flipper.flip(BLUE_RELOCALIZATION_POSE);
-    public static Pose BLUE_GOAL_POSE = new Pose(12, FIELD_WIDTH-12);
+    public static Pose BLUE_GOAL_POSE = new Pose(6, FIELD_WIDTH-7);
     public static Pose RED_GOAL_POSE = Flipper.flip(BLUE_GOAL_POSE);
 
     public static Pose BLUE_SIDE_GATE_POSE = new Pose(16, 70, Math.toRadians(270));

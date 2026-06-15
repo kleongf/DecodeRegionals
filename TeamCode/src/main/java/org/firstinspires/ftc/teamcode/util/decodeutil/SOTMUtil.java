@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util.decodeutil;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 
 public class SOTMUtil {
@@ -68,14 +69,17 @@ public class SOTMUtil {
         double dyDot = currentSpeeds.getYComponent();
 
         // d/dt of atan2(-dx, dy)
-        double turretAngleRate = (dy * (-dxDot) - (-dx) * dyDot) / r2;
+        double turretAngleRate = -(dy * TurretConstants.kVVelocityMultiplier * (-dxDot) - (-dx * TurretConstants.kVVelocityMultiplier) * dyDot) / r2;
 
         // subtract robot angular velocity since turret angle is robot-relative
         double wantedTurretVelocity = turretAngleRate - angularVelocity;
-        double wantedTurretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90);
+        // todo: red is opposite
+        double turretOffset = MathUtil.lerp(Math.toRadians(0), Math.toRadians(-3.5), (distance - 70) / 160);
+        double wantedTurretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90) + turretOffset;
 
         // take derivative with respect to time of distance (sqrt(dx^2 + dy^2))
-        double distanceRate = -(dx * dxDot + dy * dyDot) / distance;
+        // double distanceRate = -(dx * dxDot + dy * dyDot) / distance;
+        double distanceRate = (dx * dxDot + dy * dyDot) / distance;
 
         double wantedHoodAngle = thetaLUT.getValue(distance);
         double wantedWheelSpeed = velocityLUT.getValue(distance) * ShootingConstants.wheelSpeedMultiplier;

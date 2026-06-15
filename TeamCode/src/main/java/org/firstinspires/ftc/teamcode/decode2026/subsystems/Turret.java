@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.PIDFController;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
+import org.firstinspires.ftc.teamcode.util.controllers.WeightedSetpointPIDController;
 import org.firstinspires.ftc.teamcode.util.decodeutil.CachedMotor;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 
@@ -32,6 +33,7 @@ public class Turret extends Subsystem {
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
     private final PIDFController turretController;
+    private final WeightedSetpointPIDController turretControllerWeighted;
     private double prevSetPower = 0;
 
     public Turret(HardwareMap hardwareMap) {
@@ -43,6 +45,7 @@ public class Turret extends Subsystem {
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         turretController = new PIDFController(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF);
+        turretControllerWeighted = new WeightedSetpointPIDController(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD);
     }
 
     @Override
@@ -61,6 +64,8 @@ public class Turret extends Subsystem {
     public void update() {
         turretController.setIntegrationBounds(-0.2, 0.2);
         turretController.setPIDF(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF);
+        turretControllerWeighted.setPID(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD);
+        turretControllerWeighted.setWeights(TurretConstants.beta, TurretConstants.gamma);
 
         if (TurretConstants.useExternalEncoder) {
             currentPositionTicks = calculatePositionTicks(externalEncoder.getVoltage());
@@ -100,6 +105,24 @@ public class Turret extends Subsystem {
 //                    }
 
                     turretMotor.setPower(power);
+                } else if (TurretConstants.useWeightSetpointPID) {
+                    double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
+                    double error = t-currentPositionTicks;
+                    errorTicks = error;
+
+                    double power = MathUtil.clamp(
+                            turretControllerWeighted.calculate(currentPositionTicks, t) +
+                                    TurretConstants.kS * Math.signum(error) +
+                                    TurretConstants.kV * wantedAngularVelocity
+                            ,
+                            -TurretConstants.maxPower,
+                            TurretConstants.maxPower
+                    );
+                    if (TurretConstants.useVoltageCompensation) {
+                        power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
+                    }
+
+                    turretMotor.setPower(power);
                 } else {
                     double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
                     double error = t-currentPositionTicks;
@@ -127,38 +150,6 @@ public class Turret extends Subsystem {
             case TURRET_OFF:
                 break;
         }
-//
-//        turretController.setPIDF(TurretConstants.kP, 0, TurretConstants.kD, 0);
-//
-//        if (TurretConstants.useExternalEncoder) {
-//            currentPositionTicks = calculatePositionTicks(externalEncoder.getVoltage());
-//        } else {
-//            currentPositionTicks = turretMotor.getCurrentPosition() + offset;
-//        }
-//
-//        currentAngle = turretMotor.getCurrentPosition() / TurretConstants.ticksPerRadian;
-//        currentVelocityTicks = turretMotor.getVelocity();
-//
-//        switch (wantedMode) {
-//            case TURRET_ON:
-//                double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
-//                double error = t-currentPositionTicks;
-//                errorTicks = error;
-//
-//                double power = MathUtil.clamp(
-//                            turretController.calculate(currentPositionTicks, t) + TurretConstants.kS * Math.signum(error) + TurretConstants.kV * wantedAngularVelocity,
-//                            -TurretConstants.maxPower,
-//                            TurretConstants.maxPower
-//                );
-//                if (TurretConstants.useVoltageCompensation) {
-//                    power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
-//                }
-//                turretMotor.setPower(power);
-//
-//                break;
-//            case TURRET_OFF:
-//                break;
-//        }
     }
     public void resetMotorEncoder() {
         turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
