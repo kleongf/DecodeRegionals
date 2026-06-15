@@ -69,7 +69,7 @@ public class SOTMUtil {
         double dyDot = currentSpeeds.getYComponent();
 
         // d/dt of atan2(-dx, dy)
-        double turretAngleRate = -(dy * TurretConstants.kVVelocityMultiplier * (-dxDot) - (-dx * TurretConstants.kVVelocityMultiplier) * dyDot) / r2;
+        double turretAngleRate = -(dy * (-dxDot) - (-dx) * dyDot) / r2;
 
         // subtract robot angular velocity since turret angle is robot-relative
         double wantedTurretVelocity = turretAngleRate - angularVelocity;

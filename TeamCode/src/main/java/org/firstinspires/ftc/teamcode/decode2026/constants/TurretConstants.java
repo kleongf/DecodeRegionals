@@ -18,7 +18,6 @@ public class TurretConstants {
     public static double kVel = 0.0001;
     public static double beta = 1.0;
     public static double gamma = 0.1;
-    public static double kVVelocityMultiplier = 1.5;
     public static double kAngularProcession = 0;
     public static boolean useLQRController = false;
     public static boolean useWeightSetpointPID = true;
