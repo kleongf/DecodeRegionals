@@ -220,7 +220,7 @@ public class TeleopDrivetrain {
             return new double[] {outX, outY, outHeading};
         } else if (gateHeadingLock) {
             // added angle
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()-Math.toRadians(8) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()+Math.toRadians(8);
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()+Math.toRadians(3);
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
 
