@@ -26,7 +26,7 @@ public class ShootCommand extends Command {
                             // todo: for now, change this for tele or something like call it shootCommandClose or something
                             robot.shooter.closeLatch();
                         })
-                        .maxTime(425)
+                        .maxTime(400)
         );
     }
 }

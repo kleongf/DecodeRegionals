@@ -61,6 +61,7 @@ public class MainTeleop {
         this.prevDetectState = Intake.DetectionState.EMPTY;
         this.relocalizationTimer = new ElapsedTime();
         this.turretResetTimer = new ElapsedTime();
+        ShootingConstants.tofMultiplier = ShootingConstants.teleTofMultiplier;
     }
     private double normalizeInput(double input) {
         return 1.1 * input;

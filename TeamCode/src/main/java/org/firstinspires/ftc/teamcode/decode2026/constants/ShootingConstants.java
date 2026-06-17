@@ -34,6 +34,7 @@ public class ShootingConstants {
     public static final double DEFAULT_TOF = 1.0;
     public static double wheelSpeedMultiplier = 1.00; // idk dont seem like we have enough power
     public static double tofMultiplier = 0.9; //0.9 was good from far, prob need to retune tof function or quadratic
+    public static double teleTofMultiplier = 0.9;
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
     public static final LUT offsetLUT = new LUT();
