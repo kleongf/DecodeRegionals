@@ -11,8 +11,10 @@ import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.Encoder;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.ftc.localization.constants.ThreeWheelConstants;
+import com.pedropathing.ftc.localization.constants.TwoWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -60,6 +62,17 @@ public class Constants {
             .useBrakeModeInTeleOp(true)
             .useVoltageCompensation(true)
             .nominalVoltage(12.0);
+
+//    public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
+//            .forwardEncoder_HardwareMapName("leftFront")
+//            .strafeEncoder_HardwareMapName("rightRear")
+//            .IMU_HardwareMapName("imu")
+//            .IMU_Orientation(
+//                    new RevHubOrientationOnRobot(
+//                            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                            RevHubOrientationOnRobot.UsbFacingDirection.UP
+//                    )
+//            );
 
 //    public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
 //            .forwardTicksToInches(0.00197895600226)

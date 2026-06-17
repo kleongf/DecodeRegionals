@@ -61,7 +61,7 @@ public class FlywheelSysID extends OpMode {
         if (!stopped) {
             shooterMotor.setPower(power);
             shooterMotor2.setPower(power);
-            double voltage = (voltageSensor.getVoltage() / 12.0) * -power;
+            double voltage = (voltageSensor.getVoltage() / 12.0) * power;
             double velocity = shooterMotor.getVelocity();
             // check before adding it to points, cant divide by 0
             if (elapsedTime.seconds() > 1e-6) {

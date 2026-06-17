@@ -32,15 +32,17 @@ public class ShootingConstants {
     public static final double TOF_ITERATIONS = 10;
     public static final double SAMPLING_DT = 0.001;
     public static final double DEFAULT_TOF = 1.0;
-    public static double wheelSpeedMultiplier = 1.03; // idk dont seem like we have enough power
-    public static double tofMultiplier = 0.8;
+    public static double wheelSpeedMultiplier = 1.00; // idk dont seem like we have enough power
+    public static double tofMultiplier = 0.9; //0.9 was good from far, prob need to retune tof function or quadratic
     public static final LUT wheelSpeedLUT = new LUT();
     public static final LUT hoodAngleLUT = new LUT();
+    public static final LUT offsetLUT = new LUT();
     public static final Function<Double, Double> tofFunction = x -> 0.0031 * x + 0.46; // function of distance
 
-    private static void addData(double distance, double hoodAngle, double wheelSpeed) {
+    private static void addData(double distance, double hoodAngle, double wheelSpeed, double offsetBlue) {
         wheelSpeedLUT.addData(distance, wheelSpeed);
         hoodAngleLUT.addData(distance, hoodAngle);
+        offsetLUT.addData(distance, offsetBlue);
     }
 
     public static double calculateTOF(
@@ -71,19 +73,18 @@ public class ShootingConstants {
 
     static {
         // TODO: tune TOF, put into a quadratic function for least squares, then put that into function
-        addData(158, Math.toRadians(53), 2060+20); // tof: 1.5
-        addData(148, Math.toRadians(53), 1980+20);
-        addData(138, Math.toRadians(53), 1900+20);
-        addData(128, Math.toRadians(53), 1840+20);
-        addData(118, Math.toRadians(53), 1780+20);
-        addData(108, Math.toRadians(51), 1720+10);
-        addData(98, Math.toRadians(49), 1660+10);
-        addData(88, Math.toRadians(46), 1590+10);
-        addData(78, Math.toRadians(45), 1520+10);
-        addData(68, Math.toRadians(43), 1460+10);
-        addData(58, Math.toRadians(41), 1400+10); // 19 frames
-        addData(48, Math.toRadians(39), 1340+10);
-        addData(38, Math.toRadians(33), 1260+10); // 18 frames
-        addData(32, Math.toRadians(26), 1230+10);
+        addData(154, Math.toRadians(53), 2080, Math.toRadians(-5)); // tof: 1.5
+        addData(144, Math.toRadians(53), 1980, Math.toRadians(-4));
+        addData(134, Math.toRadians(53), 1890, Math.toRadians(-4));
+        addData(124, Math.toRadians(53), 1820, Math.toRadians(-4));
+        addData(114, Math.toRadians(51), 1770, Math.toRadians(-3.75));
+        addData(104, Math.toRadians(49), 1720, Math.toRadians(-3.5));
+        addData(94, Math.toRadians(47), 1670, Math.toRadians(-3));
+        addData(84, Math.toRadians(45), 1620, Math.toRadians(-3));
+        addData(74, Math.toRadians(43), 1560, Math.toRadians(-2));
+        addData(64, Math.toRadians(41), 1500, Math.toRadians(-2));
+        addData(54, Math.toRadians(38), 1440, Math.toRadians(-1)); // 19 frames
+        addData(44, Math.toRadians(36), 1360, Math.toRadians(-1));
+        addData(34, Math.toRadians(30), 1300, Math.toRadians(-1)); // 18 frames
     }
 }

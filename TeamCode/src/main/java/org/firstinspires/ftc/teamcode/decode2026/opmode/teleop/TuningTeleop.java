@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.decode2026.opmode.teleop;
 
 import static com.qualcomm.robotcore.eventloop.opmode.OpMode.blackboard;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -18,13 +20,14 @@ import org.firstinspires.ftc.teamcode.util.decodeutil.TeleopDrivetrain;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
-
-public class MainTeleop {
+@Config
+public class TuningTeleop {
     public enum RobotState {
         IDLE,
         SHOOTING
     }
-
+    public static double wheelSpeed;
+    public static double hoodAngle;
     private Intake.DetectionState prevDetectState;
     public TeleopDrivetrain drivetrain;
     private double turretOffset = 0;
@@ -39,7 +42,7 @@ public class MainTeleop {
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
 
-    public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
+    public TuningTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
         drivetrain.setStartingPose(startPose);
 
@@ -86,14 +89,14 @@ public class MainTeleop {
         RobotState robotState = robot.shootCommandFast.isFinished() && robot.shootCommandSlow.isFinished() ? RobotState.IDLE : RobotState.SHOOTING;
         boolean inZone =
                 (ZoneUtil.inCloseZone(currentPose) && currentZone == ZoneUtil.Zone.CLOSE) ||
-                (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);
+                        (ZoneUtil.inFarZone(currentPose) && currentZone == ZoneUtil.Zone.FAR);
 
 
         if (
                 robot.intake.isFull &&
                         (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED) &&
                         // prevDetectState != robot.intake.detectionState
-                robotState != RobotState.SHOOTING
+                        robotState != RobotState.SHOOTING
         ) {
             robot.ledIndicator.indicateIntakeFull();
             robot.prepareShootCommandLonger.start();
@@ -102,36 +105,36 @@ public class MainTeleop {
         // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
         // automatically kick the robot in the correct direction
         // problem:
-        if (RobotConstants.useAutomateRobotDrive) {
-            // if prev few states were the same, then we didn't shoot anything, therefore no need to auto drive again
-            // not in zone, intake full, not currently auto driving, and intake JUST became full (so we don't
-            if (!inZone &&
-                    robot.intake.isFull &&
-                    !drivetrain.isBusy() &&
-                    (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED) &&
-                    // prevDetectState != robot.intake.detectionState &&
-                    robotState != RobotState.SHOOTING) {
-                drivetrain.kick(closestPose);
-            }
-        }
+//        if (RobotConstants.useAutomateRobotDrive) {
+//            // if prev few states were the same, then we didn't shoot anything, therefore no need to auto drive again
+//            // not in zone, intake full, not currently auto driving, and intake JUST became full (so we don't
+//            if (!inZone &&
+//                    robot.intake.isFull &&
+//                    !drivetrain.isBusy() &&
+//                    (prevDetectState == Intake.DetectionState.SECOND_TRIGGERED && robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED) &&
+//                    // prevDetectState != robot.intake.detectionState &&
+//                    robotState != RobotState.SHOOTING) {
+//                drivetrain.kick(closestPose);
+//            }
+//        }
 
         // auto shoot if in zone, intake full, and stuff is at the right positions
-        if (
-                // if we are not using far zone auto shoot OR we are in far zone and using far zone shooting
-                // i know there is a redundant statement but its more clear to me
-                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
-                currentZone == ZoneUtil.Zone.CLOSE &&
-                inZone &&
-                        (robot.intake.isFull) &&
-                        robotState != RobotState.SHOOTING &&
-                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
-                Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon &&
-                        robot.turret.currentPositionTicks > -TurretConstants.ticksPerRevolution + RobotConstants.autoShootTurretRangeEpsilon &&
-                        robot.turret.currentPositionTicks < -RobotConstants.autoShootTurretRangeEpsilon &&
-                        currentPose.distanceFrom(goalPose) > RobotConstants.MIN_SHOOTING_DISTANCE
-        ) {
-            shoot(currentPose, this.goalPose);
-        }
+//        if (
+//            // if we are not using far zone auto shoot OR we are in far zone and using far zone shooting
+//            // i know there is a redundant statement but its more clear to me
+//                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
+//                        currentZone == ZoneUtil.Zone.CLOSE &&
+//                        inZone &&
+//                        (robot.intake.isFull) &&
+//                        robotState != RobotState.SHOOTING &&
+//                        Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
+//                        Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon &&
+//                        robot.turret.currentPositionTicks > -TurretConstants.ticksPerRevolution + RobotConstants.autoShootTurretRangeEpsilon &&
+//                        robot.turret.currentPositionTicks < -RobotConstants.autoShootTurretRangeEpsilon &&
+//                        currentPose.distanceFrom(goalPose) > RobotConstants.MIN_SHOOTING_DISTANCE
+//        ) {
+//            shoot(currentPose, this.goalPose);
+//        }
 
         // hopefully this will not be necessary
         if (RobotConstants.useAutomaticTurretRelocalization) {
@@ -229,32 +232,25 @@ public class MainTeleop {
 
         // dpad left: trim turret
         if (gamepad2.dpadLeftWasPressed()) {
-            turretOffset += Math.toRadians(2);
+            turretOffset += Math.toRadians(1);
         }
         // dpad right: trim turret
         if (gamepad2.dpadRightWasPressed()) {
-            turretOffset -= Math.toRadians(2);
+            turretOffset -= Math.toRadians(1);
         }
 
         ShootingConstants.ShooterOutputs shooterOutputs =
-                RobotConstants.useShootOnTheMove ?
-                        sotmUtil.calculateShooterOutputs2(
-                                drivetrain.getPose(),
-                                drivetrain.getVelocity(),
-                                drivetrain.getAcceleration(),
-                                drivetrain.getAngularVelocity(),
-                                RobotConstants.dt) :
                         sotmUtil.calculateShooterOutputs2(drivetrain.getPose(),
                                 new Vector(),
                                 new Vector(),
                                 0,
                                 RobotConstants.dt);
 
-        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
-        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
-        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+        robot.shooter.wantedVelocity = wheelSpeed;
+        robot.shooter.wantedAcceleration = 0;
+        robot.shooter.wantedPitch = Math.toRadians(hoodAngle);
         robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
-        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+        robot.turret.wantedAngularVelocity = 0;
 
         prevDetectState = robot.intake.detectionState;
         robot.update();
@@ -263,6 +259,8 @@ public class MainTeleop {
 
         telemetry.addData("Loop time", robot.dt);
         telemetry.addData("Pose", currentPose);
+        telemetry.addData("Distance", goalPose.distanceFrom(currentPose));
+        telemetry.addData("Wheel speed", robot.shooter.currentVelocity);
 //        telemetry.addData("Current state", drivetrain.getState());
 //        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
 //        telemetry.addLine("Robot in shooting zone: " + inZone);

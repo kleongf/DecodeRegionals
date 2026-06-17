@@ -68,35 +68,37 @@ public class TorqueShooter extends Subsystem {
 
         switch (wantedMode) {
             case SHOOTER_ON:
-                double error = wantedVelocity - currentVelocity;
-                double power = ShooterConstants.kS * Math.signum(error) +
-                        ShooterConstants.kV * wantedVelocity +
-                        ShooterConstants.kA * wantedAcceleration;
-
-                if (TorqueShooterConstants.useVoltageCompensation) {
-                    power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
-                }
-
 //                double error = wantedVelocity - currentVelocity;
-//                double wantedTorque = TorqueShooterConstants.kP * error;
-//                double power = calculateVoltageOutput(wantedTorque, currentVelocity) / TorqueShooterConstants.nominalVoltage;
-//                power = power +
-//                        TorqueShooterConstants.kS * Math.signum(error) +
-//                        TorqueShooterConstants.kV * wantedVelocity +
-//                        TorqueShooterConstants.kA * wantedAcceleration;
+//                double power = ShooterConstants.kS * Math.signum(error) +
+//                        ShooterConstants.kV * wantedVelocity +
+//                        ShooterConstants.kA * wantedAcceleration +
+//                        ShooterConstants.kP * error
+//                        ;
 //
 //                if (TorqueShooterConstants.useVoltageCompensation) {
 //                    power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
 //                }
 
-//                if (Math.abs(prevSetPower - power) > 0.03) {
-//                    shooterMotor.setPower(power);
-//                    shooterMotor2.setPower(power);
-//                    prevSetPower = power;
-//                }
+                double error = wantedVelocity - currentVelocity;
+                double wantedTorque = TorqueShooterConstants.kP * error;
+                double power = calculateVoltageOutput(wantedTorque, currentVelocity) / TorqueShooterConstants.nominalVoltage;
+                power = power +
+                        TorqueShooterConstants.kS * Math.signum(error) +
+                        TorqueShooterConstants.kV * wantedVelocity +
+                        TorqueShooterConstants.kA * wantedAcceleration;
+
+                if (TorqueShooterConstants.useVoltageCompensation) {
+                    power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
+                }
+
+                if (Math.abs(prevSetPower - power) > 0.03) {
+                    shooterMotor.setPower(power);
+                    shooterMotor2.setPower(power);
+                    prevSetPower = power;
+                }
 //
-                shooterMotor.setPower(power);
-                shooterMotor2.setPower(power);
+//                shooterMotor.setPower(power);
+//                shooterMotor2.setPower(power);
 
                 double ticksPerRadian = (TorqueShooterConstants.PITCH_SERVO_F-TorqueShooterConstants.PITCH_SERVO_I)/(TorqueShooterConstants.PITCH_F-TorqueShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - TorqueShooterConstants.PITCH_I;

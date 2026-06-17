@@ -8,4 +8,7 @@ public class Flipper {
     public static Pose flip(Pose pose) {
         return new Pose(FieldConstants.FIELD_WIDTH - pose.getX(), pose.getY(), Math.toRadians(180) - pose.getHeading());
     }
+    public static double flipAngle(double angle) {
+        return Math.PI - angle;
+    }
 }
