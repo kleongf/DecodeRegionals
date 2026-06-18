@@ -107,32 +107,92 @@ public class BlueFar30Comp extends OpMode {
                 .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
+        intakePile2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(50.000, 16.000),
+                                new Pose(18.000, 16.000),
+                                new Pose(10.000, 24.000),
+                                new Pose(10.000, 45.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        shootPile2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(10.000, 45.000),
+                                new Pose(50.000, 16.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        intakePile4 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(50.000, 16.000),
+                                new Pose(18.000, 16.000),
+                                new Pose(10.000, 24.000),
+                                new Pose(10.000, 45.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        shootPile4 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(10.000, 45.000),
+                                new Pose(50.000, 16.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        intakePile6 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(50.000, 16.000),
+                                new Pose(18.000, 16.000),
+                                new Pose(10.000, 24.000),
+                                new Pose(10.000, 45.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        shootPile6 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(10.000, 45.000),
+                                new Pose(50.000, 16.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
         intakePile1 = Copier.copy(follower, intakePileLowCycle);
         shootPile1 = Copier.copy(follower, shootPileLowCycle);
 
-        intakePile2 = Copier.copy(follower, intakePileHighCycle);
-        shootPile2 = Copier.copy(follower, shootPileHighCycle);
+//        intakePile2 = Copier.copy(follower, intakePileHighCycle);
+//        shootPile2 = Copier.copy(follower, shootPileHighCycle);
 
         intakePile3 = Copier.copy(follower, intakePileLowCycle);
         shootPile3 = Copier.copy(follower, shootPileLowCycle);
 
-        intakePile4 = Copier.copy(follower, intakePileHighCycle);
-        shootPile4 = Copier.copy(follower, shootPileHighCycle);
+//        intakePile4 = Copier.copy(follower, intakePileHighCycle);
+//        shootPile4 = Copier.copy(follower, shootPileHighCycle);
 
         intakePile5 = Copier.copy(follower, intakePileLowCycle);
         shootPile5 = Copier.copy(follower, shootPileLowCycle);
 
-        intakePile6 = Copier.copy(follower, intakePileHighCycle);
-        shootPile6 = Copier.copy(follower, shootPileHighCycle);
+//        intakePile6 = Copier.copy(follower, intakePileHighCycle);
+//        shootPile6 = Copier.copy(follower, shootPileHighCycle);
 
         intakePile7 = Copier.copy(follower, intakePileLowCycle);
         shootPile7 = Copier.copy(follower, shootPileLowCycle);
-
-        intakePile8 = Copier.copy(follower, intakePileHighCycle);
-        shootPile8 = Copier.copy(follower, shootPileHighCycle);
-
-        intakePile9 = Copier.copy(follower, intakePileLowCycle);
-        shootPile9 = Copier.copy(follower, shootPileLowCycle);
 
         park = follower.pathBuilder()
                 .addPath(
