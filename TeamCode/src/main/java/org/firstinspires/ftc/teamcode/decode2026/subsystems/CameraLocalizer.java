@@ -57,8 +57,10 @@ public class CameraLocalizer extends Subsystem {
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"));
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         // todo: comment out because wastes cpu
-        builder.enableLiveView(true);
+        // builder.enableLiveView(true);
         builder.addProcessors(aprilTagLeft, aprilTagRight);
+        builder.setLiveViewContainerId(0);
+
 
         builder.build();
     }
