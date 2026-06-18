@@ -5,10 +5,8 @@ import static java.lang.Thread.sleep;
 import android.util.Log;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -166,7 +164,7 @@ public class BlueClose27V7 extends OpMode {
         shootGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(48.000, 96.000)
                         )
                 )
@@ -193,7 +191,7 @@ public class BlueClose27V7 extends OpMode {
         shootGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(48.000, 96.000)
                         )
                 )
@@ -220,7 +218,7 @@ public class BlueClose27V7 extends OpMode {
         shootGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(48.000, 96.000)
                         )
                 )
@@ -248,7 +246,7 @@ public class BlueClose27V7 extends OpMode {
         shootGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(48.000, 96.000)
                         )
                 )
@@ -275,7 +273,7 @@ public class BlueClose27V7 extends OpMode {
         shootGate5 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(48.000, 96.000)
                         )
                 )
@@ -430,7 +428,7 @@ public class BlueClose27V7 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE, false);
+                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_24, false);
                             // follower.turnTo(FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
@@ -460,7 +458,7 @@ public class BlueClose27V7 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE, false);
+                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_24, false);
                             // follower.turnTo(FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
@@ -490,7 +488,7 @@ public class BlueClose27V7 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE, false);
+                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_24, false);
                             // follower.turnTo(FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
@@ -541,7 +539,7 @@ public class BlueClose27V7 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE, false);
+                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_24, false);
                             // follower.turnTo(FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })
@@ -570,7 +568,7 @@ public class BlueClose27V7 extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE, false);
+                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_24, false);
                             // follower.turnTo(FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                         })

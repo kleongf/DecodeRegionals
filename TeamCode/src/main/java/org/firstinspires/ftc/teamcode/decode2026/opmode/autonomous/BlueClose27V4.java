@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.ZoneUtil;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
@@ -157,7 +156,7 @@ public class BlueClose27V4 extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0.5,
                         1,
-                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE.getHeading())
+                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading())
                 )
         );
 
@@ -166,7 +165,7 @@ public class BlueClose27V4 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                FieldConstants.BLUE_GATE_AUTO_POSE
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -176,7 +175,7 @@ public class BlueClose27V4 extends OpMode {
         shootGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(56.000, 75.000)
                         )
                 )
@@ -189,7 +188,7 @@ public class BlueClose27V4 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.1+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),.1+FieldConstants.BLUE_GATE_AUTO_POSE_24.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -199,7 +198,7 @@ public class BlueClose27V4 extends OpMode {
         shootGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(56.000, 75.000)
                         )
                 )
@@ -212,7 +211,7 @@ public class BlueClose27V4 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.2+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),.2+FieldConstants.BLUE_GATE_AUTO_POSE_24.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -222,7 +221,7 @@ public class BlueClose27V4 extends OpMode {
         shootGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(56.000, 75.000)
                         )
                 )
@@ -235,7 +234,7 @@ public class BlueClose27V4 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.3+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),.3+FieldConstants.BLUE_GATE_AUTO_POSE_24.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -245,7 +244,7 @@ public class BlueClose27V4 extends OpMode {
         shootGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(56.000, 75.000)
                         )
                 )
@@ -257,7 +256,7 @@ public class BlueClose27V4 extends OpMode {
                         new BezierLine(
                                 new Pose(56.000, 75.000),
                                 //new Pose(45, FieldConstants.BLUE_GATE_AUTO_POSE.getY()),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE.getX(),.4+FieldConstants.BLUE_GATE_AUTO_POSE.getY())
+                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),.4+FieldConstants.BLUE_GATE_AUTO_POSE_24.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -267,7 +266,7 @@ public class BlueClose27V4 extends OpMode {
         shootGate5 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE,
+                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
                                 new Pose(56.000, 75.000)
                         )
                 )

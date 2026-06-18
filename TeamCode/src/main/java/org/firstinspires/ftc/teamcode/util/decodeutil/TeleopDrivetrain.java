@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.DrivetrainConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.decode2026.opmode.teleop.MainTeleop;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.pedropathing.control.PIDFController;
 
@@ -220,11 +219,11 @@ public class TeleopDrivetrain {
             return new double[] {outX, outY, outHeading};
         } else if (gateHeadingLock) {
             // added angle
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()+Math.toRadians(3);
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE.getHeading()+Math.toRadians(3);
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
 
-            double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getY() : FieldConstants.RED_GATE_AUTO_POSE.getY();
+            double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getY() : FieldConstants.RED_GATE_AUTO_POSE.getY();
             double yError = lockedY - follower.getPose().getY();
             yController.updateError(yError);
             // fixed x and y bug

@@ -24,6 +24,7 @@ public class Intake extends Subsystem {
     public Mode wantedMode;
     public DetectionState detectionState;
     public boolean isFull;
+    public boolean isMostlyFull;
     private final DcMotorEx intakeMotor;
     private final DigitalChannel top, middle, bottom;
     private double prevSetPower = 0;
@@ -107,7 +108,7 @@ public class Intake extends Subsystem {
             case THIRD_TRIGGERED:
                 break;
         }
-
+        isMostlyFull = detectionState == DetectionState.SECOND_TRIGGERED;
         isFull = detectionState == DetectionState.THIRD_TRIGGERED;
     }
 
