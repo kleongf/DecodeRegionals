@@ -17,13 +17,14 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Copier;
+import org.firstinspires.ftc.teamcode.util.decodeutil.Flipper;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
-@Autonomous(name="Blue Far 30 Comp", group="!")
-public class BlueFar30Comp extends OpMode {
+@Autonomous(name="Red Far 30 Comp", group="!")
+public class RedFar30Comp extends OpMode {
     private Pose lockedPose = new Pose();
     private boolean lockShooter = false;
     private double turretOffset = 0;
@@ -36,85 +37,85 @@ public class BlueFar30Comp extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(FieldConstants.BLUE_FAR_START_AUTO_POSE, new Pose(9, 10)))
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .addPath(new BezierLine(FieldConstants.RED_FAR_START_AUTO_POSE, Flipper.flip(new Pose(9, 10))))
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(9, 10), new Pose(50, 16)))
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .addPath(new BezierLine(Flipper.flip(new Pose(9, 10)), Flipper.flip(new Pose(50, 16))))
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50, 16),
-                                new Pose(40.000, 35.000),
-                                new Pose(30.000, 35.000),
-                                new Pose(10.000, 35.000)
+                                Flipper.flip(new Pose(50, 16)),
+                                Flipper.flip(new Pose(40.000, 35.000)),
+                                Flipper.flip(new Pose(30.000, 35.000)),
+                                Flipper.flip(new Pose(10.000, 35.000))
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootThird = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(10.000, 35.000), new Pose(50, 12))
+                        new BezierLine(Flipper.flip(new Pose(10.000, 35.000)), Flipper.flip(new Pose(50, 12)))
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePileLowCycle = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50.000, 12),
-                                new Pose(30.000, 11),
-                                new Pose(9.000, 11.000)
+                                Flipper.flip(new Pose(50.000, 12)),
+                                Flipper.flip(new Pose(30.000, 11)),
+                                Flipper.flip(new Pose(9.000, 11.000))
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootPileLowCycle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(9.000, 11.000),
-                                new Pose(50.000, 12)
+                                Flipper.flip(new Pose(9.000, 11.000)),
+                                Flipper.flip(new Pose(50.000, 12))
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePileHighCycle = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50.000, 12),
-                                new Pose(40.000, 34.000),
-                                new Pose(30.000, 34.000),
-                                new Pose(9.000, 34.000)
+                                Flipper.flip(new Pose(50.000, 12)),
+                                Flipper.flip(new Pose(40.000, 34.000)),
+                                Flipper.flip(new Pose(30.000, 34.000)),
+                                Flipper.flip(new Pose(9.000, 34.000))
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         shootPileHighCycle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(9.000, 34.000),
-                                new Pose(50.000, 12)
+                                Flipper.flip(new Pose(9.000, 34.000)),
+                                Flipper.flip(new Pose(50.000, 12))
                         )
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
         intakePile2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50.000, 12.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, 45.000)
+                                Flipper.flip(new Pose(50.000, 12.000)),
+                                Flipper.flip(new Pose(24.000, 20.000)),
+                                Flipper.flip(new Pose(14.000, 28.000)),
+                                Flipper.flip(new Pose(14.000, 45.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -123,8 +124,8 @@ public class BlueFar30Comp extends OpMode {
         shootPile2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(10.000, 45.000),
-                                new Pose(50.000, 12.000)
+                                Flipper.flip(new Pose(10.000, 45.000)),
+                                Flipper.flip(new Pose(50.000, 12.000))
                         )
                 )
                 // .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
@@ -135,10 +136,10 @@ public class BlueFar30Comp extends OpMode {
         intakePile4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50.000, 12.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, 45.000)
+                                Flipper.flip(new Pose(50.000, 12.000)),
+                                Flipper.flip(new Pose(24.000, 20.000)),
+                                Flipper.flip(new Pose(14.000, 28.000)),
+                                Flipper.flip(new Pose(14.000, 45.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -147,8 +148,8 @@ public class BlueFar30Comp extends OpMode {
         shootPile4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(10.000, 45.000),
-                                new Pose(50.000, 12.000)
+                                Flipper.flip(new Pose(10.000, 45.000)),
+                                Flipper.flip(new Pose(50.000, 12.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -158,10 +159,10 @@ public class BlueFar30Comp extends OpMode {
         intakePile6 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(50.000, 12.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, 45.000)
+                                Flipper.flip(new Pose(50.000, 12.000)),
+                                Flipper.flip(new Pose(24.000, 20.000)),
+                                Flipper.flip(new Pose(14.000, 28.000)),
+                                Flipper.flip(new Pose(14.000, 45.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -170,8 +171,8 @@ public class BlueFar30Comp extends OpMode {
         shootPile6 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(10.000, 45.000),
-                                new Pose(50.000, 12.000)
+                                Flipper.flip(new Pose(10.000, 45.000)),
+                                Flipper.flip(new Pose(50.000, 12.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -201,20 +202,20 @@ public class BlueFar30Comp extends OpMode {
 
         park = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(50, 16), new Pose(30, 12))
+                        new BezierLine(Flipper.flip(new Pose(50, 16)), Flipper.flip(new Pose(30, 12)))
                 )
-                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_POSE.getHeading())
+                .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
     }
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(FieldConstants.BLUE_FAR_START_AUTO_POSE);
+        follower.setStartingPose(FieldConstants.RED_FAR_START_AUTO_POSE);
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
-        sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
-        turretOffset = Math.toRadians(3);
+        sotm = new SOTMUtil(FieldConstants.RED_GOAL_POSE);
+        turretOffset = Math.toRadians(1);
         speedOffset = 45;
         // dont compensate for velo but pos
         // ShootingConstants.tofMultiplier = 0;
@@ -244,7 +245,7 @@ public class BlueFar30Comp extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootCorner, true);
-                            // turretOffset = Math.toRadians(2);
+                            turretOffset = Math.toRadians(0);
                             speedOffset = 0;
                             // lockedPose = new Pose(50, 16, Math.toRadians(180));
                             lockShooter = false;
@@ -268,7 +269,7 @@ public class BlueFar30Comp extends OpMode {
                         .onEnter(() -> follower.followPath(shootThird, true))
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -291,7 +292,7 @@ public class BlueFar30Comp extends OpMode {
 
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -311,7 +312,7 @@ public class BlueFar30Comp extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -332,7 +333,7 @@ public class BlueFar30Comp extends OpMode {
 
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -352,7 +353,7 @@ public class BlueFar30Comp extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -373,7 +374,7 @@ public class BlueFar30Comp extends OpMode {
 
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -393,7 +394,7 @@ public class BlueFar30Comp extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -413,7 +414,7 @@ public class BlueFar30Comp extends OpMode {
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-                        
+
                         .maxTime(200),
                 new State()
                         .onEnter(() -> robot.shootCommandSlow.start())
@@ -473,3 +474,4 @@ public class BlueFar30Comp extends OpMode {
         blackboard.put(FieldConstants.END_POSE_KEY, follower.getPose());
     }
 }
+
