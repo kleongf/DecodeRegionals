@@ -112,7 +112,7 @@ public class RedFar30Comp extends OpMode {
         intakePile2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                Flipper.flip(new Pose(50.000, 12.000)),
+                                Flipper.flip(new Pose(50.000+3, 12.000)),
                                 Flipper.flip(new Pose(24.000, 20.000)),
                                 Flipper.flip(new Pose(14.000, 28.000)),
                                 Flipper.flip(new Pose(14.000, 45.000))
@@ -125,7 +125,7 @@ public class RedFar30Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(10.000, 45.000)),
-                                Flipper.flip(new Pose(50.000, 12.000))
+                                Flipper.flip(new Pose(50.000+3, 12.000))
                         )
                 )
                 // .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
@@ -136,7 +136,7 @@ public class RedFar30Comp extends OpMode {
         intakePile4 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                Flipper.flip(new Pose(50.000, 12.000)),
+                                Flipper.flip(new Pose(50.000+3, 12.000)),
                                 Flipper.flip(new Pose(24.000, 20.000)),
                                 Flipper.flip(new Pose(14.000, 28.000)),
                                 Flipper.flip(new Pose(14.000, 45.000))
@@ -149,7 +149,7 @@ public class RedFar30Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(10.000, 45.000)),
-                                Flipper.flip(new Pose(50.000, 12.000))
+                                Flipper.flip(new Pose(50.000+3, 12.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -159,7 +159,7 @@ public class RedFar30Comp extends OpMode {
         intakePile6 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                Flipper.flip(new Pose(50.000, 12.000)),
+                                Flipper.flip(new Pose(50.000+3, 12.000)),
                                 Flipper.flip(new Pose(24.000, 20.000)),
                                 Flipper.flip(new Pose(14.000, 28.000)),
                                 Flipper.flip(new Pose(14.000, 45.000))
@@ -172,7 +172,7 @@ public class RedFar30Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(10.000, 45.000)),
-                                Flipper.flip(new Pose(50.000, 12.000))
+                                Flipper.flip(new Pose(50.000+3, 12.000))
                         )
                 )
                 .setTangentHeadingInterpolation()

@@ -28,9 +28,9 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 // last one is going to be a pile cycle, it will always be a pile cycle
 
 
-@Autonomous(name="Blue Close 24 Comp", group="!")
-public class BlueClose24Comp extends OpMode {
-    private boolean openGate = true;
+@Autonomous(name="Red Close 24 Comp", group="!")
+public class RedClose24Comp extends OpMode {
+    private boolean openGate = false;
     private Pose lockedPose = new Pose();
     private boolean lockShooter = true;
     private double turretOffset = 0;
@@ -41,53 +41,53 @@ public class BlueClose24Comp extends OpMode {
     private Intake.DetectionState prevState;
     private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile;
 
-    // important: to flip any pose, use Pose)
+    // important: to flip any pose, use Flipper.flip(Pose)
     public void buildPaths() {
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
-                        FieldConstants.BLUE_CLOSE_START_AUTO_POSE,
-                        new Pose(32, 108.000)
+                        FieldConstants.RED_CLOSE_START_AUTO_POSE,
+                        Flipper.flip(new Pose(32, 108.000))
                 )
-        ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading()).build();
+        ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()).build();
 
         intakeFirst = follower.pathBuilder().addPath(
                 new BezierCurve(
-                        new Pose(32, 108.000),
-                        new Pose(24, 97),
-                        new Pose(24, 92),
-                        new Pose(23.500, 83.000)
+                        Flipper.flip(new Pose(32, 108.000)),
+                        Flipper.flip(new Pose(24, 97)),
+                        Flipper.flip(new Pose(24, 92)),
+                        Flipper.flip(new Pose(23.500, 83.000))
                 )
-        ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading()).build();
+        ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()).build();
 
         if(openGate){
             shootFirst = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(23.500, 83.000),
-                                    new Pose(56.000, 76.000)
+                                    Flipper.flip(new Pose(23.500, 83.000)),
+                                    Flipper.flip(new Pose(56.000, 76.000))
                             )
                     )
                     // optimal angle trust defined by deriv of curve
-                    .setConstantHeadingInterpolation(Math.toRadians(-130.37))
+                    .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-130.37)))
                     .build();
         }
         else{
             shootFirst = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(23.500, 83.000),
-                                    new Pose(32, 108)
+                                    Flipper.flip(new Pose(23.500, 83.000)),
+                                    Flipper.flip(new Pose(32, 108))
                             )
                     )
-                    .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                    .setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                     .build();
         }
 
         if(openGate){
             intakeSecond = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(56.000, 76.000),
-                                    new Pose(46.741, 65.108),
-                                    new Pose(31.688, 59.731),
-                                    new Pose(13.000, 67.000)
+                                    Flipper.flip(new Pose(56.000, 76.000)),
+                                    Flipper.flip(new Pose(46.741, 65.108)),
+                                    Flipper.flip(new Pose(31.688, 59.731)),
+                                    Flipper.flip(new Pose(13.000, 67.000))
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -96,31 +96,31 @@ public class BlueClose24Comp extends OpMode {
         else{
             intakeSecond = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(32.00, 108.000),
-                                    new Pose(22.5, 82.000),
-                                    new Pose(22.5, 72.000),
-                                    new Pose(24.5, 62.000)
+                                    Flipper.flip(new Pose(32.00, 108.000)),
+                                    Flipper.flip(new Pose(22.5, 82.000)),
+                                    Flipper.flip(new Pose(22.5, 72.000)),
+                                    Flipper.flip(new Pose(24.5, 62.000))
                             )
-                    ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                    ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                     .build();
         }
         if (openGate) {
             shootSecond = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(24.00, 67.000),
-                                    new Pose(56.000, 75.000)
+                                    Flipper.flip(new Pose(24.00, 67.000)),
+                                    Flipper.flip(new Pose(56.000, 75.000))
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(-160))
+                    .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
                     .build();
         }
         else{
             shootSecond = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(24.500, 62.000),
-                                    new Pose(56.000, 75.000)
+                                    Flipper.flip(new Pose(24.500, 62.000)),
+                                    Flipper.flip(new Pose(56.000, 75.000))
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(-160))
+                    ).setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
                     .build();
         }
 
@@ -128,20 +128,20 @@ public class BlueClose24Comp extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0,
                         0.3,
-                        HeadingInterpolator.constant(Math.toRadians(-160))
+                        HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(-160)))
                 ),
                 new HeadingInterpolator.PiecewiseNode(
                         0.3,
                         1,
-                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading())
+                        HeadingInterpolator.constant(FieldConstants.RED_GATE_AUTO_POSE_24.getHeading())
                 )
         );
 
         intakeGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(56.000, 75.000),
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24
+                                Flipper.flip(new Pose(56.000, 75.000)),
+                                FieldConstants.RED_GATE_AUTO_POSE_24
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -151,8 +151,8 @@ public class BlueClose24Comp extends OpMode {
         shootGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
-                                new Pose(56, 75)
+                                FieldConstants.RED_GATE_AUTO_POSE_24,
+                                Flipper.flip(new Pose(56, 75))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -162,8 +162,8 @@ public class BlueClose24Comp extends OpMode {
         intakeGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(56.000, 75.000),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),FieldConstants.BLUE_GATE_AUTO_POSE_24.getY()+.1)
+                                Flipper.flip(new Pose(56.000, 75.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_24.getX(),FieldConstants.RED_GATE_AUTO_POSE_24.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -173,8 +173,8 @@ public class BlueClose24Comp extends OpMode {
         shootGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
-                                new Pose(56.000, 75.000)
+                                FieldConstants.RED_GATE_AUTO_POSE_24,
+                                Flipper.flip(new Pose(56.000, 75.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -184,8 +184,8 @@ public class BlueClose24Comp extends OpMode {
         intakeGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(56.000, 75.000),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),FieldConstants.BLUE_GATE_AUTO_POSE_24.getY()+.2)
+                                Flipper.flip(new Pose(56.000, 75.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_24.getX(),FieldConstants.RED_GATE_AUTO_POSE_24.getY())
 
                         )
                 )
@@ -196,8 +196,8 @@ public class BlueClose24Comp extends OpMode {
         shootGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
-                                new Pose(56.000, 75.000)
+                                FieldConstants.RED_GATE_AUTO_POSE_24,
+                                Flipper.flip(new Pose(56.000, 75.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -207,8 +207,8 @@ public class BlueClose24Comp extends OpMode {
         intakeGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(56.000, 75.000),
-                                new Pose(FieldConstants.BLUE_GATE_AUTO_POSE_24.getX(),FieldConstants.BLUE_GATE_AUTO_POSE_24.getY()+.3)
+                                Flipper.flip(new Pose(56.000, 75.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_24.getX(),FieldConstants.RED_GATE_AUTO_POSE_24.getY())
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -218,8 +218,8 @@ public class BlueClose24Comp extends OpMode {
         shootGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
-                                new Pose(56.000, 75.000)
+                                FieldConstants.RED_GATE_AUTO_POSE_24,
+                                Flipper.flip(new Pose(56.000, 75.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -230,20 +230,20 @@ public class BlueClose24Comp extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0,
                         0.5,
-                        HeadingInterpolator.constant(Math.toRadians(-130))
+                        HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(-130)))
                 ),
                 new HeadingInterpolator.PiecewiseNode(
                         0.5,
                         1,
-                        HeadingInterpolator.linear(Math.toRadians(-130), Math.toRadians(-90))
+                        HeadingInterpolator.linear(Flipper.flipAngle(Math.toRadians(-130)), Flipper.flipAngle(Math.toRadians(-90)))
                 )
         );
 
         intakePile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(56.000, 75.000),
-                                new Pose(12, 20)
+                                Flipper.flip(new Pose(56.000, 75.000)),
+                                Flipper.flip(new Pose(12, 20))
                         )
                 )
                 .setHeadingInterpolation(pileCycle)
@@ -252,8 +252,8 @@ public class BlueClose24Comp extends OpMode {
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 20.000),
-                                new Pose(58.000, 120.000)
+                                Flipper.flip(new Pose(12.000, 20.000)),
+                                Flipper.flip(new Pose(58.000, 120.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -279,11 +279,11 @@ public class BlueClose24Comp extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.usePredictiveBraking = true;
         follower.setMaxPower(1);
-        follower.setStartingPose(FieldConstants.BLUE_CLOSE_START_AUTO_POSE);
+        follower.setStartingPose(FieldConstants.RED_CLOSE_START_AUTO_POSE);
         robot = new CurrentRobot(hardwareMap);
-        sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
-        lockedPose = new Pose(32, 108, FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading());
-        turretOffset = Math.toRadians(-4);
+        sotm = new SOTMUtil(FieldConstants.RED_GOAL_POSE);
+        lockedPose = Flipper.flip(new Pose(32, 108, FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()));
+        turretOffset = Math.toRadians(4);
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -303,19 +303,8 @@ public class BlueClose24Comp extends OpMode {
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                             ShootingConstants.tofMultiplier = 0.35;
-                            //lockedPose = new Pose(56, 75);
-                        })
-                        .maxTime(25),
-                new State()
-                        .onEnter(() -> {
-                            if(openGate) {
-                                lockShooter = true;
-                                lockedPose = new Pose(56,75, Math.toRadians(-160));
-                                turretOffset = Math.toRadians(3);
-                            }
-                            else{
-                                lockShooter = false;
-                            }
+                            //lockedPose = Flipper.flip(new Pose(56, 75);
+                            lockShooter = false;
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.75)),
                 new State()
@@ -335,8 +324,8 @@ public class BlueClose24Comp extends OpMode {
                 new State()
                         .onEnter(() -> {
                             lockShooter = true;
-                            lockedPose = new Pose(56,75, Math.toRadians(-160));
-                            turretOffset = Math.toRadians(3);
+                            lockedPose = Flipper.flip(new Pose(56,75, Math.toRadians(-160)));
+                            turretOffset = Math.toRadians(-3);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -357,14 +346,14 @@ public class BlueClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(2200),
                 new State()
                         .onEnter(() -> {
-                            turretOffset = Math.toRadians(1);
+                            turretOffset = Math.toRadians(-1);
                             follower.setMaxPower(1);
                             follower.followPath(shootGate1, true);
                             robot.prepareShootCommandLonger.start();
@@ -383,7 +372,7 @@ public class BlueClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -408,7 +397,7 @@ public class BlueClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -433,7 +422,7 @@ public class BlueClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
