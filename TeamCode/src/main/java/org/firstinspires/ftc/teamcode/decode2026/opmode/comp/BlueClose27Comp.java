@@ -266,6 +266,7 @@ public class BlueClose27Comp extends OpMode {
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
+                            follower.setMaxPower(0.8);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
                         })
@@ -275,6 +276,7 @@ public class BlueClose27Comp extends OpMode {
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
+                            follower.setMaxPower(1);
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                             ShootingConstants.tofMultiplier = 0.5;
@@ -443,13 +445,13 @@ public class BlueClose27Comp extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            ShootingConstants.tofMultiplier = 0.8;
+                            ShootingConstants.tofMultiplier = 0.93;
                         })
                         .maxTime(300)
                         .transition(new Transition(() -> robot.intake.isFull)),
                 new State()
                         .onEnter(() -> robot.prepareShootCommandLonger.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.55)),
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.53)),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
