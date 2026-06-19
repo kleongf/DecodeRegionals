@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 @Autonomous(name="Blue Close 24 Comp", group="!")
 public class BlueClose24Comp extends OpMode {
-    private boolean openGate = true;
+    private boolean openGate = false;
     private Pose lockedPose = new Pose();
     private boolean lockShooter = true;
     private double turretOffset = 0;
