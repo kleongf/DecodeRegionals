@@ -244,7 +244,7 @@ public class TuningTeleop {
                                 new Vector(),
                                 new Vector(),
                                 0,
-                                RobotConstants.dt);
+                                RobotConstants.dt, Alliance.BLUE);
 
         robot.shooter.wantedVelocity = wheelSpeed;
         robot.shooter.wantedAcceleration = 0;

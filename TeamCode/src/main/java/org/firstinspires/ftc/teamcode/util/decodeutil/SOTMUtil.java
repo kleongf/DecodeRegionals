@@ -54,7 +54,7 @@ public class SOTMUtil {
         );
     }
 
-    public ShootingConstants.ShooterOutputs calculateShooterOutputs2(Pose turretPose, Vector currentSpeeds, Vector robotAcceleration, double angularVelocity, double dt) {
+    public ShootingConstants.ShooterOutputs calculateShooterOutputs2(Pose turretPose, Vector currentSpeeds, Vector robotAcceleration, double angularVelocity, double dt, Alliance alliance) {
         double tof = ShootingConstants.calculateTOF(ShootingConstants.tofFunction, turretPose, goal, currentSpeeds) * ShootingConstants.tofMultiplier;
 
         Pose virtualGoal = new Pose(goal.getX()-currentSpeeds.getXComponent()*tof, goal.getY()-currentSpeeds.getYComponent()*tof);
@@ -74,7 +74,7 @@ public class SOTMUtil {
         // subtract robot angular velocity since turret angle is robot-relative
         double wantedTurretVelocity = turretAngleRate - angularVelocity;
         // todo: red is opposite
-        double turretOffset = ShootingConstants.offsetLUT.getValue(distance);
+        double turretOffset = alliance == Alliance.BLUE ? ShootingConstants.offsetLUT.getValue(distance) : -0.5 * ShootingConstants.offsetLUT.getValue(distance);
                 // MathUtil.lerp(Math.toRadians(0), Math.toRadians(-3.5), (distance - 70) / 160);
         double wantedTurretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90) + turretOffset;
 

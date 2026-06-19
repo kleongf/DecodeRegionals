@@ -11,6 +11,7 @@ import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
@@ -31,7 +32,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 // 24 third spike no open gate
 // 24 pile cycle (extra gate cycle) open gate
 // 24 pile cycle (extra gate cycle) no open gate
-
+@Disabled
 @Autonomous(name="Blue Close 24 Just Paths", group="!")
 public class BlueClose24JustPaths extends OpMode {
     private boolean doThirdSpike = false;

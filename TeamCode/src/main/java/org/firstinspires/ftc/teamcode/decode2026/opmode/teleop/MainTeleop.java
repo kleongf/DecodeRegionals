@@ -244,12 +244,12 @@ public class MainTeleop {
                                 drivetrain.getVelocity(),
                                 drivetrain.getAcceleration(),
                                 drivetrain.getAngularVelocity(),
-                                RobotConstants.dt) :
+                                RobotConstants.dt, alliance) :
                         sotmUtil.calculateShooterOutputs2(drivetrain.getPose(),
                                 new Vector(),
                                 new Vector(),
                                 0,
-                                RobotConstants.dt);
+                                RobotConstants.dt, alliance);
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
