@@ -63,7 +63,7 @@ public class RedClose27Comp extends OpMode {
         shootFirst = follower.pathBuilder().addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(23.500, 83.000)),
-                                Flipper.flip(new Pose(56.000, 76.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 // optimal angle trust defined by deriv of curve
@@ -72,7 +72,7 @@ public class RedClose27Comp extends OpMode {
 
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                Flipper.flip(new Pose(56.000, 76.000)),
+                                Flipper.flip(new Pose(57.000, 77.000)),
                                 Flipper.flip(new Pose(46.741, 65.108)),
                                 Flipper.flip(new Pose(31.688, 59.731)),
                                 Flipper.flip(new Pose(13.000, 67.000))
@@ -84,7 +84,7 @@ public class RedClose27Comp extends OpMode {
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(24.00, 67.000)),
-                                Flipper.flip(new Pose(56.000, 75.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
@@ -106,7 +106,7 @@ public class RedClose27Comp extends OpMode {
         intakeGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(56.000, 75.000)),
+                                Flipper.flip(new Pose(57.000, 77.000)),
                                 FieldConstants.RED_GATE_AUTO_POSE_27
                         )
                 )
@@ -128,8 +128,8 @@ public class RedClose27Comp extends OpMode {
         intakeGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(56.000, 75.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY())
+                                Flipper.flip(new Pose(57.000, 77.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY()-.1)
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -140,7 +140,7 @@ public class RedClose27Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 FieldConstants.RED_GATE_AUTO_POSE_27,
-                                Flipper.flip(new Pose(56.000, 75.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -150,8 +150,8 @@ public class RedClose27Comp extends OpMode {
         intakeGate3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(56.000, 75.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY())
+                                Flipper.flip(new Pose(57.000, 77.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY()-.2)
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -162,7 +162,7 @@ public class RedClose27Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 FieldConstants.RED_GATE_AUTO_POSE_27,
-                                Flipper.flip(new Pose(56.000, 75.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -172,8 +172,8 @@ public class RedClose27Comp extends OpMode {
         intakeGate4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(56.000, 75.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY())
+                                Flipper.flip(new Pose(57.000, 77.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY()-.3)
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -184,7 +184,7 @@ public class RedClose27Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 FieldConstants.RED_GATE_AUTO_POSE_27,
-                                Flipper.flip(new Pose(56.000, 75.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -193,8 +193,8 @@ public class RedClose27Comp extends OpMode {
         intakeGate5 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(56.000, 75.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY())
+                                Flipper.flip(new Pose(57.000, 77.000)),
+                                new Pose(FieldConstants.RED_GATE_AUTO_POSE_27.getX(),FieldConstants.RED_GATE_AUTO_POSE_27.getY()-.4)
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -205,7 +205,7 @@ public class RedClose27Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 FieldConstants.RED_GATE_AUTO_POSE_27,
-                                Flipper.flip(new Pose(56.000, 75.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -228,8 +228,8 @@ public class RedClose27Comp extends OpMode {
         intakePile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(56.000, 75.000)),
-                                Flipper.flip(new Pose(12, 12))
+                                Flipper.flip(new Pose(57.000, 77.000)),
+                                Flipper.flip(new Pose(8, 12))
                         )
                 )
                 .setHeadingInterpolation(pileCycle)
@@ -238,7 +238,7 @@ public class RedClose27Comp extends OpMode {
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(12.000, 12.000)),
+                                Flipper.flip(new Pose(8, 12.000)),
                                 Flipper.flip(new Pose(58.000, 120.000))
                         )
                 )
@@ -325,7 +325,7 @@ public class RedClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1500),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -350,7 +350,7 @@ public class RedClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1500),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -375,7 +375,7 @@ public class RedClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1500),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -400,7 +400,7 @@ public class RedClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1600),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -425,7 +425,7 @@ public class RedClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1600),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);

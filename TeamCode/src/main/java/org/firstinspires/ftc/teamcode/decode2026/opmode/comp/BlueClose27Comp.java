@@ -323,7 +323,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1500),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -348,7 +348,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1500),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -373,7 +373,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1500),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -398,7 +398,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1600),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -423,7 +423,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1600),
+                        .maxTime(1700),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);

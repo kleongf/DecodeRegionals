@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Flipper;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
@@ -243,7 +244,7 @@ public class BlueClose24Comp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(56.000, 75.000),
-                                new Pose(12, 20)
+                                new Pose(8, 12)
                         )
                 )
                 .setHeadingInterpolation(pileCycle)
@@ -252,7 +253,7 @@ public class BlueClose24Comp extends OpMode {
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(12.000, 20.000),
+                                new Pose(8, 12),
                                 new Pose(58.000, 120.000)
                         )
                 )
@@ -492,8 +493,8 @@ public class BlueClose24Comp extends OpMode {
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt) :
-                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.BLUE) :
+                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;

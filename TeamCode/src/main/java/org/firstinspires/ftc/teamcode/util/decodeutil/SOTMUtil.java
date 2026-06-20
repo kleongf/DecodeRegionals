@@ -74,7 +74,7 @@ public class SOTMUtil {
         // subtract robot angular velocity since turret angle is robot-relative
         double wantedTurretVelocity = turretAngleRate - angularVelocity;
         // todo: red is opposite
-        double turretOffset = alliance == Alliance.BLUE ? ShootingConstants.offsetLUT.getValue(distance) : -0.5 * ShootingConstants.offsetLUT.getValue(distance);
+        double turretOffset = alliance == Alliance.BLUE ? ShootingConstants.offsetLUT.getValue(distance) : 0.5 * ShootingConstants.offsetLUT.getValue(distance);
                 // MathUtil.lerp(Math.toRadians(0), Math.toRadians(-3.5), (distance - 70) / 160);
         double wantedTurretAngle = Math.atan2(-(virtualGoal.getX() - turretPose.getX()), virtualGoal.getY() - turretPose.getY()) - turretPose.getHeading() + Math.toRadians(90) + turretOffset;
 

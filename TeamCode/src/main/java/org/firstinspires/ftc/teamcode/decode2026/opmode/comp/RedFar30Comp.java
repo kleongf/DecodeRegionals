@@ -38,7 +38,7 @@ public class RedFar30Comp extends OpMode {
 
     public void buildPaths() {
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(FieldConstants.RED_FAR_START_AUTO_POSE, Flipper.flip(new Pose(9, 10))))
+                .addPath(new BezierLine(FieldConstants.RED_FAR_START_AUTO_POSE, Flipper.flip(new Pose(9, 10-1))))
                 .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
                 .build();
 
@@ -230,10 +230,16 @@ public class RedFar30Comp extends OpMode {
                         .transition(new Transition(() -> robot.shooter.atTarget(30) && !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            robot.shootCommandSlow.start();
+                            if(robot.intake.isFull){
+                                robot.shootCommandSlow.start();
+                            }
+                            else{
+                                robot.shootCommandFast.start();
+                            }
+                            
                             follower.setMaxPower(1);
                         })
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .maxTime(500),
                 // corner
                 new State()
                         .onEnter(() -> {
@@ -255,8 +261,14 @@ public class RedFar30Comp extends OpMode {
                 new State()
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // third
                 new State()
                         .onEnter(() -> {
@@ -273,8 +285,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 1
                 new State()
                         .onEnter(() -> {
@@ -296,8 +314,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 2
                 new State()
                         .onEnter(() -> {
@@ -316,8 +340,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 3
                 new State()
                         .onEnter(() -> {
@@ -337,8 +367,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 4
                 new State()
                         .onEnter(() -> {
@@ -357,8 +393,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 5
                 new State()
                         .onEnter(() -> {
@@ -378,8 +420,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 6
                 new State()
                         .onEnter(() -> {
@@ -398,8 +446,14 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 // pile 7
                 new State()
                         .onEnter(() -> {
@@ -418,13 +472,19 @@ public class RedFar30Comp extends OpMode {
 
                         .maxTime(200),
                 new State()
-                        .onEnter(() -> robot.shootCommandSlow.start())
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }
+                        })
+                        .maxTime(500),
                 new State()
                         .onEnter(() -> follower.followPath(park, true))
-                        .transition(new Transition(() -> !follower.isBusy()))
+                        .transition(new Transition(() -> !follower.isBusy())
 
-        );
+        ));
 
         try {
             sleep(500);
