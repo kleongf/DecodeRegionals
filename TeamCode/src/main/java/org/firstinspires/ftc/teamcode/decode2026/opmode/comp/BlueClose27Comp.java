@@ -266,7 +266,7 @@ public class BlueClose27Comp extends OpMode {
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            follower.setMaxPower(0.8);
+                            follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
                         })

@@ -128,11 +128,11 @@ public class BlueClose24Comp extends OpMode {
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
-                        0.3,
+                        0.25,
                         HeadingInterpolator.constant(Math.toRadians(-160))
                 ),
                 new HeadingInterpolator.PiecewiseNode(
-                        0.3,
+                        0.25,
                         1,
                         HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading())
                 )
@@ -290,7 +290,7 @@ public class BlueClose24Comp extends OpMode {
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            follower.setMaxPower(0.8);
+                            follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
                         })

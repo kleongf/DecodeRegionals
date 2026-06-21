@@ -71,8 +71,8 @@ public class RedFar30Comp extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 Flipper.flip(new Pose(50.000, 12)),
-                                Flipper.flip(new Pose(30.000, 11)),
-                                Flipper.flip(new Pose(9.000, 11.000))
+                                Flipper.flip(new Pose(30.000, 10)),
+                                Flipper.flip(new Pose(9.000, 9.000))
                         )
                 )
                 .setConstantHeadingInterpolation(FieldConstants.RED_FAR_START_AUTO_POSE.getHeading())
@@ -81,7 +81,7 @@ public class RedFar30Comp extends OpMode {
         shootPileLowCycle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(9.000, 11.000)),
+                                Flipper.flip(new Pose(9.000, 9.000)),
                                 Flipper.flip(new Pose(50.000, 12))
                         )
                 )
@@ -258,8 +258,7 @@ public class RedFar30Comp extends OpMode {
                             lockShooter = false;
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -281,9 +280,7 @@ public class RedFar30Comp extends OpMode {
                 new State()
                         .onEnter(() -> follower.followPath(shootThird, true))
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -311,9 +308,6 @@ public class RedFar30Comp extends OpMode {
 
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-
-                        .maxTime(200),
-                new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
                                 robot.shootCommandSlow.start();
@@ -336,9 +330,6 @@ public class RedFar30Comp extends OpMode {
                             follower.followPath(shootPile2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-
-                        .maxTime(200),
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -364,9 +355,6 @@ public class RedFar30Comp extends OpMode {
 
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
-
-                        .maxTime(200),
-                new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
                                 robot.shootCommandSlow.start();
@@ -389,9 +377,7 @@ public class RedFar30Comp extends OpMode {
                             follower.followPath(shootPile4, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -416,9 +402,7 @@ public class RedFar30Comp extends OpMode {
                         })
 
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -442,9 +426,7 @@ public class RedFar30Comp extends OpMode {
                             follower.followPath(shootPile6, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -468,9 +450,7 @@ public class RedFar30Comp extends OpMode {
                             follower.followPath(shootPile7, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {

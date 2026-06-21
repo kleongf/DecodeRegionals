@@ -256,8 +256,7 @@ public class BlueFar30Comp extends OpMode {
                             lockShooter = false;
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -279,9 +278,7 @@ public class BlueFar30Comp extends OpMode {
                 new State()
                         .onEnter(() -> follower.followPath(shootThird, true))
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -308,9 +305,7 @@ public class BlueFar30Comp extends OpMode {
                         })
 
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -334,9 +329,7 @@ public class BlueFar30Comp extends OpMode {
                             follower.followPath(shootPile2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -361,9 +354,7 @@ public class BlueFar30Comp extends OpMode {
                         })
 
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -386,9 +377,7 @@ public class BlueFar30Comp extends OpMode {
                             follower.followPath(shootPile4, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -412,9 +401,7 @@ public class BlueFar30Comp extends OpMode {
                         })
 
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -437,9 +424,7 @@ public class BlueFar30Comp extends OpMode {
                             follower.followPath(shootPile6, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -462,9 +447,7 @@ public class BlueFar30Comp extends OpMode {
                             follower.followPath(shootPile7, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        
-                        .maxTime(200),
+                
                 new State()
                         .onEnter(() -> {
                             if (robot.intake.isFull) {

@@ -93,11 +93,11 @@ public class RedClose27Comp extends OpMode {
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
-                        0.5,
+                        0.4,
                         HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(-160)))
                 ),
                 new HeadingInterpolator.PiecewiseNode(
-                        0.5,
+                        0.4,
                         1,
                         HeadingInterpolator.constant(FieldConstants.RED_GATE_AUTO_POSE_27.getHeading())
                 )
@@ -267,7 +267,7 @@ public class RedClose27Comp extends OpMode {
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
-                            follower.setMaxPower(0.8);
+                            follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
                         })
@@ -321,7 +321,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -346,7 +346,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -371,7 +371,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -396,7 +396,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -421,7 +421,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
+                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
