@@ -240,27 +240,30 @@ public class TuningTeleop {
         }
 
         ShootingConstants.ShooterOutputs shooterOutputs =
-                        sotmUtil.calculateShooterOutputs2(drivetrain.getPose(),
-                                new Vector(),
-                                new Vector(),
-                                0,
+                        sotmUtil.calculateShooterOutputsTele(drivetrain.getPose(),
+                                drivetrain.getVelocity(),
+                                drivetrain.getAcceleration(),
+                                drivetrain.getAngularVelocity(),
                                 RobotConstants.dt, Alliance.BLUE);
 
-        robot.shooter.wantedVelocity = wheelSpeed;
-        robot.shooter.wantedAcceleration = 0;
-        robot.shooter.wantedPitch = Math.toRadians(hoodAngle);
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
+        // wheelSpeed
+        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
+        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+                // Math.toRadians(hoodAngle);
         robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
-        robot.turret.wantedAngularVelocity = 0;
+        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
         prevDetectState = robot.intake.detectionState;
         robot.update();
 
         blackboard.put(FieldConstants.END_POSE_KEY, drivetrain.follower.getPose());
 
+        telemetry.addData("Wheel speed", robot.shooter.currentVelocity);
         telemetry.addData("Loop time", robot.dt);
         telemetry.addData("Pose", currentPose);
-        telemetry.addData("Distance", goalPose.distanceFrom(currentPose));
-        telemetry.addData("Wheel speed", robot.shooter.currentVelocity);
+        telemetry.addData("Offset", turretOffset);
+        telemetry.addData("Distance", currentPose.distanceFrom(goalPose));
 //        telemetry.addData("Current state", drivetrain.getState());
 //        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
 //        telemetry.addLine("Robot in shooting zone: " + inZone);

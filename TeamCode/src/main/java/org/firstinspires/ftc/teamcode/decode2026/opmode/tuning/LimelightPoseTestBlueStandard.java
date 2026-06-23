@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 public class LimelightPoseTestBlueStandard extends OpMode {
     private Follower follower;
     private Intake intake;
+
+
     private final Pose startPose = FieldConstants.BLUE_CLOSE_START_AUTO_POSE;
 
 

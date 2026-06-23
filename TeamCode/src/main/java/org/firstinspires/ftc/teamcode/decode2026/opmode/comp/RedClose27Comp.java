@@ -93,11 +93,11 @@ public class RedClose27Comp extends OpMode {
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
-                        0.4,
+                        0.25,
                         HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(-160)))
                 ),
                 new HeadingInterpolator.PiecewiseNode(
-                        0.4,
+                        0.25,
                         1,
                         HeadingInterpolator.constant(FieldConstants.RED_GATE_AUTO_POSE_27.getHeading())
                 )

@@ -13,9 +13,9 @@ public class ShooterConstants {
     public static boolean useVoltageCompensation = true;
     public static double PITCH_I = Math.toRadians(26);
     public static double PITCH_F = Math.toRadians(53);
-    public static double PITCH_SERVO_MIN = 0.23;
-    public static double PITCH_SERVO_I = 0.23;
-    public static double PITCH_SERVO_F = 0.97;
+    public static double PITCH_SERVO_MIN = TorqueShooterConstants.PITCH_SERVO_MIN;
+    public static double PITCH_SERVO_I = TorqueShooterConstants.PITCH_SERVO_I;
+    public static double PITCH_SERVO_F = TorqueShooterConstants.PITCH_SERVO_F;
     public static double LATCH_CLOSED = 0.63;//0.56;
     public static double LATCH_OPEN = 0.46;
 }

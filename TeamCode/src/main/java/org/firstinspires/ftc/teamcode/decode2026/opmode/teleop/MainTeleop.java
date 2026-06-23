@@ -38,6 +38,7 @@ public class MainTeleop {
     private ZoneUtil.Zone currentZone;
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
+    public boolean isParking = false;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -158,6 +159,7 @@ public class MainTeleop {
 
         // park: x
         if (gamepad1.xWasPressed()) {
+            isParking = !isParking;
             drivetrain.park();
         }
 
@@ -239,13 +241,13 @@ public class MainTeleop {
 
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
-                        sotmUtil.calculateShooterOutputs2(
+                        sotmUtil.calculateShooterOutputsTele(
                                 drivetrain.getPose(),
                                 drivetrain.getVelocity(),
                                 drivetrain.getAcceleration(),
                                 drivetrain.getAngularVelocity(),
                                 RobotConstants.dt, alliance) :
-                        sotmUtil.calculateShooterOutputs2(drivetrain.getPose(),
+                        sotmUtil.calculateShooterOutputsTele(drivetrain.getPose(),
                                 new Vector(),
                                 new Vector(),
                                 0,
@@ -254,8 +256,15 @@ public class MainTeleop {
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
-        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+
+        if(isParking){
+            robot.turret.wantedAngle = Math.toRadians(180);
+            robot.turret.wantedAngularVelocity = 0;
+        }
+        else {
+            robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
+            robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+        }
 
         prevDetectState = robot.intake.detectionState;
         robot.update();
@@ -264,6 +273,8 @@ public class MainTeleop {
 
         telemetry.addData("Loop time", robot.dt);
         telemetry.addData("Pose", currentPose);
+        telemetry.addData("Offset", turretOffset);
+        telemetry.addData("Distance", currentPose.distanceFrom(goalPose));
 //        telemetry.addData("Current state", drivetrain.getState());
 //        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
 //        telemetry.addLine("Robot in shooting zone: " + inZone);
