@@ -77,7 +77,7 @@ public class ShootingConstants {
 
     static {
         // TODO: tune TOF, put into a quadratic function for least squares, then put that into function
-        addData(154, Math.toRadians(53), 2080+30, Math.toRadians(-5)); // tof: 1.5
+        addData(154, Math.toRadians(53), 2080+40, Math.toRadians(-5)); // tof: 1.5
         addData(144, Math.toRadians(53), 1980+30, Math.toRadians(-4));
         addData(134, Math.toRadians(53), 1890+30, Math.toRadians(-4));
         addData(124, Math.toRadians(53), 1820+30, Math.toRadians(-4));
