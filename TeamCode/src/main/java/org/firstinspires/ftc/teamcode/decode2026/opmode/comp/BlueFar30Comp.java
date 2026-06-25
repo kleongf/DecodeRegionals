@@ -234,7 +234,7 @@ public class BlueFar30Comp extends OpMode {
                             }
                             else{
                                 robot.shootCommandFast.start();
-                            };
+                            }
                             follower.setMaxPower(1);
                         })
                         .maxTime(500),
@@ -302,9 +302,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            // stuff idk
-                            // robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
-                            // here? robot.prepareShootCommandLonger.start()
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile1, true);
                         })
 
@@ -331,7 +331,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            // robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -357,7 +359,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile3, true);
                         })
 
@@ -382,7 +386,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            // robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile4, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -406,7 +412,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            // robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile5, true);
                         })
 
@@ -431,7 +439,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            // robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile6, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -455,7 +465,9 @@ public class BlueFar30Comp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
                 new State()
                         .onEnter(() -> {
-                            // robot.intake.wantedMode = Intake.Mode.INTAKE_SLOW;
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
                             follower.followPath(shootPile7, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
