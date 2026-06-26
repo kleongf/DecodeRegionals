@@ -326,7 +326,7 @@ public class RedClose27LastGateComp extends OpMode {
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
-                        .onEnter(() -> follower.holdPoint(Flipper.flip(new Pose(16, 64, Math.toRadians(180)))))
+                        .onEnter(() -> follower.holdPoint(Flipper.flip(new Pose(16, 64, Math.toRadians(180))), false))
                         .maxTime(1000),
                 new State()
                         .onEnter(() -> {

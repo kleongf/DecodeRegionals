@@ -324,7 +324,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1700),
+                        .maxTime(1900),
                 new State()
                         .onEnter(() -> {
 
@@ -350,7 +350,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1700),
+                        .maxTime(1900),
                 new State()
                         .onEnter(() -> {
 
@@ -376,7 +376,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1700),
+                        .maxTime(1900),
                 new State()
                         .onEnter(() -> {
 
@@ -402,7 +402,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1700),
+                        .maxTime(1900),
                 new State()
                         .onEnter(() -> {
 
@@ -427,7 +427,7 @@ public class BlueClose27Comp extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1700),
+                        .maxTime(1900),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);

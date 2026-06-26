@@ -324,7 +324,7 @@ public class BlueClose27LastGateComp extends OpMode {
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
-                        .onEnter(() -> follower.holdPoint(new Pose(16, 64, Math.toRadians(180))))
+                        .onEnter(() -> follower.holdPoint(new Pose(16, 64, Math.toRadians(180)), false))
                         .maxTime(1000),
                 new State()
                         .onEnter(() -> {
