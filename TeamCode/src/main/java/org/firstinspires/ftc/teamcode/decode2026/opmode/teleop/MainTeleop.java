@@ -76,9 +76,19 @@ public class MainTeleop {
         }
     }
 
+    public void init_loop() {
+        // right bumper: close zone
+        if (gamepad2.rightBumperWasPressed()) {
+            currentZone = ZoneUtil.Zone.CLOSE;
+        }
+        // left bumper: far zone
+        if (gamepad2.leftBumperWasPressed()) {
+            currentZone = ZoneUtil.Zone.FAR;
+        }
+    }
+
     public void loop() {
-        // always automate driving, whether close or far
-        // RobotConstants.useAutomateRobotDrive = (currentZone == ZoneUtil.Zone.CLOSE);
+        RobotConstants.useAutomateRobotDrive = (currentZone == ZoneUtil.Zone.CLOSE);
 
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = currentZone == ZoneUtil.Zone.CLOSE ?
@@ -100,7 +110,8 @@ public class MainTeleop {
                 robotState != RobotState.SHOOTING
         ) {
             robot.ledIndicator.indicateIntakeFull();
-            robot.prepareShootCommandLonger.start();
+            //robot.prepareShootCommandLonger.start();
+            robot.prepareShootCommand.start();
         }
 
         // we want to not necessarily turn to the closest pose as that could end badly but rather a certain constant pose.
@@ -120,22 +131,23 @@ public class MainTeleop {
         }
 
         // auto shoot if in zone, intake full, and stuff is at the right positions
-        if (
-                // if we are not using far zone auto shoot OR we are in far zone and using far zone shooting
-                // i know there is a redundant statement but its more clear to me
-                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
-                currentZone == ZoneUtil.Zone.CLOSE &&
-                inZone &&
-                        (robot.intake.isFull) &&
-                        robotState != RobotState.SHOOTING &&
-                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
-                Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon &&
-                        robot.turret.currentPositionTicks > -TurretConstants.ticksPerRevolution + RobotConstants.autoShootTurretRangeEpsilon &&
-                        robot.turret.currentPositionTicks < -RobotConstants.autoShootTurretRangeEpsilon &&
-                        currentPose.distanceFrom(goalPose) > RobotConstants.MIN_SHOOTING_DISTANCE
-        ) {
-            shoot(currentPose, this.goalPose);
-        }
+        //todo: drivers don't want this anymore
+//        if (
+//                // if we are not using far zone auto shoot OR we are in far zone and using far zone shooting
+//                // i know there is a redundant statement but its more clear to me
+//                (!RobotConstants.useFarZoneAutoShoot || (RobotConstants.useFarZoneAutoShoot && ZoneUtil.inFarZone(currentPose))) &&
+//                currentZone == ZoneUtil.Zone.CLOSE &&
+//                inZone &&
+//                        (robot.intake.isFull) &&
+//                        robotState != RobotState.SHOOTING &&
+//                Math.abs(robot.shooter.wantedVelocity - robot.shooter.currentVelocity) < RobotConstants.autoShootWheelSpeedEpsilonTicks &&
+//                Math.abs(robot.turret.errorTicks) < RobotConstants.autoShootTurretTicksEpsilon &&
+//                        robot.turret.currentPositionTicks > -TurretConstants.ticksPerRevolution + RobotConstants.autoShootTurretRangeEpsilon &&
+//                        robot.turret.currentPositionTicks < -RobotConstants.autoShootTurretRangeEpsilon &&
+//                        currentPose.distanceFrom(goalPose) > RobotConstants.MIN_SHOOTING_DISTANCE
+//        ) {
+//            shoot(currentPose, this.goalPose);
+//        }
 
         // hopefully this will not be necessary
         if (RobotConstants.useAutomaticTurretRelocalization) {
@@ -165,11 +177,12 @@ public class MainTeleop {
             Pose parkPose = currentZone == ZoneUtil.Zone.CLOSE ?
                     alliance == Alliance.BLUE ? FieldConstants.BLUE_CLOSE_PARK_POSE : FieldConstants.RED_CLOSE_PARK_POSE :
                     alliance == Alliance.BLUE ? FieldConstants.BLUE_PARK_POSE : FieldConstants.RED_PARK_POSE;
-            drivetrain.park(parkPose);
+            //drivetrain.park(parkPose);
         }
 
         // toggle tilt: y
         if (gamepad1.yWasPressed()) {
+            isParking = true;
             if (robot.tilt.tilted) {
                 robot.tilt.unTilt();
             } else {
@@ -178,13 +191,14 @@ public class MainTeleop {
         }
 
         // stop auto drive: left/right stick
-        if (gamepad1.leftStickButtonWasPressed()) {
+        if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
             drivetrain.breakFollowing();
         }
-        // hold pose: right stick
-        if (gamepad1.rightStickButtonWasPressed()) {
-            drivetrain.holdPose(drivetrain.getPose());
-        }
+        //todo amahl doesn't want this rn
+//        // hold pose: right stick
+//        if (gamepad1.rightStickButtonWasPressed()) {
+//            drivetrain.holdPose(drivetrain.getPose());
+//        }
 
         drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
                 -normalizeInput(gamepad1.left_stick_x),
@@ -208,6 +222,8 @@ public class MainTeleop {
             Pose webcamPose = robot.cameraLocalizer.currentPose;
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
                 robot.ledIndicator.indicateRelocalization();
+                turretOffset = 0;
+                ShootingConstants.wheelSpeedMultiplier = 1.0;
                 drivetrain.follower.setPose(webcamPose);
             }
         }
@@ -269,7 +285,7 @@ public class MainTeleop {
         if(isParking){
             robot.turret.wantedAngle = Math.toRadians(180);
             robot.turret.wantedAngularVelocity = 0;
-            speedScaleFactor = 0.3;
+            speedScaleFactor = 0.45;
         }
         else {
             robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;

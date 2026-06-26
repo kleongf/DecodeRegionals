@@ -29,6 +29,11 @@ public class BlueTeleopStandardStart extends OpMode {
     }
 
     @Override
+    public void init_loop() {
+        teleop.init_loop();
+    }
+
+    @Override
     public void start() {
         teleop.start();
     }

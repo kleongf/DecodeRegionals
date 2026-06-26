@@ -30,6 +30,7 @@ public class RedFar30Comp extends OpMode {
     private boolean lockShooter = false;
     private double turretOffset = 0;
     private double speedOffset = 0;
+    private double highPileCycleHeight = 45; //todo subtract smth like 5 inches if we hit teammate
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -116,7 +117,7 @@ public class RedFar30Comp extends OpMode {
                                 Flipper.flip(new Pose(50.000+3, 12.000)),
                                 Flipper.flip(new Pose(24.000, 20.000)),
                                 Flipper.flip(new Pose(14.000, 28.000)),
-                                Flipper.flip(new Pose(14.000, 45.000))
+                                Flipper.flip(new Pose(14.000, highPileCycleHeight))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -125,7 +126,7 @@ public class RedFar30Comp extends OpMode {
         shootPile2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(10.000, 45.000)),
+                                Flipper.flip(new Pose(10.000, highPileCycleHeight)),
                                 Flipper.flip(new Pose(50.000+3, 12.000))
                         )
                 )
@@ -140,7 +141,7 @@ public class RedFar30Comp extends OpMode {
                                 Flipper.flip(new Pose(50.000+3, 12.000)),
                                 Flipper.flip(new Pose(24.000, 20.000)),
                                 Flipper.flip(new Pose(14.000, 28.000)),
-                                Flipper.flip(new Pose(14.000, 45.000))
+                                Flipper.flip(new Pose(14.000, highPileCycleHeight))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -149,7 +150,7 @@ public class RedFar30Comp extends OpMode {
         shootPile4 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(10.000, 45.000)),
+                                Flipper.flip(new Pose(10.000, highPileCycleHeight)),
                                 Flipper.flip(new Pose(50.000+3, 12.000))
                         )
                 )
@@ -163,7 +164,7 @@ public class RedFar30Comp extends OpMode {
                                 Flipper.flip(new Pose(50.000+3, 12.000)),
                                 Flipper.flip(new Pose(24.000, 20.000)),
                                 Flipper.flip(new Pose(14.000, 28.000)),
-                                Flipper.flip(new Pose(14.000, 45.000))
+                                Flipper.flip(new Pose(14.000, highPileCycleHeight))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -172,7 +173,7 @@ public class RedFar30Comp extends OpMode {
         shootPile6 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(10.000, 45.000)),
+                                Flipper.flip(new Pose(10.000, highPileCycleHeight)),
                                 Flipper.flip(new Pose(50.000+3, 12.000))
                         )
                 )

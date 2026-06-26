@@ -85,6 +85,7 @@ public class State {
         return this;
     }
 
+
     public String getNextState() {
         return nextState;
     }

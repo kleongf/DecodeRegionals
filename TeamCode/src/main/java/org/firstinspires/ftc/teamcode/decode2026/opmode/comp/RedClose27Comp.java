@@ -75,7 +75,7 @@ public class RedClose27Comp extends OpMode {
                                 Flipper.flip(new Pose(57.000, 77.000)),
                                 Flipper.flip(new Pose(46.741, 65.108)),
                                 Flipper.flip(new Pose(31.688, 59.731)),
-                                Flipper.flip(new Pose(13.000, 67.000))
+                                Flipper.flip(new Pose(16.000, 63.000))
                         )
                 )
                 .setTangentHeadingInterpolation()

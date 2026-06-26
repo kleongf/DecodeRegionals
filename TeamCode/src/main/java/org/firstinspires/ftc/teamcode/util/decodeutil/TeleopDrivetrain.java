@@ -55,7 +55,7 @@ public class TeleopDrivetrain {
         follower.startTeleopDrive(true);
         follower.usePredictiveBraking = true;
 
-        headingPIDFController = new PIDFController(new PIDFCoefficients(0.4, 0, 0.03, 0));
+        headingPIDFController = new PIDFController(new PIDFCoefficients(0.6, 0, 0.03, 0));
 
         strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(0.8, 0, 0.04, 0));
         yController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
@@ -219,7 +219,8 @@ public class TeleopDrivetrain {
             return new double[] {outX, outY, outHeading};
         } else if (gateHeadingLock) {
             // added angle
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE_24.getHeading()+Math.toRadians(3);
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading() : FieldConstants.RED_GATE_AUTO_POSE_24.getHeading();
+            //targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE_24.getHeading()+Math.toRadians(3);
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
 
@@ -276,6 +277,7 @@ public class TeleopDrivetrain {
         }
     }
 
+    //todo: not used rn, drivers tell me it's not neccesary
     public void holdPose(Pose p) {
         follower.holdPoint(p);
         state = DrivetrainState.HOLDING_POSITION;

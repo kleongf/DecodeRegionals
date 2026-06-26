@@ -33,10 +33,12 @@ public class FieldConstants {
     public static Pose RED_SIDE_GATE_POSE = Flipper.flip(BLUE_SIDE_GATE_POSE);
     public static Pose BLUE_FRONT_GATE_POSE = new Pose(16, 70, Math.toRadians(180)); // TODO: tune
     public static Pose RED_FRONT_GATE_POSE = Flipper.flip(BLUE_FRONT_GATE_POSE);
-    public static Pose BLUE_PARK_POSE = new Pose(97,25, Math.toRadians(-135));//Flipper.flip(RED_PARK_POSE);
-    public static Pose BLUE_CLOSE_PARK_POSE = new Pose(110, 40, Math.toRadians(45));
-    public static Pose RED_PARK_POSE = Flipper.flip(BLUE_PARK_POSE);//new Pose(FIELD_WIDTH / 6 + FIELD_WIDTH / 24 + HALF_ROBOT_WIDTH, FIELD_WIDTH / 6 + ROBOT_LENGTH - ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(-90));
-    public static Pose RED_CLOSE_PARK_POSE = Flipper.flip(BLUE_CLOSE_PARK_POSE);
+
+    public static Pose RED_PARK_POSE = new Pose(47,24.7,Math.toRadians(-44));//new Pose(FIELD_WIDTH / 6 + FIELD_WIDTH / 24 + HALF_ROBOT_WIDTH, FIELD_WIDTH / 6 + ROBOT_LENGTH - ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(-90));
+    public static Pose RED_CLOSE_PARK_POSE = new Pose(32,40.5,Math.toRadians(133.5));
+
+    public static Pose BLUE_PARK_POSE = Flipper.flip(RED_PARK_POSE);
+    public static Pose BLUE_CLOSE_PARK_POSE = Flipper.flip(RED_CLOSE_PARK_POSE);
 
     // Autonomous Poses
     public static Pose BLUE_CLOSE_START_AUTO_POSE = new Pose(FIELD_WIDTH / 6 + HALF_ROBOT_WIDTH, FIELD_WIDTH - GOAL_TO_WALL_DISTANCE - ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(270));

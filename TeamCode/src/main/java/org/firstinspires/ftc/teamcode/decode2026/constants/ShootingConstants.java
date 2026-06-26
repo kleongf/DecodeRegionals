@@ -106,7 +106,7 @@ public class ShootingConstants {
         90: 0
         otherwise: 0
          */
-        redOffsetLUT.addData(154, Math.toRadians(1));
+        redOffsetLUT.addData(154, Math.toRadians(1.5));
         redOffsetLUT.addData(134, Math.toRadians(1));
         redOffsetLUT.addData(90, Math.toRadians(0));
     }
