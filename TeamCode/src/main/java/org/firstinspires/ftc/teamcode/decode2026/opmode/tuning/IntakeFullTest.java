@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 
 @Config
-@TeleOp(name="Intake Full Test")
+@TeleOp(name="Intake Full Test", group="?")
 public class IntakeFullTest extends OpMode {
     private Intake intake;
 

@@ -28,7 +28,6 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 // last one is going to be a pile cycle, it will always be a pile cycle
 
-
 @Autonomous(name="Red Close 24 Comp", group="!")
 public class RedClose24Comp extends OpMode {
     private boolean openGate = false;
@@ -40,7 +39,8 @@ public class RedClose24Comp extends OpMode {
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
+    private PathChain shootFirstOpenGate, intakeSecondOpenGate, shootSecondOpenGate;
 
     // important: to flip any pose, use Flipper.flip(Pose)
     public void buildPaths() {
@@ -60,8 +60,8 @@ public class RedClose24Comp extends OpMode {
                 )
         ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()).build();
 
-        if(openGate){
-            shootFirst = follower.pathBuilder().addPath(
+
+        shootFirstOpenGate = follower.pathBuilder().addPath(
                             new BezierLine(
                                     Flipper.flip(new Pose(23.500, 83.000)),
                                     Flipper.flip(new Pose(57.000, 77.000))
@@ -70,9 +70,8 @@ public class RedClose24Comp extends OpMode {
                     // optimal angle trust defined by deriv of curve
                     .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-130.37)))
                     .build();
-        }
-        else{
-            shootFirst = follower.pathBuilder().addPath(
+
+        shootFirst = follower.pathBuilder().addPath(
                             new BezierLine(
                                     Flipper.flip(new Pose(23.500, 83.000)),
                                     Flipper.flip(new Pose(32, 108))
@@ -80,10 +79,10 @@ public class RedClose24Comp extends OpMode {
                     )
                     .setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                     .build();
-        }
 
-        if(openGate){
-            intakeSecond = follower.pathBuilder().addPath(
+
+
+        intakeSecondOpenGate = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     Flipper.flip(new Pose(57.000, 77.000)),
                                     Flipper.flip(new Pose(46.741, 65.108)),
@@ -93,9 +92,8 @@ public class RedClose24Comp extends OpMode {
                     )
                     .setTangentHeadingInterpolation()
                     .build();
-        }
-        else{
-            intakeSecond = follower.pathBuilder().addPath(
+
+        intakeSecond = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     Flipper.flip(new Pose(32.00, 108.000)),
                                     Flipper.flip(new Pose(22.5, 82.000)),
@@ -104,9 +102,8 @@ public class RedClose24Comp extends OpMode {
                             )
                     ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                     .build();
-        }
-        if (openGate) {
-            shootSecond = follower.pathBuilder().addPath(
+
+        shootSecondOpenGate = follower.pathBuilder().addPath(
                             new BezierLine(
                                     Flipper.flip(new Pose(24.00, 67.000)),
                                     Flipper.flip(new Pose(57.000, 77.000))
@@ -114,16 +111,15 @@ public class RedClose24Comp extends OpMode {
                     )
                     .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
                     .build();
-        }
-        else{
-            shootSecond = follower.pathBuilder().addPath(
+
+        shootSecond = follower.pathBuilder().addPath(
                             new BezierLine(
                                     Flipper.flip(new Pose(24.500, 62.000)),
                                     Flipper.flip(new Pose(57.000, 77.000))
                             )
                     ).setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
                     .build();
-        }
+
 
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
@@ -293,6 +289,13 @@ public class RedClose24Comp extends OpMode {
                             follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
+
+                            // setting the paths to the correct ones
+                            if (openGate) {
+                                shootFirst = shootFirstOpenGate;
+                                intakeSecond = intakeSecondOpenGate;
+                                shootSecond = shootSecondOpenGate;
+                            }
                         })
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
                 new State()

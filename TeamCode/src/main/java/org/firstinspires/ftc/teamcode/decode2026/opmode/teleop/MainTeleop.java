@@ -38,7 +38,8 @@ public class MainTeleop {
     private ZoneUtil.Zone currentZone;
     private final ElapsedTime relocalizationTimer;
     private final ElapsedTime turretResetTimer;
-    public boolean isParking = false;
+    private boolean isParking = false;
+    private double speedScaleFactor = 1.0;
 
     public MainTeleop(Pose startPose, Alliance alliance, HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         drivetrain = new TeleopDrivetrain(hardwareMap, alliance);
@@ -65,7 +66,7 @@ public class MainTeleop {
         ShootingConstants.tofMultiplier = ShootingConstants.teleTofMultiplier;
     }
     private double normalizeInput(double input) {
-        return 1.1 * input;
+        return 1.1 * input * speedScaleFactor;
     }
     private void shoot(Pose currentPose, Pose goalPose) {
         if (MathUtil.distance(currentPose, goalPose) > RobotConstants.farShootingDistanceThreshold)  {
@@ -76,7 +77,8 @@ public class MainTeleop {
     }
 
     public void loop() {
-        RobotConstants.useAutomateRobotDrive = (currentZone == ZoneUtil.Zone.CLOSE);
+        // always automate driving, whether close or far
+        // RobotConstants.useAutomateRobotDrive = (currentZone == ZoneUtil.Zone.CLOSE);
 
         Pose currentPose = drivetrain.getPose();
         Pose closestPose = currentZone == ZoneUtil.Zone.CLOSE ?
@@ -160,7 +162,10 @@ public class MainTeleop {
         // park: x
         if (gamepad1.xWasPressed()) {
             isParking = !isParking;
-            drivetrain.park();
+            Pose parkPose = currentZone == ZoneUtil.Zone.CLOSE ?
+                    alliance == Alliance.BLUE ? FieldConstants.BLUE_CLOSE_PARK_POSE : FieldConstants.RED_CLOSE_PARK_POSE :
+                    alliance == Alliance.BLUE ? FieldConstants.BLUE_PARK_POSE : FieldConstants.RED_PARK_POSE;
+            drivetrain.park(parkPose);
         }
 
         // toggle tilt: y
@@ -173,8 +178,12 @@ public class MainTeleop {
         }
 
         // stop auto drive: left/right stick
-        if (gamepad1.leftStickButtonWasPressed() || gamepad1.rightStickButtonWasPressed()) {
+        if (gamepad1.leftStickButtonWasPressed()) {
             drivetrain.breakFollowing();
+        }
+        // hold pose: right stick
+        if (gamepad1.rightStickButtonWasPressed()) {
+            drivetrain.holdPose(drivetrain.getPose());
         }
 
         drivetrain.update(-normalizeInput(gamepad1.left_stick_y),
@@ -260,10 +269,12 @@ public class MainTeleop {
         if(isParking){
             robot.turret.wantedAngle = Math.toRadians(180);
             robot.turret.wantedAngularVelocity = 0;
+            speedScaleFactor = 0.3;
         }
         else {
             robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
             robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+            speedScaleFactor = 1.0;
         }
 
         prevDetectState = robot.intake.detectionState;

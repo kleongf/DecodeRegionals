@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.TiltConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 
 @Config
-@TeleOp(name="Position Tuner")
+@TeleOp(name="Position Tuner", group="?")
 public class PositionTuner extends OpMode {
     public Servo leftLatch;
     public Servo liftServo;
@@ -26,6 +26,8 @@ public class PositionTuner extends OpMode {
     public static double intakePower = 0;
     public static double liftTarget = TiltConstants.TILT_SERVO_UNTILTED;
     public static double pitchTarget = ShooterConstants.PITCH_SERVO_MIN;
+    public static boolean shooterMotor1On = true;
+    public static boolean shooterMotor2On = true;
 
 
     @Override
@@ -54,8 +56,12 @@ public class PositionTuner extends OpMode {
 
     @Override
     public void loop() {
-        shooterMotor.setPower(shooterPower);
-        shooterMotor2.setPower(shooterPower);
+        if (shooterMotor1On) {
+            shooterMotor.setPower(shooterPower);
+        }
+        if (shooterMotor2On) {
+            shooterMotor2.setPower(shooterPower);
+        }
 
         intakeMotor.setPower(intakePower);
 

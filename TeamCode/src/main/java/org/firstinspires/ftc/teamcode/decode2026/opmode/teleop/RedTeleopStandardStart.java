@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 
 @Config
-@TeleOp(name="Red Teleop Standard Start", group="!")
+@TeleOp(name="Red Teleop Standard Start", group="?")
 public class RedTeleopStandardStart extends OpMode {
     private MainTeleop teleop;
     private final Pose startPose = FieldConstants.RED_STANDARD_START_POSE;

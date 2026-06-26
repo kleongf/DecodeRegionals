@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 
 @Config
-@TeleOp(name="Absolute Encoder Tuner")
+@TeleOp(name="Absolute Encoder Tuner", group="?")
 public class AbsoluteEncoderTuning extends OpMode {
     // TODO: i also have no idea if it's reversed or not. might need to negate to calculate position
     public static double encoderOffsetDegrees = -107.2;

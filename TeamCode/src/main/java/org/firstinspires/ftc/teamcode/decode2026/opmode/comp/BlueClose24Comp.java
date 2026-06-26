@@ -40,7 +40,8 @@ public class BlueClose24Comp extends OpMode {
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
+    private PathChain shootFirstOpenGate, intakeSecondOpenGate, shootSecondOpenGate;
 
     // important: to flip any pose, use Pose)
     public void buildPaths() {
@@ -60,70 +61,62 @@ public class BlueClose24Comp extends OpMode {
                 )
         ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading()).build();
 
-        if(openGate){
-            shootFirst = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(23.500, 83.000),
-                                    new Pose(57.000, 76.000)
-                            )
-                    )
-                    // optimal angle trust defined by deriv of curve
-                    .setConstantHeadingInterpolation(Math.toRadians(-130.37))
-                    .build();
-        }
-        else{
-            shootFirst = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(23.500, 83.000),
-                                    new Pose(32, 108)
-                            )
-                    )
-                    .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
-                    .build();
-        }
+        shootFirstOpenGate = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(23.500, 83.000),
+                                new Pose(57.000, 76.000)
+                        )
+                )
+                // optimal angle trust defined by deriv of curve
+                .setConstantHeadingInterpolation(Math.toRadians(-130.37))
+                .build();
 
-        if(openGate){
-            intakeSecond = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(57.000, 76.000),
-                                    new Pose(46.741, 65.108),
-                                    new Pose(31.688, 59.731),
-                                    new Pose(16.000, 63.000)
-                            )
-                    )
-                    .setTangentHeadingInterpolation()
-                    .build();
-        }
-        else{
-            intakeSecond = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(32.00, 108.000),
-                                    new Pose(22.5, 82.000),
-                                    new Pose(22.5, 72.000),
-                                    new Pose(24.5, 62.000)
-                            )
-                    ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
-                    .build();
-        }
-        if (openGate) {
-            shootSecond = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(24.00, 67.000),
-                                    new Pose(57.000, 76.000)
-                            )
-                    )
-                    .setConstantHeadingInterpolation(Math.toRadians(-160))
-                    .build();
-        }
-        else{
-            shootSecond = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(24.500, 62.000),
-                                    new Pose(57.000, 76.000)
-                            )
-                    ).setConstantHeadingInterpolation(Math.toRadians(-160))
-                    .build();
-        }
+        shootFirst = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(23.500, 83.000),
+                                new Pose(32, 108)
+                        )
+                )
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                .build();
+
+        intakeSecondOpenGate = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(57.000, 76.000),
+                                new Pose(46.741, 65.108),
+                                new Pose(31.688, 59.731),
+                                new Pose(16.000, 63.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        intakeSecond = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(32.00, 108.000),
+                                new Pose(22.5, 82.000),
+                                new Pose(22.5, 72.000),
+                                new Pose(24.5, 62.000)
+                        )
+                ).setConstantHeadingInterpolation(FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading())
+                .build();
+
+        shootSecondOpenGate = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(24.00, 67.000),
+                                new Pose(57.000, 76.000)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-160))
+                .build();
+
+        shootSecond = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(24.500, 62.000),
+                                new Pose(57.000, 76.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(-160))
+                .build();
 
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
@@ -293,6 +286,13 @@ public class BlueClose24Comp extends OpMode {
                             follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
+
+                            // setting the paths to the correct ones
+                            if (openGate) {
+                                shootFirst = shootFirstOpenGate;
+                                intakeSecond = intakeSecondOpenGate;
+                                shootSecond = shootSecondOpenGate;
+                            }
                         })
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
                 new State()

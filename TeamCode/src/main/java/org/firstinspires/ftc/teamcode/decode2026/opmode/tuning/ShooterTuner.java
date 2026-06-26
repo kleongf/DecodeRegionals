@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 
+@Disabled
 @Config
 @TeleOp(name="Shooter Tuner")
 public class ShooterTuner extends OpMode {

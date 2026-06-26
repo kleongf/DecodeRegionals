@@ -159,9 +159,9 @@ public class TuningTeleop {
         drivetrain.openGateHeadingLock = Math.abs(gamepad1.left_trigger) > 0.05;
 
         // park: x
-        if (gamepad1.xWasPressed()) {
-            drivetrain.park();
-        }
+//        if (gamepad1.xWasPressed()) {
+//            drivetrain.park();
+//        }
 
         // toggle tilt: y
         if (gamepad1.yWasPressed()) {

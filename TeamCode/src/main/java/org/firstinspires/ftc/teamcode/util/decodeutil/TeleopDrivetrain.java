@@ -24,8 +24,8 @@ public class TeleopDrivetrain {
         TELEOP_DRIVE,
         KICK,
         INTAKE_GATE,
-        OPEN_GATE,
-        PARK
+        PARK,
+        HOLDING_POSITION
     }
     private Supplier<PathChain> currentPathChain;
 
@@ -145,7 +145,7 @@ public class TeleopDrivetrain {
         kickTimer.reset();
     }
 
-    public void park() {
+    public void park(Pose parkPose) {
         // now it doesn't really matter because we have full park
         currentPathChain = () -> follower.pathBuilder()
                 .addPath(
@@ -276,6 +276,11 @@ public class TeleopDrivetrain {
         }
     }
 
+    public void holdPose(Pose p) {
+        follower.holdPoint(p);
+        state = DrivetrainState.HOLDING_POSITION;
+    }
+
     public void update(double x, double y, double rx) {
         follower.update();
 
@@ -314,6 +319,9 @@ public class TeleopDrivetrain {
                     breakFollowing();
                 }
                 break;
+            case HOLDING_POSITION:
+                break;
+
         }
 
         elapsedTime.reset();

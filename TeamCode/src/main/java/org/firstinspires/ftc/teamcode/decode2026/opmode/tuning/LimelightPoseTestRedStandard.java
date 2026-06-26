@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 
 @Config
-@TeleOp(name="limelight pose test red")
+@TeleOp(name="limelight pose test red: close auto pose")
 public class LimelightPoseTestRedStandard extends OpMode {
     private Follower follower;
     private Intake intake;
