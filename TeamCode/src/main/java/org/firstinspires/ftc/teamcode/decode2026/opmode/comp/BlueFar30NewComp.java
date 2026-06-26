@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
-@Autonomous(name="Blue Far 30 new Comp", group="!")
+@Autonomous(name="Blue Far 33 sidespike Comp", group="!")
 public class BlueFar30NewComp extends OpMode {
     private Pose lockedPose = new Pose();
     private boolean lockShooter = false;
@@ -34,19 +34,18 @@ public class BlueFar30NewComp extends OpMode {
     private StateMachine stateMachine;
     private CurrentRobot robot;
     private SOTMUtil sotm;
-    private Pose startPose = new Pose(FieldConstants.FIELD_WIDTH / 3 - FieldConstants.HALF_ROBOT_WIDTH, FieldConstants.ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(90));
     private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakePileLowCycle, shootPileLowCycle, intakePileHighCycle, shootPileHighCycle, intakePile1, shootPile1, intakePile2, shootPile2, intakePile3, shootPile3, intakePile4, shootPile4, intakePile5, shootPile5, intakePile6, shootPile6, intakePile7, shootPile7, intakePile8, shootPile8, intakePile9, shootPile9, park;
 
     public void buildPaths() {
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                startPose,
+                                FieldConstants.BLUE_FAR_START_AUTO_SIDESPIKE_POSE,
                                 new Pose(26.000, 15.000),
                                 new Pose(26.000, 30.000)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+                .setConstantHeadingInterpolation(FieldConstants.BLUE_FAR_START_AUTO_SIDESPIKE_POSE.getHeading())
                 .build();
 
         shootThird = follower.pathBuilder()
@@ -184,6 +183,29 @@ public class BlueFar30NewComp extends OpMode {
                 .setReversed()
                 .build();
 
+        intakePile8 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(50.000, 12.000),
+                                new Pose(24.000, 20.000),
+                                new Pose(14.000, 28.000),
+                                new Pose(14.000, highPileCycleHeight)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        shootPile8 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(10.000, highPileCycleHeight),
+                                new Pose(50.000, 12.000)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .setReversed()
+                .build();
+
         intakePile1 = Copier.copy(follower, intakePileLowCycle);
         shootPile1 = Copier.copy(follower, shootPileLowCycle);
 
@@ -216,7 +238,7 @@ public class BlueFar30NewComp extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startPose);
+        follower.setStartingPose(FieldConstants.BLUE_FAR_START_AUTO_SIDESPIKE_POSE);
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
@@ -488,9 +510,35 @@ public class BlueFar30NewComp extends OpMode {
                             }
                         })
                         .maxTime(500),
+//                new State()
+//                        .onEnter(() -> follower.followPath(park, true))
+//                        .transition(new Transition(() -> !follower.isBusy())),
+                // pile 8
                 new State()
-                        .onEnter(() -> follower.followPath(park, true))
-                        .transition(new Transition(() -> !follower.isBusy()))
+                        .onEnter(() -> {
+                            follower.followPath(intakePile8, false);
+                        })
+                        .maxTime(1200)
+                        // .onExit(() -> robot.prepareShootCommandLonger.start())
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.7)),
+                new State()
+                        .onEnter(() -> {
+                            if(robot.intake.isFull){
+                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+                            }
+                            follower.followPath(shootPile8, true);
+                        })
+                        .transition(new Transition(() -> !follower.isBusy())),
+                new State()
+                        .maxTime(100),
+                new State()
+                        .onEnter(() -> {
+                            if (robot.intake.isFull) {
+                                robot.shootCommandSlow.start();
+                            } else {
+                                robot.shootCommandFast.start();
+                            }})
+                        .maxTime(500)
 
         );
 
