@@ -140,7 +140,29 @@ public class RedFar30NewComp extends OpMode {
 //                .setTangentHeadingInterpolation()
 //                .setReversed()
 //                .build();
-        intakePile2 =
+        intakePile2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                Flipper.flip(new Pose(50.000+3, 12.000)),
+                                Flipper.flip(new Pose(24.000, 20.000)),
+                                Flipper.flip(new Pose(14.000, 28.000)),
+                                Flipper.flip(new Pose(14.000, highPileCycleHeight))
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        shootPile2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                Flipper.flip(new Pose(10.000, highPileCycleHeight)),
+                                Flipper.flip(new Pose(50.000+3, 12.000))
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .setReversed()
+                .build();
+
 
         intakePile4 = follower.pathBuilder()
                 .addPath(
@@ -214,8 +236,8 @@ public class RedFar30NewComp extends OpMode {
         intakePile1 = Copier.copy(follower, intakePileLowCycle);
         shootPile1 = Copier.copy(follower, shootPileLowCycle);
 
-        intakePile2 = Copier.copy(follower, intakePileHighCycle);
-        shootPile2 = Copier.copy(follower, shootPileHighCycle);
+//        intakePile2 = Copier.copy(follower, intakePileHighCycle);
+//        shootPile2 = Copier.copy(follower, shootPileHighCycle);
 
         intakePile3 = Copier.copy(follower, intakePileLowCycle);
         shootPile3 = Copier.copy(follower, shootPileLowCycle);
@@ -242,6 +264,9 @@ public class RedFar30NewComp extends OpMode {
 
     @Override
     public void init() {
+        // first: high
+        // second: high?
+        // third:
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(FieldConstants.RED_FAR_START_AUTO_SIDESPIKE_POSE);
         follower.usePredictiveBraking = true;
@@ -283,7 +308,7 @@ public class RedFar30NewComp extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootThird, true);
-                            turretOffset = Math.toRadians(0);
+                            // turretOffset = Math.toRadians(0);
                             speedOffset = 0;
                             // lockedPose = new Pose(50, 16, Math.toRadians(180));
                             lockShooter = false;

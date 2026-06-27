@@ -13,7 +13,8 @@ public class Intake extends Subsystem {
         INTAKE_FAST,
         INTAKE_MEDIUM,
         INTAKE_SLOW,
-        INTAKE_OFF
+        INTAKE_OFF,
+        INTAKE_BACKWARD,
     }
     public enum DetectionState {
         EMPTY,
@@ -86,6 +87,12 @@ public class Intake extends Subsystem {
                     prevSetPower = IntakeConstants.INTAKE_STOPPED_POWER;
                 }
                 // intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
+                break;
+            case INTAKE_BACKWARD:
+                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_BACKWARD_POWER) > 0.03) {
+                    intakeMotor.setPower(IntakeConstants.INTAKE_BACKWARD_POWER);
+                    prevSetPower = IntakeConstants.INTAKE_BACKWARD_POWER;
+                }
                 break;
         }
 

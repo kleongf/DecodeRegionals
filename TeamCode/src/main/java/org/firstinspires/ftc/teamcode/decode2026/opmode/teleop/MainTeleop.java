@@ -248,11 +248,11 @@ public class MainTeleop {
 
         // trim speed up
         if (gamepad2.dpadUpWasPressed()) {
-            ShootingConstants.wheelSpeedMultiplier += 0.01;
+            ShootingConstants.wheelSpeedMultiplier += 0.005;
         }
         // trim speed down
         if (gamepad2.dpadDownWasPressed()) {
-            ShootingConstants.wheelSpeedMultiplier -= 0.01;
+            ShootingConstants.wheelSpeedMultiplier -= 0.005;
         }
 
         // dpad left: trim turret
@@ -263,6 +263,14 @@ public class MainTeleop {
         if (gamepad2.dpadRightWasPressed()) {
             turretOffset -= Math.toRadians(2);
         }
+
+        if (gamepad2.left_trigger > 0.1) {
+            robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
+        }
+
+//        if (gamepad2.right_trigger > 0.1) {
+//            robot.intake.wantedMode = Intake.Mode.INTAKE_BACKWARD;
+//        }
 
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?

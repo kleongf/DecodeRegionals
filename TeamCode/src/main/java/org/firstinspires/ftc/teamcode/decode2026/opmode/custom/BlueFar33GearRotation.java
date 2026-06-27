@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decode2026.opmode.comp;
+package org.firstinspires.ftc.teamcode.decode2026.opmode.custom;
 
 import static java.lang.Thread.sleep;
 import com.pedropathing.follower.Follower;
@@ -29,7 +29,7 @@ public class BlueFar33GearRotation extends OpMode {
     private boolean lockShooter = false;
     private double turretOffset = 0;
     private double speedOffset = 0;
-    private double highPileCycleHeight = 40; //todo subtract smth like 5 inches if we hit teammate
+    private double highPileCycleHeight = 45; //todo subtract smth like 5 inches if we hit teammate
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -113,54 +113,14 @@ public class BlueFar33GearRotation extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        intakePile1 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(50.000, 12.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, highPileCycleHeight+8)
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .build();
 
-        shootPile1 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Pose(10.000, highPileCycleHeight+8),
-                                new Pose(50.000, 12.000)
-                        )
-                )
-                // .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
+        intakePile1 = Copier.copy(follower, intakePileLowCycle);
+        shootPile1 = Copier.copy(follower, shootPileLowCycle);
 
-//        intakePile3 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierCurve(
-//                                new Pose(50.000, 12.000),
-//                                new Pose(24.000, 20.000),
-//                                new Pose(14.000, 28.000),
-//                                new Pose(14.000, highPileCycleHeight)
-//                        )
-//                )
-//                .setTangentHeadingInterpolation()
-//                .build();
-//
-//        shootPile3 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(
-//                                new Pose(10.000, highPileCycleHeight),
-//                                new Pose(50.000, 12.000)
-//                        )
-//                )
-//                .setTangentHeadingInterpolation()
-//                .setReversed()
-//                .build();
+        intakePile2 = Copier.copy(follower, intakePileLowCycle);
+        shootPile2 = Copier.copy(follower, shootPileLowCycle);
 
-        intakePile4 = follower.pathBuilder()
+        intakePile3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
                                 new Pose(50.000, 12.000),
@@ -172,7 +132,7 @@ public class BlueFar33GearRotation extends OpMode {
                 .setTangentHeadingInterpolation()
                 .build();
 
-        shootPile4 = follower.pathBuilder()
+        shootPile3 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 new Pose(10.000, highPileCycleHeight),
@@ -183,28 +143,17 @@ public class BlueFar33GearRotation extends OpMode {
                 .setReversed()
                 .build();
 
-        intakePile6 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(50.000, 12.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, highPileCycleHeight)
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .build();
+        intakePile4 = Copier.copy(follower, intakePileLowCycle);
+        shootPile4 = Copier.copy(follower, shootPileHighCycle);
 
-        shootPile6 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Pose(10.000, highPileCycleHeight),
-                                new Pose(50.000, 12.000)
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
+        intakePile5 = Copier.copy(follower, intakePileLowCycle);
+        shootPile5 = Copier.copy(follower, shootPileLowCycle);
+
+        intakePile6 = Copier.copy(follower, intakePileLowCycle);
+        shootPile6 = Copier.copy(follower, shootPileLowCycle);
+
+        intakePile7 = Copier.copy(follower, intakePileLowCycle);
+        shootPile7 = Copier.copy(follower, shootPileLowCycle);
 
         intakePile8 = follower.pathBuilder()
                 .addPath(
@@ -229,31 +178,6 @@ public class BlueFar33GearRotation extends OpMode {
                 .setReversed()
                 .build();
 
-
-
-        intakePile2 = Copier.copy(follower, intakePileHighCycle);
-        shootPile2 = Copier.copy(follower, shootPileHighCycle);
-
-//        intakePile3 = Copier.copy(follower, intakePileLowCycle);
-//        shootPile3 = Copier.copy(follower, shootPileLowCycle);
-
-//        intakePile2 = Copier.copy(follower, intakePileHighCycle);
-//        shootPile2 = Copier.copy(follower, shootPileHighCycle);
-
-        intakePile3 = Copier.copy(follower, intakePileLowCycle);
-        shootPile3 = Copier.copy(follower, shootPileLowCycle);
-
-//        intakePile4 = Copier.copy(follower, intakePileHighCycle);
-//        shootPile4 = Copier.copy(follower, shootPileHighCycle);
-
-        intakePile5 = Copier.copy(follower, intakePileLowCycle);
-        shootPile5 = Copier.copy(follower, shootPileLowCycle);
-
-//        intakePile6 = Copier.copy(follower, intakePileHighCycle);
-//        shootPile6 = Copier.copy(follower, shootPileHighCycle);
-
-        intakePile7 = Copier.copy(follower, intakePileLowCycle);
-        shootPile7 = Copier.copy(follower, shootPileLowCycle);
 
         park = follower.pathBuilder()
                 .addPath(

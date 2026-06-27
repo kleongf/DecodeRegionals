@@ -9,4 +9,5 @@ public class IntakeConstants {
     public static double INTAKE_MEDIUM_POWER = 0.75;
     public static double INTAKE_SLOW_POWER = 0.3;
     public static double INTAKE_STOPPED_POWER = 0.0;
+    public static double INTAKE_BACKWARD_POWER = -1.0;
 }

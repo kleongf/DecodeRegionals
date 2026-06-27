@@ -23,7 +23,7 @@ public class TurretConstants {
     public static boolean useWeightSetpointPID = true;
     public static double epsilonTicks = 5;
     public static double encoderGearRatio = 50/42d;
-    public static double encoderOffsetDegrees = -96.5;
+    public static double encoderOffsetDegrees = -94.5;
     public static double encoderMaxVoltage = 3.272;
     public static double encoderMinVoltage = 0.02;
     public static boolean useExternalEncoder = false;
