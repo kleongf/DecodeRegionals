@@ -142,7 +142,7 @@ public class RedClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate1 = follower.pathBuilder()
@@ -164,7 +164,7 @@ public class RedClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate2 = follower.pathBuilder()
@@ -187,7 +187,7 @@ public class RedClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate3 = follower.pathBuilder()
@@ -209,7 +209,7 @@ public class RedClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate4 = follower.pathBuilder()
@@ -315,7 +315,7 @@ public class RedClose24Comp extends OpMode {
                         .onEnter(() -> {
                             if(openGate) {
                                 lockShooter = true;
-                                lockedPose = Flipper.flip(new Pose(57,77, Math.toRadians(-160)));
+                                lockedPose = Flipper.flip(new Pose(57,77, Math.toRadians(-130.37)));
                                 turretOffset = Math.toRadians(3);
                             }
                             else{
@@ -362,7 +362,7 @@ public class RedClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_24), FieldConstants.RED_GATE_AUTO_POSE_24.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -388,7 +388,7 @@ public class RedClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_24), FieldConstants.RED_GATE_AUTO_POSE_24.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -413,7 +413,7 @@ public class RedClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_24), FieldConstants.RED_GATE_AUTO_POSE_24.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -438,7 +438,7 @@ public class RedClose24Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_24), FieldConstants.RED_GATE_AUTO_POSE_24.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))

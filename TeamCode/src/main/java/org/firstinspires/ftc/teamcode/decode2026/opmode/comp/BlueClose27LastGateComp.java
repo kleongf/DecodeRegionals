@@ -226,7 +226,7 @@ public class BlueClose27LastGateComp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 FieldConstants.BLUE_GATE_AUTO_POSE_27,
-                                new Pose(57.000, 76.000)
+                                new Pose(40, 110)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -325,7 +325,7 @@ public class BlueClose27LastGateComp extends OpMode {
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
                         .onEnter(() -> follower.holdPoint(new Pose(16, 64, Math.toRadians(180)), false))
-                        .maxTime(1000),
+                        .maxTime(500),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);

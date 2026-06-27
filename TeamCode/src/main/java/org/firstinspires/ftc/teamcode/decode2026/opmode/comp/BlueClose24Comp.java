@@ -139,7 +139,7 @@ public class BlueClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate1 = follower.pathBuilder()
@@ -161,7 +161,7 @@ public class BlueClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate2 = follower.pathBuilder()
@@ -184,7 +184,7 @@ public class BlueClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate3 = follower.pathBuilder()
@@ -206,7 +206,7 @@ public class BlueClose24Comp extends OpMode {
                         )
                 )
                 .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.99)
+                .setTValueConstraint(0.95)
                 .build();
 
         shootGate4 = follower.pathBuilder()
@@ -311,7 +311,7 @@ public class BlueClose24Comp extends OpMode {
                         .onEnter(() -> {
                             if(openGate) {
                                 lockShooter = true;
-                                lockedPose = new Pose(57,76, Math.toRadians(-160));
+                                lockedPose = new Pose(57,76, Math.toRadians(-130.37));
                                 turretOffset = Math.toRadians(3);
                             }
                             else{

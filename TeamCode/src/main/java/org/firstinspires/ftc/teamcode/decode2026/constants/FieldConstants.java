@@ -9,7 +9,7 @@ public class FieldConstants {
 //                    16, 70
     public static String END_POSE_KEY = "END_POSE";
     // was 15
-    public static double DISTANCE_IN = 0; // if it is not holding/correcting can increase this number
+    public static double DISTANCE_IN = 5; // if it is not holding/correcting can increase this number
     public static double TURN_IN = Math.toRadians(0); // how much to turn into the gate
     public static double ROBOT_WIDTH = 15.1;
     // just counting the drivetrain, without we are 17.0866
@@ -53,15 +53,15 @@ public class FieldConstants {
 
     public static Pose BLUE_GATE_AUTO_POSE_27 = new Pose(13.25-.25+.1,59.25+.25+.25,Math.toRadians(145.5+4+2));//new Pose(12+1.5, 59.5+.5, Math.toRadians(147+3+5+3));
 
-    public static Pose RED_GATE_AUTO_POSE_24 = new Pose(128.2+.15,57.5+.5,Math.toRadians(35.5-4-2-2));//new Pose(FIELD_WIDTH - BLUE_GATE_AUTO_POSE_27.getX()-2+.5+.2, BLUE_GATE_AUTO_POSE_27.getY() - 1-.3, Flipper.flipAngle(BLUE_GATE_AUTO_POSE_27.getHeading())+Math.toRadians(8));
-    public static Pose RED_GATE_AUTO_POSE_27 = new Pose(128.2+.15,57.5+.5,Math.toRadians(35.5-4-2-2));
+    public static Pose RED_GATE_AUTO_POSE_24 = new Pose(128.2+.15+1,57.5+.5,Math.toRadians(35.5-4-2-2));//new Pose(FIELD_WIDTH - BLUE_GATE_AUTO_POSE_27.getX()-2+.5+.2, BLUE_GATE_AUTO_POSE_27.getY() - 1-.3, Flipper.flipAngle(BLUE_GATE_AUTO_POSE_27.getHeading())+Math.toRadians(8));
+    public static Pose RED_GATE_AUTO_POSE_27 = new Pose(128.2+.15+1,57.5+.5,Math.toRadians(35.5-4-2-2));
     //public static Pose RED_GATE_AUTO_POSE_27 = new Pose(128.5+.5+.5+.5,58.9-1+.5, Math.toRadians(30.5));
     //public static Pose RED_GATE_AUTO_POSE_27 = new Pose(FIELD_WIDTH - BLUE_GATE_AUTO_POSE_27.getX()-2-.5, BLUE_GATE_AUTO_POSE_27.getY() - 1, Flipper.flipAngle(BLUE_GATE_AUTO_POSE_27.getHeading()));
     //public static Pose RED_GATE_AUTO_POSE_27 = new Pose(FIELD_WIDTH - BLUE_GATE_AUTO_POSE_27.getX()-2-.5+1.3+2+.75, BLUE_GATE_AUTO_POSE_27.getY() - 1-.75-.5, Flipper.flipAngle(BLUE_GATE_AUTO_POSE_27.getHeading())+Math.toRadians(8+2));
             // Flipper.flip(BLUE_GATE_AUTO_POSE_27);
     // Math.sin(BLUE_GATE_AUTO_POSE.getHeading())*DISTANCE_IN
-    public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE_24.getX()+Math.cos(BLUE_GATE_AUTO_POSE_24.getHeading())*DISTANCE_IN, BLUE_GATE_AUTO_POSE_24.getY(), BLUE_GATE_AUTO_POSE_24.getHeading()+TURN_IN);
-    public static Pose RED_GATE_AUTO_POSE_IN = Flipper.flip(BLUE_GATE_AUTO_POSE_IN);
+    public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE_24.getX()-DISTANCE_IN,BLUE_GATE_AUTO_POSE_24.getY(), BLUE_GATE_AUTO_POSE_24.getHeading()+TURN_IN);
+    public static Pose RED_GATE_AUTO_POSE_IN = new Pose(RED_GATE_AUTO_POSE_24.getX()+DISTANCE_IN,RED_GATE_AUTO_POSE_24.getY(), RED_GATE_AUTO_POSE_24.getHeading()+TURN_IN);
 
     public static Pose BLUE_CLOSE_ZONE_POSE = new Pose(55, 76);
     public static Pose RED_CLOSE_ZONE_POSE = Flipper.flip(BLUE_CLOSE_ZONE_POSE);

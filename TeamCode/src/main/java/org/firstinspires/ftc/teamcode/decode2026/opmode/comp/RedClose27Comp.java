@@ -321,7 +321,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -346,7 +346,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -371,7 +371,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -396,7 +396,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -421,7 +421,7 @@ public class RedClose27Comp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))

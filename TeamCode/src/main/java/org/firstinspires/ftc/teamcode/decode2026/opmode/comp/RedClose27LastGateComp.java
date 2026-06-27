@@ -227,7 +227,7 @@ public class RedClose27LastGateComp extends OpMode {
                 .addPath(
                         new BezierLine(
                                 FieldConstants.RED_GATE_AUTO_POSE_27,
-                                Flipper.flip(new Pose(57.000, 77.000))
+                                Flipper.flip(new Pose(40, 110))
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -325,9 +325,9 @@ public class RedClose27LastGateComp extends OpMode {
                             robot.intakeCommand.start();
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
-                new State()
-                        .onEnter(() -> follower.holdPoint(Flipper.flip(new Pose(16, 64, Math.toRadians(180))), false))
-                        .maxTime(1000),
+//                new State()
+//                        .onEnter(() -> follower.holdPoint(Flipper.flip(new Pose(16, 64, Math.toRadians(180))), false))
+//                        .maxTime(500),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
@@ -346,7 +346,8 @@ public class RedClose27LastGateComp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
+                            // follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -371,7 +372,8 @@ public class RedClose27LastGateComp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
+                            // follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -396,7 +398,8 @@ public class RedClose27LastGateComp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
+                            // follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -421,7 +424,8 @@ public class RedClose27LastGateComp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
+                            // follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -446,7 +450,8 @@ public class RedClose27LastGateComp extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
+                            // follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
@@ -466,12 +471,13 @@ public class RedClose27LastGateComp extends OpMode {
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
-                            follower.followPath(intakeGate5, true);
+                            follower.followPath(intakeGate6, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
+                            follower.holdPoint(FieldConstants.RED_GATE_AUTO_POSE_IN, false);
+                            // follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_27), FieldConstants.RED_GATE_AUTO_POSE_27.getHeading());
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))

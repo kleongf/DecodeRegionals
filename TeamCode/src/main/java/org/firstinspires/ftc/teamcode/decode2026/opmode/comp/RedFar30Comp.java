@@ -30,7 +30,7 @@ public class RedFar30Comp extends OpMode {
     private boolean lockShooter = false;
     private double turretOffset = 0;
     private double speedOffset = 0;
-    private double highPileCycleHeight = 45; //todo subtract smth like 5 inches if we hit teammate
+    private double highPileCycleHeight = 40; //todo subtract smth like 5 inches if we hit teammate
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -263,11 +263,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // third
@@ -286,11 +282,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 1
@@ -314,11 +306,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 2
@@ -341,11 +329,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 3
@@ -369,11 +353,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 4
@@ -396,11 +376,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 5
@@ -424,11 +400,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 6
@@ -451,11 +423,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 7
@@ -478,11 +446,7 @@ public class RedFar30Comp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 new State()

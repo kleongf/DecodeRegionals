@@ -29,7 +29,7 @@ public class BlueFar30NewComp extends OpMode {
     private boolean lockShooter = false;
     private double turretOffset = 0;
     private double speedOffset = 0;
-    private double highPileCycleHeight = 45; //todo subtract smth like 5 inches if we hit teammate
+    private double highPileCycleHeight = 40; //todo subtract smth like 5 inches if we hit teammate
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
@@ -60,7 +60,7 @@ public class BlueFar30NewComp extends OpMode {
                 .build();
 
         intakeCorner = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(50.000, 12.000), new Pose(9, 10)))
+                .addPath(new BezierLine(new Pose(50.000, 12.000), new Pose(9, 9)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
@@ -75,7 +75,7 @@ public class BlueFar30NewComp extends OpMode {
                         new BezierCurve(
                                 new Pose(50.000, 16),
                                 new Pose(30.000, 11),
-                                new Pose(9.000, 11.000)
+                                new Pose(9.000, 9.000)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -84,7 +84,7 @@ public class BlueFar30NewComp extends OpMode {
         shootPileLowCycle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(9.000, 11.000),
+                                new Pose(9.000, 9.000),
                                 new Pose(50.000, 12)
                         )
                 )
@@ -113,29 +113,29 @@ public class BlueFar30NewComp extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        intakePile2 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(50.000, 12.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, highPileCycleHeight)
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        shootPile2 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Pose(10.000, highPileCycleHeight),
-                                new Pose(50.000, 12.000)
-                        )
-                )
-                // .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
+//        intakePile2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                new Pose(50.000, 12.000),
+//                                new Pose(24.000, 20.000),
+//                                new Pose(14.000, 28.000),
+//                                new Pose(14.000, highPileCycleHeight)
+//                        )
+//                )
+//                .setTangentHeadingInterpolation()
+//                .build();
+//
+//        shootPile2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(
+//                                new Pose(10.000, highPileCycleHeight),
+//                                new Pose(50.000, 12.000)
+//                        )
+//                )
+//                // .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
+//                .setTangentHeadingInterpolation()
+//                .setReversed()
+//                .build();
 
         intakePile4 = follower.pathBuilder()
                 .addPath(
@@ -209,8 +209,8 @@ public class BlueFar30NewComp extends OpMode {
         intakePile1 = Copier.copy(follower, intakePileLowCycle);
         shootPile1 = Copier.copy(follower, shootPileLowCycle);
 
-//        intakePile2 = Copier.copy(follower, intakePileHighCycle);
-//        shootPile2 = Copier.copy(follower, shootPileHighCycle);
+        intakePile2 = Copier.copy(follower, intakePileHighCycle);
+        shootPile2 = Copier.copy(follower, shootPileHighCycle);
 
         intakePile3 = Copier.copy(follower, intakePileLowCycle);
         shootPile3 = Copier.copy(follower, shootPileLowCycle);
@@ -242,7 +242,7 @@ public class BlueFar30NewComp extends OpMode {
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
-        turretOffset = Math.toRadians(3);
+        turretOffset = Math.toRadians(1.75);
         speedOffset = 30;
         // dont compensate for velo but pos
         // ShootingConstants.tofMultiplier = 0;
@@ -288,11 +288,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // third
@@ -312,11 +308,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 1
@@ -341,11 +333,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 2
@@ -369,11 +357,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
                 // pile 3
@@ -397,11 +381,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }})
+                            robot.shootCommandSlow.start();})
                         .maxTime(500),
                 // pile 4
                 new State()
@@ -423,11 +403,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }})
+                            robot.shootCommandSlow.start();})
                         .maxTime(500),
                 // pile 5
                 new State()
@@ -450,11 +426,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }})
+                            robot.shootCommandSlow.start();})
                         .maxTime(500),
                 // pile 6
                 new State()
@@ -476,11 +448,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }})
+                            robot.shootCommandSlow.start();})
                         .maxTime(500),
                 // pile 7
                 new State()
@@ -503,11 +471,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
 //                new State()
@@ -533,11 +497,7 @@ public class BlueFar30NewComp extends OpMode {
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }})
+                            robot.shootCommandSlow.start();})
                         .maxTime(500)
 
         );
