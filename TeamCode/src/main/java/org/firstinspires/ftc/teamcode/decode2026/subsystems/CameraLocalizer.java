@@ -61,7 +61,6 @@ public class CameraLocalizer extends Subsystem {
         builder.addProcessors(aprilTagLeft, aprilTagRight);
         builder.setLiveViewContainerId(0);
 
-
         builder.build();
     }
 

@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.decode2026.subsystems.TorqueShooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
-import org.firstinspires.ftc.teamcode.decode2026.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 
 @Disabled

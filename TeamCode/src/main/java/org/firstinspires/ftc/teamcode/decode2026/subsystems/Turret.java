@@ -32,9 +32,7 @@ public class Turret extends Subsystem {
     private final DcMotorEx turretMotor;
     private final AnalogInput externalEncoder;
     private final VoltageSensor voltageSensor;
-    private final PIDFController turretController;
     private final WeightedSetpointPIDController turretControllerWeighted;
-    private double prevSetPower = 0;
 
     public Turret(HardwareMap hardwareMap) {
         turretMotor = hardwareMap.get(DcMotorEx.class, "turretMotor");
@@ -44,7 +42,6 @@ public class Turret extends Subsystem {
         externalEncoder = hardwareMap.get(AnalogInput.class, "externalEncoder");
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
-        turretController = new PIDFController(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF);
         turretControllerWeighted = new WeightedSetpointPIDController(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD);
     }
 
@@ -62,8 +59,6 @@ public class Turret extends Subsystem {
 
     @Override
     public void update() {
-        turretController.setIntegrationBounds(-0.2, 0.2);
-        turretController.setPIDF(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF);
         turretControllerWeighted.setPID(TurretConstants.kP, TurretConstants.kI, TurretConstants.kD);
         turretControllerWeighted.setWeights(TurretConstants.beta, TurretConstants.gamma);
 
@@ -79,73 +74,23 @@ public class Turret extends Subsystem {
 
         switch (wantedMode) {
             case TURRET_ON:
-                if (TurretConstants.useLQRController) {
-                    double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
-                    errorTicks = t-currentPositionTicks;
+                double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
+                double error = t-currentPositionTicks;
+                errorTicks = error;
 
-                    double LQRErrorPosition = currentPositionTicks - t;
-                    double LQRErrorVelocity = currentVelocityTicks - wantedAngularVelocity * TurretConstants.ticksPerRadian;
-
-                    // a lqr controller follows the model u = -K(error)
-                    double u = -(TurretConstants.kPos * LQRErrorPosition + TurretConstants.kVel * LQRErrorVelocity);
-                    u += TurretConstants.kS * Math.signum(u);
-
-                    double power = MathUtil.clamp(
-                            u,
-                            -TurretConstants.maxPower,
-                            TurretConstants.maxPower
-                    );
-                    if (TurretConstants.useVoltageCompensation) {
-                        power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
-                    }
-
-                    if (Math.abs(prevSetPower - power) > 0.03) {
-                        turretMotor.setPower(power);
-                        prevSetPower = power;
-                    }
-
-                    // turretMotor.setPower(power);
-                } else if (TurretConstants.useWeightSetpointPID) {
-                    double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
-                    double error = t-currentPositionTicks;
-                    errorTicks = error;
-
-                    double power = MathUtil.clamp(
-                            turretControllerWeighted.calculate(currentPositionTicks, t) +
-                                    TurretConstants.kS * Math.signum(error) +
-                                    TurretConstants.kV * wantedAngularVelocity
-                            ,
-                            -TurretConstants.maxPower,
-                            TurretConstants.maxPower
-                    );
-                    if (TurretConstants.useVoltageCompensation) {
-                        power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
-                    }
-
-                    turretMotor.setPower(power);
-                } else {
-                    double t = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
-                    double error = t-currentPositionTicks;
-                    errorTicks = error;
-
-                    double power = MathUtil.clamp(
-                                turretController.calculate(currentPositionTicks, t) +
-                                        TurretConstants.kS * Math.signum(error) +
-                                        TurretConstants.kV * wantedAngularVelocity +
-                                        TurretConstants.kAngularProcession * currentVelocityTicks * flywheelVelocityTicks
-                            ,
-                                -TurretConstants.maxPower,
-                                TurretConstants.maxPower
-                    );
-                    if (TurretConstants.useVoltageCompensation) {
-                        power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
-                    }
-                    if (Math.abs(prevSetPower - power) > 0.03) {
-                        turretMotor.setPower(power);
-                        prevSetPower = power;
-                    }
-                    // turretMotor.setPower(power);
+                double power = MathUtil.clamp(
+                        turretControllerWeighted.calculate(currentPositionTicks, t) +
+                                TurretConstants.kS * Math.signum(error) +
+                                TurretConstants.kV * wantedAngularVelocity
+                        ,
+                        -TurretConstants.maxPower,
+                        TurretConstants.maxPower
+                );
+                if (TurretConstants.useVoltageCompensation) {
+                    power *= (TurretConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
+
+                turretMotor.setPower(power);
                 break;
             case TURRET_OFF:
                 break;
@@ -173,6 +118,7 @@ public class Turret extends Subsystem {
         }
         return radians;
     }
+
     private double calculatePositionTicks(double voltage) {
         double realOffset = Math.toRadians(TurretConstants.encoderOffsetDegrees + 360);
         double position = ((Math.max(0, voltage-TurretConstants.encoderMinVoltage) / TurretConstants.encoderMaxVoltage) * 2 * Math.PI) % (2 * Math.PI) + realOffset;

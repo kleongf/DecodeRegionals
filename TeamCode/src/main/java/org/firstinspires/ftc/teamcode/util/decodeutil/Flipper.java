@@ -11,4 +11,6 @@ public class Flipper {
     public static double flipAngle(double angle) {
         return Math.PI - angle;
     }
+    public static double flipX(double x) {return FieldConstants.FIELD_WIDTH - x;}
+    public static double flipY(double y) {return y;}
 }

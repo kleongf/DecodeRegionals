@@ -104,6 +104,17 @@ public class Matrix {
         return result;
     }
 
+    public Matrix multiply(double scalar) {
+        Matrix result = new Matrix(this.rows, this.cols);
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                result.data[i][j] = this.data[i][j] * scalar;
+            }
+        }
+        return result;
+    }
+
     // Aᵀ
     public Matrix transpose() {
         Matrix result = new Matrix(cols, rows);

@@ -15,7 +15,11 @@ public class IntakeFullTest extends OpMode {
 
     @Override
     public void loop() {
+        if (gamepad1.xWasPressed()) {
+            intake.detectionState = Intake.DetectionState.EMPTY;
+        }
         intake.update();
+        telemetry.addLine("Press X to reset detection state");
         telemetry.addData("Is Full:", intake.isFull);
         telemetry.addData("Bottom Beam", intake.bottomTriggered());
         telemetry.addData("Middle Beam", intake.middleTriggered());

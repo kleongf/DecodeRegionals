@@ -58,42 +58,27 @@ public class Intake extends Subsystem {
 
     @Override
     public void update() {
+        double wantedSpeed = 0;
         switch (wantedMode) {
             case INTAKE_FAST:
-                // caching
-                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_FAST_POWER) > 0.03) {
-                    intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
-                    prevSetPower = IntakeConstants.INTAKE_FAST_POWER;
-                }
-                // intakeMotor.setPower(IntakeConstants.INTAKE_FAST_POWER);
+                wantedSpeed = IntakeConstants.INTAKE_FAST_POWER;
                 break;
             case INTAKE_MEDIUM:
-                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_MEDIUM_POWER) > 0.03) {
-                    intakeMotor.setPower(IntakeConstants.INTAKE_MEDIUM_POWER);
-                    prevSetPower = IntakeConstants.INTAKE_MEDIUM_POWER;
-                }
-                // intakeMotor.setPower(IntakeConstants.INTAKE_MEDIUM_POWER);
+                wantedSpeed = IntakeConstants.INTAKE_MEDIUM_POWER;
                 break;
             case INTAKE_SLOW:
-                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_SLOW_POWER) > 0.03) {
-                    intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
-                    prevSetPower = IntakeConstants.INTAKE_SLOW_POWER;
-                }
-                // intakeMotor.setPower(IntakeConstants.INTAKE_SLOW_POWER);
+                wantedSpeed = IntakeConstants.INTAKE_SLOW_POWER;
                 break;
             case INTAKE_OFF:
-                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_STOPPED_POWER) > 0.03) {
-                    intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
-                    prevSetPower = IntakeConstants.INTAKE_STOPPED_POWER;
-                }
-                // intakeMotor.setPower(IntakeConstants.INTAKE_STOPPED_POWER);
+                wantedSpeed = IntakeConstants.INTAKE_STOPPED_POWER;
                 break;
             case INTAKE_BACKWARD:
-                if (Math.abs(prevSetPower - IntakeConstants.INTAKE_BACKWARD_POWER) > 0.03) {
-                    intakeMotor.setPower(IntakeConstants.INTAKE_BACKWARD_POWER);
-                    prevSetPower = IntakeConstants.INTAKE_BACKWARD_POWER;
-                }
+                wantedSpeed = IntakeConstants.INTAKE_BACKWARD_POWER;
                 break;
+        }
+        if (!IntakeConstants.useMotorCaching || Math.abs(prevSetPower - wantedSpeed) > IntakeConstants.cachingThreshold) {
+            intakeMotor.setPower(wantedSpeed);
+            prevSetPower = wantedSpeed;
         }
 
         switch (detectionState) {

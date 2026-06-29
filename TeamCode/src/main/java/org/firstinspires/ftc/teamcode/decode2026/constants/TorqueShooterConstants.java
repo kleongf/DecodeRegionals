@@ -5,8 +5,11 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class TorqueShooterConstants {
     public static double nominalVoltage = 12.0;
-    public static double cachingThreshold = 0.005;
-    public static double kV = 0.000005; // viscous friction or smth
+    public static double cachingThreshold = 0.03;
+    public static boolean useMotorCaching = true;
+    public static final double R = 9.2 / 0.144; // motor resistance 1.3 ohms ish
+    public static final double kOmega = 12 / 2800d; // back emf, volts ticks^-1 s^-1
+    public static double kV = 0.000005; // viscous friction
     public static double kS = 0.01; // static friction
     public static double kP = 0.001;
     public static double kA = 0.0002;

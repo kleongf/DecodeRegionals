@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.TorqueShooterConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
+import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.util.controllers.FeedForwardController;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
@@ -30,8 +31,6 @@ public class TorqueShooter extends Subsystem {
     private final DcMotorEx shooterMotor2;
     private final VoltageSensor voltageSensor;
     private double prevSetPower = 0;
-    private final double R = 9.2 / 0.144; // motor resistance 1.3 ohms ish
-    private final double kOmega = 12 / 2800d; // back emf, volts ticks^-1 s^-1
     public TorqueShooter(HardwareMap hardwareMap) {
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
@@ -46,9 +45,9 @@ public class TorqueShooter extends Subsystem {
         latchServo = hardwareMap.get(Servo.class, "latchServo");
         pitchServo = hardwareMap.get(Servo.class, "pitchServo");
     }
-    // wanted torque = kP * velocity error, ik it sounds weird but trust even tho they not same units
+    // wanted torque = kP * velocity error
     private double calculateVoltageOutput(double wantedTorque, double currentVelocity) {
-        return R * wantedTorque + kOmega * currentVelocity;
+        return TorqueShooterConstants.R * wantedTorque + TorqueShooterConstants.kOmega * currentVelocity;
     }
 
     @Override
@@ -68,17 +67,6 @@ public class TorqueShooter extends Subsystem {
 
         switch (wantedMode) {
             case SHOOTER_ON:
-//                double error = wantedVelocity - currentVelocity;
-//                double power = ShooterConstants.kS * Math.signum(error) +
-//                        ShooterConstants.kV * wantedVelocity +
-//                        ShooterConstants.kA * wantedAcceleration +
-//                        ShooterConstants.kP * error
-//                        ;
-//
-//                if (TorqueShooterConstants.useVoltageCompensation) {
-//                    power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
-//                }
-
                 double error = wantedVelocity - currentVelocity;
                 double wantedTorque = TorqueShooterConstants.kP * error;
                 double power = calculateVoltageOutput(wantedTorque, currentVelocity) / TorqueShooterConstants.nominalVoltage;
@@ -91,14 +79,11 @@ public class TorqueShooter extends Subsystem {
                     power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
                 }
 
-                if (Math.abs(prevSetPower - power) > 0.03) {
+                if (!TorqueShooterConstants.useMotorCaching || Math.abs(prevSetPower - power) > TorqueShooterConstants.cachingThreshold) {
                     shooterMotor.setPower(power);
                     shooterMotor2.setPower(power);
                     prevSetPower = power;
                 }
-//
-//                shooterMotor.setPower(power);
-//                shooterMotor2.setPower(power);
 
                 double ticksPerRadian = (TorqueShooterConstants.PITCH_SERVO_F-TorqueShooterConstants.PITCH_SERVO_I)/(TorqueShooterConstants.PITCH_F-TorqueShooterConstants.PITCH_I);
                 double adjustedAngle = wantedPitch - TorqueShooterConstants.PITCH_I;

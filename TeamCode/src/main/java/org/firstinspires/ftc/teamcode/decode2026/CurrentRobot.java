@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandFast;
 import org.firstinspires.ftc.teamcode.decode2026.commands.ShootCommandSlow;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
+import org.firstinspires.ftc.teamcode.decode2026.subsystems.ArtifactVision;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Tilt;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.TorqueShooter;
 import org.firstinspires.ftc.teamcode.lib.robot.Robot;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
-import org.firstinspires.ftc.teamcode.decode2026.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.LEDIndicator;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.CameraLocalizer;
 import org.firstinspires.ftc.teamcode.lib.util.BulkRead;
@@ -32,7 +32,7 @@ public class CurrentRobot extends Robot {
     public final Tilt tilt;
     public final LEDIndicator ledIndicator;
     public final CameraLocalizer cameraLocalizer;
-
+    public final ArtifactVision artifactVision;
     private final ArrayList<StateMachine> commands;
     public StateMachine shootCommandFast;
     public StateMachine intakeCommand;
@@ -66,6 +66,9 @@ public class CurrentRobot extends Robot {
 
         cameraLocalizer = new CameraLocalizer(hardwareMap);
         subsystems.add(cameraLocalizer);
+
+        artifactVision = new ArtifactVision(hardwareMap);
+        subsystems.add(artifactVision);
 
         commands = new ArrayList<>();
         // this is called last to ensure everything is initialized
