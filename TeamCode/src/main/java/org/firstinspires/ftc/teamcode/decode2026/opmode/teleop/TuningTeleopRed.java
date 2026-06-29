@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
-@Disabled
 @TeleOp(name="Red Teleop Tuning", group="!")
 public class TuningTeleopRed extends OpMode {
     private TuningTeleop teleop;
