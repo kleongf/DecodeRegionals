@@ -17,9 +17,9 @@ import org.firstinspires.ftc.teamcode.decode2026.subsystems.TorqueShooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 
-@Disabled
 @Config
 @TeleOp(name="Shooter Tuner")
 public class ShooterTuner extends OpMode {
@@ -37,7 +37,7 @@ public class ShooterTuner extends OpMode {
     @Override
     public void loop() {
         shooter.openLatch();
-        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt);
+        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(),0, RobotConstants.dt, Alliance.BLUE);
         shooter.wantedVelocity = shooterSpeed;
         shooter.wantedAcceleration = 0;
         shooter.wantedPitch = Math.toRadians(shooterPitchDegrees);

@@ -37,7 +37,8 @@ public class ArtifactVision extends Subsystem {
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setCameraResolution(new Size(640, 480))
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setLiveViewContainerId(1) // idk about this one but ok
+                .enableLiveView(true)
+                // .setLiveViewContainerId(0) // idk about this one but ok
                 .build();
 
     }
