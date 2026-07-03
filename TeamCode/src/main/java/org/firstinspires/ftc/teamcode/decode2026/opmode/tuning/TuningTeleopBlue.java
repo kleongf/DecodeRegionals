@@ -1,24 +1,23 @@
-package org.firstinspires.ftc.teamcode.decode2026.opmode.teleop;
+package org.firstinspires.ftc.teamcode.decode2026.opmode.tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
-@TeleOp(name="Red Teleop Tuning", group="!")
-public class TuningTeleopRed extends OpMode {
+
+@TeleOp(name="Blue Teleop Tuning", group="!")
+public class TuningTeleopBlue extends OpMode {
     private TuningTeleop teleop;
-    private final Pose startPose = FieldConstants.RED_STANDARD_START_POSE;
+    private final Pose startPose = FieldConstants.BLUE_STANDARD_START_POSE;
 
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        teleop = new TuningTeleop(startPose, Alliance.RED, hardwareMap, telemetry, gamepad1, gamepad2);
+        teleop = new TuningTeleop(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2);
     }
 
     @Override
@@ -37,9 +36,11 @@ public class TuningTeleopRed extends OpMode {
         teleop.stop();
     }
 }
+
 /*
-134: -1
-154: -1
-90: 0
-otherwise: 0
+50, -1
+80, -2
+134, -3
+154, -3
  */
+

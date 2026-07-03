@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.decode2026.opmode.teleop;
+package org.firstinspires.ftc.teamcode.decode2026.opmode.tuning;
 
 import static com.qualcomm.robotcore.eventloop.opmode.OpMode.blackboard;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,7 +11,6 @@ import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
-import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
@@ -240,7 +238,7 @@ public class TuningTeleop {
         }
 
         ShootingConstants.ShooterOutputs shooterOutputs =
-                        sotmUtil.calculateShooterOutputsTele(drivetrain.getPose(),
+                        sotmUtil.calculateShooterOutputsTuning(drivetrain.getPose(),
                                 drivetrain.getVelocity(),
                                 drivetrain.getAcceleration(),
                                 drivetrain.getAngularVelocity(),
