@@ -7,18 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.ArtifactVision;
-import org.firstinspires.ftc.teamcode.decode2026.subsystems.LimelightArtifactVision;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.opencv.core.Point;
 
 import java.util.List;
 @TeleOp(name="Limelight Artifact Vision Test Blue Standard Start", group="?")
 public class LimelightArtifactVisionTestBlue extends OpMode {
-    private LimelightArtifactVision artifactVision;
+    private ArtifactVision artifactVision;
     private Follower follower;
     @Override
     public void init() {
-        artifactVision = new LimelightArtifactVision(hardwareMap);
+        artifactVision = new ArtifactVision(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(FieldConstants.BLUE_STANDARD_START_POSE);
     }

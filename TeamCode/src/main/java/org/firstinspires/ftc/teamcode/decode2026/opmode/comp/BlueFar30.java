@@ -201,7 +201,6 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(currentIntakePath, true);
                         })
                         .maxTime(1500)
-                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesWanted, "park"))
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.9 && !goodDetection, "gateSit"))
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.9 && goodDetection, "shootPath"))
                         .transition(new Transition(() -> robot.intake.isFull && follower.getCurrentTValue() > 0.5, "shootPath")),
@@ -233,8 +232,11 @@ public class BlueFar30 extends OpMode {
                             robot.shootCommandSlow.start();
                             numGateCyclesCompleted++;
                         })
-                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished(), "startCycle")),
+                        .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
+                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesWanted, "startCycle"))
+                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesWanted, "park")),
+                new State("park")
                         .onEnter(() -> {
                             follower.followPath(park, true);
                         })

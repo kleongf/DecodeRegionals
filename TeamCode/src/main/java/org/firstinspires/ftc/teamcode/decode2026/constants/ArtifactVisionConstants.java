@@ -1,21 +1,13 @@
 package org.firstinspires.ftc.teamcode.decode2026.constants;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Matrix;
 @Config
 public class ArtifactVisionConstants {
-    public static final double MIN_AREA = 300;
-    public static final double MAX_AREA = 20000;
     public static final double fx = 212;
     public static final double fy = 212;
     public static final double cx = 320;
     public static final double cy = 240;
-    public static final double IMAGE_WIDTH = 640;
-    public static final double IMAGE_HEIGHT = 480;
     public static final double CAMERA_HEIGHT = 8.0; // in
     public static final double FORWARD_OFFSET = 8.0; // in
     public static final double CAMERA_PITCH = Math.toRadians(15); // 35 degrees tilted down
