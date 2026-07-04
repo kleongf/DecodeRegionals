@@ -37,7 +37,7 @@ public class ShooterTuner extends OpMode {
     @Override
     public void loop() {
         shooter.openLatch();
-        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(),0, RobotConstants.dt, Alliance.BLUE);
+        ShootingConstants.ShooterOutputs shooterOutputs = sotm.calculateShooterOutputsTuning(follower.getPose(), new Vector(), new Vector(),0, RobotConstants.dt, Alliance.BLUE);
         shooter.wantedVelocity = shooterSpeed;
         shooter.wantedAcceleration = 0;
         shooter.wantedPitch = Math.toRadians(shooterPitchDegrees);

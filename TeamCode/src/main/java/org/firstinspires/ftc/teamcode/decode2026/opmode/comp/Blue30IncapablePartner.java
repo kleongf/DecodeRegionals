@@ -429,12 +429,12 @@ public class Blue30IncapablePartner extends OpMode {
         ShootingConstants.ShooterOutputs shooterOutputs;
 
         if (lockShooter) {
-            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt);
+            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.BLUE) :
-                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
+                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.BLUE) :
+                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;

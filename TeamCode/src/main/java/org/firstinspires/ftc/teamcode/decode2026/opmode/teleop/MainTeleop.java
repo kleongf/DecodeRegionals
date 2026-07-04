@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.RobotConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
-import org.firstinspires.ftc.teamcode.decode2026.constants.TurretConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
@@ -274,13 +273,13 @@ public class MainTeleop {
 
         ShootingConstants.ShooterOutputs shooterOutputs =
                 RobotConstants.useShootOnTheMove ?
-                        sotmUtil.calculateShooterOutputsTele(
+                        sotmUtil.calculateShooterOutputs(
                                 drivetrain.getPose(),
                                 drivetrain.getVelocity(),
                                 drivetrain.getAcceleration(),
                                 drivetrain.getAngularVelocity(),
                                 RobotConstants.dt, alliance) :
-                        sotmUtil.calculateShooterOutputsTele(drivetrain.getPose(),
+                        sotmUtil.calculateShooterOutputs(drivetrain.getPose(),
                                 new Vector(),
                                 new Vector(),
                                 0,

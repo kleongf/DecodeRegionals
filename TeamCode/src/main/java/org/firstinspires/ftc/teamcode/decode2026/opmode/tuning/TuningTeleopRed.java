@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
-@TeleOp(name="Red Teleop Tuning", group="!")
+@TeleOp(name="Red Teleop Tuning Offset", group="!")
 public class TuningTeleopRed extends OpMode {
     private TuningTeleop teleop;
     private final Pose startPose = FieldConstants.RED_STANDARD_START_POSE;

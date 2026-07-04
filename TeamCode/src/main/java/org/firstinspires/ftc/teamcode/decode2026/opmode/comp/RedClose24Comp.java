@@ -493,12 +493,12 @@ public class RedClose24Comp extends OpMode {
         ShootingConstants.ShooterOutputs shooterOutputs;
 
         if (lockShooter) {
-            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt);
+            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputs2(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.RED) :
-                            sotm.calculateShooterOutputs2(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
+                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.RED) :
+                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
         }
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;

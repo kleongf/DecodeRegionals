@@ -152,6 +152,16 @@ public class BlueClose24 extends OpMode {
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
+
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(57.000, 77.000),
+                                new Pose(40.000, 78.000)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-160), Math.toRadians(180))
+                .build();
     }
 
     @Override
@@ -296,12 +306,12 @@ public class BlueClose24 extends OpMode {
         ShootingConstants.ShooterOutputs shooterOutputs;
 
         if (lockShooter) {
-            shooterOutputs = sotm.calculateShooterOutputsTele(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
+            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
-                            sotm.calculateShooterOutputsTele(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.BLUE) :
-                            sotm.calculateShooterOutputsTele(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
+                            sotm.calculateShooterOutputs(follower.getPose(), follower.getVelocity(), follower.getAcceleration(), follower.getAngularVelocity(), RobotConstants.dt, Alliance.BLUE) :
+                            sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
