@@ -14,11 +14,11 @@ public class TorqueShooterConstants {
     public static double kP = 0.001;
     public static double kA = 0.0002;
     public static boolean useVoltageCompensation = true;
-    public static double PITCH_I = Math.toRadians(26);
-    public static double PITCH_F = Math.toRadians(53);
+    public static double PITCH_I = Math.toRadians(28);
+    public static double PITCH_F = Math.toRadians(48);
     public static double PITCH_SERVO_MIN = 0.81;
-    public static double PITCH_SERVO_I = 0.81;
-    public static double PITCH_SERVO_F = 0.17;
+    public static double PITCH_SERVO_I = 0.27;
+    public static double PITCH_SERVO_F = 0.81;
     public static double LATCH_CLOSED = 0.46;//0.56;
     public static double LATCH_OPEN = 0.63;
 }

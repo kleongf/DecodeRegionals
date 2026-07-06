@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
@@ -29,7 +30,6 @@ public class BlueFar30 extends OpMode {
     private boolean lockShooter = false;
     private double turretOffset = 0;
     private double speedOffset = 0;
-    private final double gateSitHeight = 44;
     private final double minY = 8;
     private final double maxY = 48;
     private final int numGateCyclesWanted = 7;
@@ -40,7 +40,6 @@ public class BlueFar30 extends OpMode {
     private SOTMUtil sotm;
     private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeGate, currentIntakePath, currentShootPath, park;
     private HeadingInterpolator fromPile;
-    private boolean goodDetection = false;
 
     public void buildPaths() {
         intakeThird = follower.pathBuilder()
@@ -80,9 +79,8 @@ public class BlueFar30 extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(50.000, 16.000),
-                                new Pose(24.000, 20.000),
-                                new Pose(14.000, 28.000),
-                                new Pose(14.000, gateSitHeight)
+                                new Pose(28.000, maxY),
+                                new Pose(10.000, maxY)
                         )
                 )
                 .setTangentHeadingInterpolation()
@@ -104,7 +102,7 @@ public class BlueFar30 extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0.5,
                         1,
-                        HeadingInterpolator.constant(Math.toRadians(175))
+                        HeadingInterpolator.constant(Math.toRadians(165))
                 )
         );
     }
@@ -135,7 +133,7 @@ public class BlueFar30 extends OpMode {
                             follower.setMaxPower(1);
                         })
                         .maxTime(500),
-                // corner
+                // third
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
@@ -145,7 +143,7 @@ public class BlueFar30 extends OpMode {
                         .maxTime(1200),
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(shootThird, true);
+                            follower.followPath(shootThird, 0.8, true);
                             // turretOffset = Math.toRadians(2);
                             speedOffset = 0;
                             // lockedPose = new Pose(50, 16, Math.toRadians(180));
@@ -160,7 +158,7 @@ public class BlueFar30 extends OpMode {
                             robot.shootCommandSlow.start();
                         })
                         .maxTime(500),
-                // third
+                // corner
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
@@ -181,12 +179,10 @@ public class BlueFar30 extends OpMode {
                 // cycles
                 new State("startCycle")
                         .onEnter(() -> {
-                            double intakeY = robot.artifactVision.findBestYPosition(follower.getPose(), minY, maxY);
+                            double intakeY = MathUtil.clamp(robot.artifactVision.findBestYPosition(follower.getPose(), 0, maxY), minY, maxY);
                             if (intakeY == -1) {
-                                goodDetection = false;
                                 currentIntakePath = intakeGate;
                             } else {
-                                goodDetection = true;
                                 currentIntakePath = follower.pathBuilder()
                                         .addPath(
                                                 new BezierCurve(
@@ -201,13 +197,8 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(currentIntakePath, true);
                         })
                         .maxTime(1500)
-                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.9 && !goodDetection, "gateSit"))
-                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.9 && goodDetection, "shootPath"))
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.9, "shootPath"))
                         .transition(new Transition(() -> robot.intake.isFull && follower.getCurrentTValue() > 0.5, "shootPath")),
-                new State("gateSit")
-                        .transition(new Transition(() -> robot.intake.isFull, "shootPath"))
-                        .minTime(500)
-                        .maxTime(3000),
                 new State("shootPath")
                         .onEnter(() -> {
                             if (robot.intake.isFull) {
@@ -264,11 +255,11 @@ public class BlueFar30 extends OpMode {
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
-        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;
+        robot.shooter.wantedVelocity = -400;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
-        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+        robot.turret.wantedAngle = Math.toRadians(180);
+        robot.turret.wantedAngularVelocity = 0;
 
         stateMachine.update();
         follower.update();

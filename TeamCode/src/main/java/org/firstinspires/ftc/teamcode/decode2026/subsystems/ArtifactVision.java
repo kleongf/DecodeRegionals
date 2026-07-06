@@ -8,11 +8,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.decode2026.constants.ArtifactVisionConstants;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Matrix;
 import org.opencv.core.Point;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 public class ArtifactVision extends Subsystem {
@@ -113,7 +115,16 @@ public class ArtifactVision extends Subsystem {
         return worldPoints;
     }
 
-    // Returns the start y of the 15-inch window that contains the most detections.
+    @FunctionalInterface
+    public interface PointWeightFn {
+        double apply(Point point, double a, double b);
+    }
+
+    private final PointWeightFn weightFunction = (p, min, max) ->
+            MathUtil.lerp(ArtifactVisionConstants.CORNER_MAX_MULTIPLIER, 1,
+                    (p.y - min) / (max - min));
+
+    // Returns the start y of the window that contains the most detections.
     // Each detection's y is used as a candidate window start; returns -1 if none found.
     public double findBestYPosition(Pose robotPose, double minY, double maxY) {
         List<Point> worldPoints = getArtifactWorldPoints(robotPose);
@@ -125,23 +136,52 @@ public class ArtifactVision extends Subsystem {
             return -1;
         }
 
-        final double WINDOW = 15.0;
         double bestY = -1;
-        int bestCount = 0;
+        double bestScore = -1;
 
         for (Point candidate : filtered) {
-            // Clamp window start so the window fits within [minY, maxY].
             final double windowStart = Math.min(candidate.y, maxY);
-            int count = (int) filtered.stream()
-                    .filter(p -> p.y >= windowStart && p.y <= windowStart + WINDOW)
-                    .count();
+            double score = filtered.stream()
+                    .filter(p -> p.y >= windowStart && p.y <= windowStart + ArtifactVisionConstants.WINDOW_SIZE)
+                    .mapToDouble(p -> weightFunction.apply(p, minY, maxY))
+                    .sum();
 
-            if (count > bestCount) {
-                bestCount = count;
+            if (score > bestScore) {
+                bestScore = score;
                 bestY = windowStart;
             }
         }
 
         return bestY;
     }
+
+//    public double findBestYPosition(Pose robotPose, double minY, double maxY) {
+//        List<Point> worldPoints = getArtifactWorldPoints(robotPose);
+//        List<Point> filtered = worldPoints.stream()
+//                .filter(p -> p.y >= minY && p.y <= maxY)
+//                .collect(Collectors.toList());
+//
+//        if (filtered.isEmpty()) {
+//            return -1;
+//        }
+//
+//        final double WINDOW = 15.0;
+//        double bestY = -1;
+//        int bestCount = 0;
+//
+//        for (Point candidate : filtered) {
+//            // Clamp window start so the window fits within [minY, maxY].
+//            final double windowStart = Math.min(candidate.y, maxY);
+//            int count = (int) filtered.stream()
+//                    .filter(p -> p.y >= windowStart && p.y <= windowStart + WINDOW)
+//                    .count();
+//
+//            if (count > bestCount) {
+//                bestCount = count;
+//                bestY = windowStart;
+//            }
+//        }
+//
+//        return bestY;
+//    }
 }

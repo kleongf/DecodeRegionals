@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.decode2026.constants;
 
 import com.acmerobotics.dashboard.config.Config;
+
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Matrix;
 @Config
 public class ArtifactVisionConstants {
@@ -8,9 +10,11 @@ public class ArtifactVisionConstants {
     public static final double fy = 212;
     public static final double cx = 320;
     public static final double cy = 240;
-    public static final double CAMERA_HEIGHT = 8.0; // in
+    public static final double CAMERA_HEIGHT = MathUtil.mmToIn(237); // in
     public static final double FORWARD_OFFSET = 8.0; // in
-    public static final double CAMERA_PITCH = Math.toRadians(15); // 35 degrees tilted down
+    public static final double CAMERA_PITCH = Math.toRadians(12); // 12 degrees tilted down
+    public static final double CORNER_MAX_MULTIPLIER = 1.5;
+    public static final double WINDOW_SIZE = 15.0; // intake width (roughly)
     // update this
     public static final Matrix cameraMatrix = new Matrix(
             new double[][] {
