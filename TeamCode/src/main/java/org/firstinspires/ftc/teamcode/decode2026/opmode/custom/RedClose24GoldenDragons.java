@@ -5,7 +5,6 @@ import static java.lang.Thread.sleep;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -28,8 +27,8 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
 // last one is going to be a pile cycle, it will always be a pile cycle
 
-@Autonomous(name="Red Close 24 Crow Force V2", group="!")
-public class RedClose24Overcharged extends OpMode {
+@Autonomous(name="Red Close 24 Golden Dragons", group="!")
+public class RedClose24GoldenDragons extends OpMode {
     private boolean openGate = true;
     private Pose lockedPose = new Pose();
     private boolean lockShooter = true;
@@ -39,7 +38,7 @@ public class RedClose24Overcharged extends OpMode {
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakePile, shootPile, park;
     private PathChain shootFirstOpenGate, intakeSecondOpenGate, shootSecondOpenGate;
 
     // important: to flip any pose, use Flipper.flip(Pose)
@@ -98,7 +97,7 @@ public class RedClose24Overcharged extends OpMode {
                                 Flipper.flip(new Pose(32.00, 108.000)),
                                 Flipper.flip(new Pose(22.5, 82.000)),
                                 Flipper.flip(new Pose(22.5, 72.000)),
-                                Flipper.flip(new Pose(24.5, 62.000))
+                                Flipper.flip(new Pose(24.5, 62.000+.5))
                         )
                 ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                 .build();
@@ -257,6 +256,16 @@ public class RedClose24Overcharged extends OpMode {
                         HeadingInterpolator.linear(Flipper.flipAngle(Math.toRadians(-130)), Flipper.flipAngle(Math.toRadians(-90)))
                 )
         );
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                Flipper.flip(new Pose(57.000, 77.000)),
+                                Flipper.flip(new Pose(57, 60))
+                        )
+                )
+                .setConstantHeadingInterpolation(0)
+                .setReversed()
+                .build();
 
 //        intakePile = follower.pathBuilder()
 //                .addPath(
@@ -371,6 +380,7 @@ public class RedClose24Overcharged extends OpMode {
                         .maxTime(800),
                 new State()
                         .onEnter(() -> {
+                            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
                             follower.followPath(shootSecond, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -502,7 +512,9 @@ public class RedClose24Overcharged extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished()))
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                new State()
+                        .maxTime(300)
         );
 
         try {
