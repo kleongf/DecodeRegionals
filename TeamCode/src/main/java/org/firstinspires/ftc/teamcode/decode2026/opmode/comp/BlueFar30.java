@@ -10,6 +10,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.decode2026.CurrentRobot;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
@@ -32,14 +33,15 @@ public class BlueFar30 extends OpMode {
     private double speedOffset = 0;
     private final double minY = 8;
     private final double maxY = 48;
-    private final int numGateCyclesWanted = 7;
-    private int numGateCyclesCompleted = 0;
+    private final int numCyclesWanted = 7;
+    private int numCyclesCompleted = 0;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeGate, currentIntakePath, currentShootPath, park;
     private HeadingInterpolator fromPile;
+    private ElapsedTime elapsedTime;
 
     public void buildPaths() {
         intakeThird = follower.pathBuilder()
@@ -88,9 +90,9 @@ public class BlueFar30 extends OpMode {
 
         park = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(50, 16), new Pose(30, 12))
+                        new BezierLine(new Pose(50, 16), new Pose(48, 24))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(135))
                 .build();
 
         fromPile = HeadingInterpolator.piecewise(
@@ -114,6 +116,7 @@ public class BlueFar30 extends OpMode {
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
+        elapsedTime = new ElapsedTime();
         turretOffset = Math.toRadians(0);
         speedOffset = 0;
         buildPaths();
@@ -121,6 +124,7 @@ public class BlueFar30 extends OpMode {
         stateMachine = new StateMachine(
                 // preload
                 new State()
+                        .onEnter(() -> elapsedTime.reset())
                         .maxTime(3000) // in case it takes too long.
                         .transition(new Transition(() -> robot.shooter.atTarget(30) && !follower.isBusy())),
                 new State()
@@ -216,17 +220,18 @@ public class BlueFar30 extends OpMode {
                             follower.followPath(currentShootPath, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
+                // maybe take away, will give us extra 0.7s
                 new State()
                         .maxTime(100),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
-                            numGateCyclesCompleted++;
+                            numCyclesCompleted++;
                         })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
-                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesWanted, "startCycle"))
-                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesWanted, "park")),
+                        .transition(new Transition(() -> elapsedTime.seconds() > 27 || numCyclesCompleted >= numCyclesWanted, "park"))
+                        .transition(new Transition(() -> elapsedTime.seconds() <= 27 && numCyclesCompleted < numCyclesWanted, "startCycle")),
                 new State("park")
                         .onEnter(() -> {
                             follower.followPath(park, true);
