@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 
-@Autonomous(name="Blue Far 30 Vision + park", group="!")
+@Autonomous(name="Blue Far 30/33 Vision + park", group="!")
 public class BlueFar30 extends OpMode {
     private Pose lockedPose = new Pose();
     private boolean lockShooter = false;
@@ -33,7 +33,7 @@ public class BlueFar30 extends OpMode {
     private double speedOffset = 0;
     private final double minY = 8;
     private final double maxY = 48;
-    private final int numCyclesWanted = 7;
+    private final int numCyclesWanted = 8;
     private int numCyclesCompleted = 0;
     private Follower follower;
     private StateMachine stateMachine;
