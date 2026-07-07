@@ -17,7 +17,7 @@ public class TurretConstants {
     public static double gamma = 0;
     public static double encoderGearRatio = 50/42d;
     public static double encoderOffsetDegrees = -97.7;
-    public static double encoderMaxVoltage = 3.241;
+    public static double encoderMaxVoltage = 3.242;
     public static double encoderMinVoltage = 0.00;
     public static boolean useExternalEncoder = false;
     public static double nominalVoltage = 12.0;
