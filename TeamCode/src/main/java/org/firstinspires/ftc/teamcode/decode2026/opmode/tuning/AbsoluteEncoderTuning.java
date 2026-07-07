@@ -15,11 +15,11 @@ import org.firstinspires.ftc.teamcode.decode2026.subsystems.Turret;
 public class AbsoluteEncoderTuning extends OpMode {
     // TODO: i also have no idea if it's reversed or not. might need to negate to calculate position
     public static double encoderOffsetDegrees = TurretConstants.encoderOffsetDegrees;
-    public static double minVoltage = 0.02;
-    public static double maxVoltage = 3.272; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
+    public static double minVoltage = TurretConstants.encoderMinVoltage;
+    public static double maxVoltage = TurretConstants.encoderMaxVoltage; // my understanding: somewhere in the vicinity of 3.2 and 3.3 but depends. is 3.24
     public static boolean isReversed = false;
     private Turret turret;
-    private double ticksPerRevolution = 1381; // 383.6*5
+    private double ticksPerRevolution = TurretConstants.ticksPerRevolution; // 383.6*5
     private double ticksPerRadian = ticksPerRevolution / (2 * Math.PI);
     private double degreesPerTick = 360d / ticksPerRevolution;
     private double prevPos = 0;

@@ -32,7 +32,7 @@ public class BlueFar30 extends OpMode {
     private double turretOffset = 0;
     private double speedOffset = 0;
     private final double minY = 8;
-    private final double maxY = 48;
+    private final double maxY = 44;
     private final int numCyclesWanted = 8;
     private int numCyclesCompleted = 0;
     private Follower follower;
@@ -71,17 +71,17 @@ public class BlueFar30 extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        // this one is different: 160 degrees, this is so we can see stuff better
+        // this one is different: 165 degrees, this is so we can see stuff better
         shootCorner = follower.pathBuilder()
                 .addPath(new BezierLine(new Pose(9, 8), new Pose(50, 16)))
-                .setConstantHeadingInterpolation(Math.toRadians(160))
+                .setConstantHeadingInterpolation(Math.toRadians(165))
                 .build();
 
         intakeGate = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
                                 new Pose(50.000, 16.000),
-                                new Pose(28.000, maxY),
+                                new Pose(32.000, maxY),
                                 new Pose(10.000, maxY)
                         )
                 )
@@ -147,7 +147,7 @@ public class BlueFar30 extends OpMode {
                         .maxTime(1200),
                 new State()
                         .onEnter(() -> {
-                            follower.followPath(shootThird, 0.8, true);
+                            follower.followPath(shootThird, 0.85, true);
                             // turretOffset = Math.toRadians(2);
                             speedOffset = 0;
                             // lockedPose = new Pose(50, 16, Math.toRadians(180));

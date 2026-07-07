@@ -41,7 +41,7 @@ public class RedClose24 extends OpMode {
     private Intake.DetectionState prevState;
     private PathChain shootPreload, intakeFirst, shootFirst, shootFirstOpenGate, intakeSecondOpenGate, intakeSecond, shootSecond, shootSecondOpenGate, intakeGate, shootGate, park;
     private int numGateCyclesCompleted = 0;
-    private final int numGateCyclesTarget = 5;
+    private final int numGateCyclesWanted = 5;
     private boolean openGate = true;
 
     // important: to flip any pose, use Flipper.flip(Pose)
@@ -132,7 +132,7 @@ public class RedClose24 extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0.25,
                         1,
-                        HeadingInterpolator.constant(FieldConstants.RED_GATE_AUTO_POSE_24.getHeading())
+                        HeadingInterpolator.constant(FieldConstants.RED_GATE_AUTO_POSE.getHeading())
                 )
         );
 
@@ -140,7 +140,7 @@ public class RedClose24 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(57.000, 77.000)),
-                                FieldConstants.RED_GATE_AUTO_POSE_24
+                                FieldConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -150,7 +150,7 @@ public class RedClose24 extends OpMode {
         shootGate = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.RED_GATE_AUTO_POSE_24,
+                                FieldConstants.RED_GATE_AUTO_POSE,
                                 Flipper.flip(new Pose(56, 75))
                         )
                 )
@@ -276,8 +276,8 @@ public class RedClose24 extends OpMode {
                         })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
-                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesTarget, "gateCycleStart"))
-                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesTarget, "park")),
+                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesWanted, "gateCycleStart"))
+                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesWanted, "park")),
                 // park
                 new State("park")
                         .onEnter(() -> follower.followPath(park, true))

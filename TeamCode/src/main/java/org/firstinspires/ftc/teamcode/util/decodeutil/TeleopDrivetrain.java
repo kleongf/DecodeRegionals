@@ -219,12 +219,12 @@ public class TeleopDrivetrain {
             return new double[] {outX, outY, outHeading};
         } else if (gateHeadingLock) {
             // added angle
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading() : FieldConstants.RED_GATE_AUTO_POSE_24.getHeading();
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading() : FieldConstants.RED_GATE_AUTO_POSE.getHeading();
             //targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE_24.getHeading()+Math.toRadians(3);
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);
 
-            double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getY() : FieldConstants.RED_GATE_AUTO_POSE_24.getY();
+            double lockedY = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getY() : FieldConstants.RED_GATE_AUTO_POSE.getY();
             double yError = lockedY - follower.getPose().getY();
             yController.updateError(yError);
             // fixed x and y bug

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.decode2026.constants.ShootingConstants;
 import org.firstinspires.ftc.teamcode.decode2026.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.decodeutil.Alliance;
+import org.firstinspires.ftc.teamcode.util.decodeutil.MathUtil;
 import org.firstinspires.ftc.teamcode.util.decodeutil.SOTMUtil;
 import org.firstinspires.ftc.teamcode.util.fsm.State;
 import org.firstinspires.ftc.teamcode.util.fsm.StateMachine;
@@ -31,14 +32,13 @@ public class Blue30IncapablePartner extends OpMode {
     private double turretOffset = 0;
     private double speedOffset = 0;
     private double minY = 8;
-    private double maxY = 48;
+    private double maxY = 44;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private PathChain intakeCorner, shootCorner, intakeThird, shootThird, intakeSecond, shootSecond, intakeFirst, shootFirst, intakeGate1, shootGate1, intakeGate2, shootGate2, intakePilePath, shootPilePath, park;
-    private HeadingInterpolator toPile, fromPile;
-    private boolean goodDetection = false;
+    private HeadingInterpolator fromPile;
     private int numPileCyclesWanted = 3;
     private int numPileCyclesCompleted = 0;
 
@@ -80,7 +80,7 @@ public class Blue30IncapablePartner extends OpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(50.000, 16.000),
-                                new Pose(40.000, 63.000),
+                                new Pose(40.000, 53.000),
                                 new Pose(12.000, 63.000)
                         )
                 )
@@ -115,6 +115,7 @@ public class Blue30IncapablePartner extends OpMode {
                         )
                 )
                 .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
@@ -126,7 +127,7 @@ public class Blue30IncapablePartner extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0.25,
                         1,
-                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading())
+                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 )
         );
 
@@ -134,7 +135,7 @@ public class Blue30IncapablePartner extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(57.000, 76.000),
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24
+                                FieldConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -144,7 +145,7 @@ public class Blue30IncapablePartner extends OpMode {
         shootGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
+                                FieldConstants.BLUE_GATE_AUTO_POSE,
                                 new Pose(57, 76)
                         )
                 )
@@ -156,7 +157,7 @@ public class Blue30IncapablePartner extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(57.000, 76.000),
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24
+                                FieldConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -166,13 +167,27 @@ public class Blue30IncapablePartner extends OpMode {
         shootGate2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_24,
+                                FieldConstants.BLUE_GATE_AUTO_POSE,
                                 new Pose(50, 16)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
+
+        fromPile = HeadingInterpolator.piecewise(
+                new HeadingInterpolator.PiecewiseNode(
+                        0,
+                        0.5,
+                        HeadingInterpolator.tangent.reverse()
+                ),
+                new HeadingInterpolator.PiecewiseNode(
+                        0.5,
+                        1,
+                        HeadingInterpolator.constant(Math.toRadians(165))
+                )
+        );
+
         park = follower.pathBuilder()
                 .addPath(
                         new BezierLine(new Pose(50, 16), new Pose(30, 12))
@@ -272,7 +287,7 @@ public class Blue30IncapablePartner extends OpMode {
                             robot.intakeCommand.start();
                             follower.followPath(intakeSecond, true);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
+                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.95)),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootSecond, true);
@@ -353,9 +368,8 @@ public class Blue30IncapablePartner extends OpMode {
                 // 3 pile cycles
                 new State("startCycle")
                         .onEnter(() -> {
-                            double intakeY = robot.artifactVision.findBestYPosition(follower.getPose(), minY, maxY);
+                            double intakeY = MathUtil.clamp(robot.artifactVision.findBestYPosition(follower.getPose(), 0, maxY), minY, maxY);
                             if (intakeY == -1) {
-                                goodDetection = false;
                                 intakePilePath = follower.pathBuilder()
                                         .addPath(
                                                 new BezierCurve(
@@ -367,7 +381,6 @@ public class Blue30IncapablePartner extends OpMode {
                                         .setTangentHeadingInterpolation()
                                         .build();
                             } else {
-                                goodDetection = true;
                                 intakePilePath = follower.pathBuilder()
                                         .addPath(
                                                 new BezierCurve(
@@ -437,11 +450,16 @@ public class Blue30IncapablePartner extends OpMode {
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
-        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;
+//        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;
+//        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
+//        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+//        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
+//        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+        robot.shooter.wantedVelocity = -400;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
-        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+        robot.turret.wantedAngle = Math.toRadians(180);
+        robot.turret.wantedAngularVelocity = 0;
 
         stateMachine.update();
         follower.update();

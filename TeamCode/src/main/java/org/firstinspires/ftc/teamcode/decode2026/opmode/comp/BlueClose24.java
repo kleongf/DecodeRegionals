@@ -40,7 +40,7 @@ public class BlueClose24 extends OpMode {
     private Intake.DetectionState prevState;
     private PathChain shootPreload, intakeFirst, shootFirst, shootFirstOpenGate, intakeSecondOpenGate, intakeSecond, shootSecond, shootSecondOpenGate, intakeGate, shootGate, park;
     private int numGateCyclesCompleted = 0;
-    private final int numGateCyclesTarget = 5;
+    private final int numGateCyclesWanted = 5;
     private boolean openGate = true;
 
     // important: to flip any pose, use Flipper.flip(Pose)
@@ -127,7 +127,7 @@ public class BlueClose24 extends OpMode {
                 new HeadingInterpolator.PiecewiseNode(
                         0.25,
                         1,
-                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE_27.getHeading())
+                        HeadingInterpolator.constant(FieldConstants.BLUE_GATE_AUTO_POSE.getHeading())
                 )
         );
 
@@ -135,7 +135,7 @@ public class BlueClose24 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(57.000, 76.000),
-                                FieldConstants.BLUE_GATE_AUTO_POSE_27
+                                FieldConstants.BLUE_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
@@ -145,7 +145,7 @@ public class BlueClose24 extends OpMode {
         shootGate = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                FieldConstants.BLUE_GATE_AUTO_POSE_27,
+                                FieldConstants.BLUE_GATE_AUTO_POSE,
                                 new Pose(57, 76)
                         )
                 )
@@ -207,7 +207,6 @@ public class BlueClose24 extends OpMode {
                             if (openGate) {
                                 lockShooter = true;
                                 lockedPose = new Pose(57,76, Math.toRadians(-130.37));
-                                turretOffset = Math.toRadians(0);
                             }
                             else{
                                 lockShooter = false;
@@ -232,7 +231,6 @@ public class BlueClose24 extends OpMode {
                         .onEnter(() -> {
                             lockShooter = true;
                             lockedPose = new Pose(57,76, Math.toRadians(-160));
-                            turretOffset = Math.toRadians(3);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -271,8 +269,8 @@ public class BlueClose24 extends OpMode {
                         })
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
-                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesTarget, "gateCycleStart"))
-                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesTarget, "park")),
+                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesWanted, "gateCycleStart"))
+                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesWanted, "park")),
                 // park
                 new State("park")
                         .onEnter(() -> follower.followPath(park, true))
