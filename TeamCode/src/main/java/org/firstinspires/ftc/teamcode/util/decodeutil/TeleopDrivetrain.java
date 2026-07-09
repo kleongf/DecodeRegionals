@@ -229,12 +229,19 @@ public class TeleopDrivetrain {
             yController.updateError(yError);
             // fixed x and y bug
             double outX = x * DrivetrainConstants.xSpeed;
-            double outY = -yController.run(); // ok we drift too much for it to work
+
+            double controllerOutput = MathUtil.clamp(-yController.run(), -0.5, 0.5);
+            double fadeScaling = 1.2;
+            double fade = MathUtil.clamp(1 - (Math.abs(y) * DrivetrainConstants.ySpeed) * fadeScaling, 0, 1);
+
+            double outY = MathUtil.clamp(y * DrivetrainConstants.ySpeed + fade * controllerOutput, -1, 1);
             double outHeading = headingPIDFController.run();
             // wait i think that x and y outputs are actually reversed,
             // since from human pov, x is sideways, but from coord sys,
             // that's actually y error that.
-            outY = y * DrivetrainConstants.ySpeed;
+            // outY = y * DrivetrainConstants.ySpeed;
+
+            // on red this will need to be retested but it should work
 
             if (alliance == Alliance.RED) {
                 return new double[] {outX, outY, outHeading};
