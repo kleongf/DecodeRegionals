@@ -11,8 +11,8 @@ public class ShooterConstants {
     public static double kP = 0.01;
     public static double kA = 0.0005;
     public static boolean useVoltageCompensation = true;
-    public static double PITCH_I = Math.toRadians(26);
-    public static double PITCH_F = Math.toRadians(53);
+    public static double PITCH_I = Math.toRadians(31);
+    public static double PITCH_F = Math.toRadians(61);
     public static double PITCH_SERVO_MIN = TorqueShooterConstants.PITCH_SERVO_MIN;
     public static double PITCH_SERVO_I = TorqueShooterConstants.PITCH_SERVO_I;
     public static double PITCH_SERVO_F = TorqueShooterConstants.PITCH_SERVO_F;

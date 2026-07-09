@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.decode2026.opmode.comp;
 
 import static java.lang.Thread.sleep;
+
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -44,6 +46,19 @@ public class BlueFar30 extends OpMode {
     private ElapsedTime elapsedTime;
 
     public void buildPaths() {
+        fromPile = HeadingInterpolator.piecewise(
+                new HeadingInterpolator.PiecewiseNode(
+                        0,
+                        0.3,
+                        HeadingInterpolator.tangent.reverse()
+                ),
+                new HeadingInterpolator.PiecewiseNode(
+                        0.3,
+                        1,
+                        HeadingInterpolator.constant(Math.toRadians(165))
+                )
+        );
+
         intakeThird = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -74,7 +89,7 @@ public class BlueFar30 extends OpMode {
         // this one is different: 165 degrees, this is so we can see stuff better
         shootCorner = follower.pathBuilder()
                 .addPath(new BezierLine(new Pose(9, 8), new Pose(50, 16)))
-                .setConstantHeadingInterpolation(Math.toRadians(165))
+                .setHeadingInterpolation(fromPile)
                 .build();
 
         intakeGate = follower.pathBuilder()
@@ -94,19 +109,6 @@ public class BlueFar30 extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(135))
                 .build();
-
-        fromPile = HeadingInterpolator.piecewise(
-                new HeadingInterpolator.PiecewiseNode(
-                        0,
-                        0.5,
-                        HeadingInterpolator.tangent.reverse()
-                ),
-                new HeadingInterpolator.PiecewiseNode(
-                        0.5,
-                        1,
-                        HeadingInterpolator.constant(Math.toRadians(165))
-                )
-        );
     }
 
     @Override
@@ -116,9 +118,11 @@ public class BlueFar30 extends OpMode {
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
+        lockedPose = FieldConstants.BLUE_FAR_START_AUTO_SIDESPIKE_POSE;
         elapsedTime = new ElapsedTime();
-        turretOffset = Math.toRadians(0);
+        turretOffset = Math.toRadians(-0.5);
         speedOffset = 0;
+        telemetry = new MultipleTelemetry(telemetry);
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -129,14 +133,10 @@ public class BlueFar30 extends OpMode {
                         .transition(new Transition(() -> robot.shooter.atTarget(30) && !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.shootCommandSlow.start();
-                            } else {
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                             follower.setMaxPower(1);
                         })
-                        .maxTime(500),
+                        .maxTime(800),
                 // third
                 new State()
                         .onEnter(() -> {
@@ -149,7 +149,8 @@ public class BlueFar30 extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootThird, 0.85, true);
                             // turretOffset = Math.toRadians(2);
-                            speedOffset = 0;
+                            // speedOffset = 0;
+                            // lockedPose = new Pose(50.000, 12.000);
                             // lockedPose = new Pose(50, 16, Math.toRadians(180));
                             lockShooter = false;
                         })
@@ -161,7 +162,7 @@ public class BlueFar30 extends OpMode {
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
                         })
-                        .maxTime(500),
+                        .maxTime(800),
                 // corner
                 new State()
                         .onEnter(() -> {
@@ -171,7 +172,12 @@ public class BlueFar30 extends OpMode {
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),
                 new State()
-                        .onEnter(() -> follower.followPath(shootCorner, true))
+                        .onEnter(() -> {
+                            follower.followPath(shootCorner, true);
+                            lockShooter = true;
+                            lockedPose = new Pose(50.000, 16.000, Math.toRadians(165));
+                            turretOffset = Math.toRadians(0);
+                        })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .maxTime(100),
@@ -179,13 +185,14 @@ public class BlueFar30 extends OpMode {
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
                         })
-                        .maxTime(500),
+                        .maxTime(800),
                 // cycles
                 new State("startCycle")
                         .onEnter(() -> {
                             double intakeY = MathUtil.clamp(robot.artifactVision.findBestYPosition(follower.getPose(), 0, maxY), minY, maxY);
                             if (intakeY == -1) {
                                 currentIntakePath = intakeGate;
+                                robot.ledIndicator.indicateRelocalization();
                             } else {
                                 currentIntakePath = follower.pathBuilder()
                                         .addPath(
@@ -205,9 +212,10 @@ public class BlueFar30 extends OpMode {
                         .transition(new Transition(() -> robot.intake.isFull && follower.getCurrentTValue() > 0.5, "shootPath")),
                 new State("shootPath")
                         .onEnter(() -> {
-                            if (robot.intake.isFull) {
-                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
-                            }
+                            // hopefully this will make it more consistent, so that it is always off before shooting, and we don't accidentally accelerate ball
+//                            if (robot.intake.isFull) {
+//                                robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+//                            }
                             currentShootPath = follower.pathBuilder()
                                     .addPath(
                                             new BezierLine(
@@ -216,6 +224,7 @@ public class BlueFar30 extends OpMode {
                                             )
                                     )
                                     .setHeadingInterpolation(fromPile)
+                                    .addParametricCallback(0.4, () -> robot.intake.wantedMode = Intake.Mode.INTAKE_OFF)
                                     .build();
                             follower.followPath(currentShootPath, true);
                         })
@@ -230,8 +239,9 @@ public class BlueFar30 extends OpMode {
                         })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
-                        .transition(new Transition(() -> elapsedTime.seconds() > 27 || numCyclesCompleted >= numCyclesWanted, "park"))
-                        .transition(new Transition(() -> elapsedTime.seconds() <= 27 && numCyclesCompleted < numCyclesWanted, "startCycle")),
+                        // .onEnter(() -> robot.intake.wantedMode = Intake.Mode.INTAKE_FAST)
+                        .transition(new Transition(() -> elapsedTime.seconds() > 27.5 || numCyclesCompleted >= numCyclesWanted, "park"))
+                        .transition(new Transition(() -> elapsedTime.seconds() <= 27.5 && numCyclesCompleted < numCyclesWanted, "startCycle")),
                 new State("park")
                         .onEnter(() -> {
                             follower.followPath(park, true);
@@ -252,7 +262,8 @@ public class BlueFar30 extends OpMode {
         ShootingConstants.ShooterOutputs shooterOutputs;
 
         if (lockShooter) {
-            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
+            // shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
+            shooterOutputs = sotm.calculateShooterOutputs(new Pose(lockedPose.getX(), lockedPose.getY(), follower.getHeading()), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
@@ -260,17 +271,24 @@ public class BlueFar30 extends OpMode {
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
-        robot.shooter.wantedVelocity = -400;
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = Math.toRadians(180);
-        robot.turret.wantedAngularVelocity = 0;
+        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
+        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+
+//        if (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && robot.shootCommandSlow.isFinished()) {
+//            robot.intake.wantedMode = Intake.Mode.INTAKE_OFF;
+//        }
 
         stateMachine.update();
         follower.update();
         robot.update();
         blackboard.put(FieldConstants.END_POSE_KEY, follower.getPose());
-        // telemetry.update();
+//        telemetry.addData("flywheel speed", robot.shooter.currentVelocity);
+//        telemetry.addData("target flywheel speed", robot.shooter.wantedVelocity);
+        telemetry.addData("speed error", robot.shooter.wantedVelocity - robot.shooter.currentVelocity);
+        telemetry.update();
     }
 
     @Override

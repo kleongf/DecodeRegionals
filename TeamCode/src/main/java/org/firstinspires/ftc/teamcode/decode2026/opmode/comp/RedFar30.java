@@ -75,7 +75,7 @@ public class RedFar30 extends OpMode {
         // this one is different: 165 degrees, this is so we can see stuff better
         shootCorner = follower.pathBuilder()
                 .addPath(new BezierLine(Flipper.flip(new Pose(9, 8)), Flipper.flip(new Pose(50, 16))))
-                .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(165)))
+                .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(170)))
                 .build();
 
         intakeGate = follower.pathBuilder()
@@ -99,13 +99,13 @@ public class RedFar30 extends OpMode {
         fromPile = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
                         0,
-                        0.5,
+                        0.2,
                         HeadingInterpolator.tangent.reverse()
                 ),
                 new HeadingInterpolator.PiecewiseNode(
-                        0.5,
+                        0.2,
                         1,
-                        HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(165)))
+                        HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(170)))
                 )
         );
     }
@@ -117,9 +117,10 @@ public class RedFar30 extends OpMode {
         follower.usePredictiveBraking = true;
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.RED_GOAL_POSE);
+        lockedPose = FieldConstants.RED_FAR_START_AUTO_SIDESPIKE_POSE;
         elapsedTime = new ElapsedTime();
-        turretOffset = Math.toRadians(0);
-        speedOffset = 0;
+        turretOffset = Math.toRadians(-2);
+        speedOffset = 10;
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -137,7 +138,7 @@ public class RedFar30 extends OpMode {
                             }
                             follower.setMaxPower(1);
                         })
-                        .maxTime(500),
+                        .maxTime(800),
                 // third
                 new State()
                         .onEnter(() -> {
@@ -150,7 +151,6 @@ public class RedFar30 extends OpMode {
                         .onEnter(() -> {
                             follower.followPath(shootThird, 0.85, true);
                             // turretOffset = Math.toRadians(2);
-                            speedOffset = 0;
                             // lockedPose = new Pose(50, 16, Math.toRadians(180));
                             lockShooter = false;
                         })
@@ -162,7 +162,7 @@ public class RedFar30 extends OpMode {
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
                         })
-                        .maxTime(500),
+                        .maxTime(800),
                 // corner
                 new State()
                         .onEnter(() -> {
@@ -172,7 +172,11 @@ public class RedFar30 extends OpMode {
                         .transition(new Transition(() -> follower.atParametricEnd()))
                         .maxTime(1200),
                 new State()
-                        .onEnter(() -> follower.followPath(shootCorner, true))
+                        .onEnter(() -> {
+                            follower.followPath(shootCorner, true);
+                            lockShooter = true;
+                            lockedPose = Flipper.flip(new Pose(50.000, 16.000, Math.toRadians(170)));
+                        })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .maxTime(100),
@@ -180,7 +184,7 @@ public class RedFar30 extends OpMode {
                         .onEnter(() -> {
                             robot.shootCommandSlow.start();
                         })
-                        .maxTime(500),
+                        .maxTime(800),
                 // cycles
                 new State("startCycle")
                         .onEnter(() -> {
@@ -217,6 +221,7 @@ public class RedFar30 extends OpMode {
                                             )
                                     )
                                     .setHeadingInterpolation(fromPile)
+                                    .addParametricCallback(0.4, () -> robot.intake.wantedMode = Intake.Mode.INTAKE_OFF)
                                     .build();
                             follower.followPath(currentShootPath, true);
                         })
@@ -231,8 +236,8 @@ public class RedFar30 extends OpMode {
                         })
                         .transition(new Transition(() -> robot.shootCommandSlow.isFinished())),
                 new State()
-                        .transition(new Transition(() -> elapsedTime.seconds() > 27 || numCyclesCompleted >= numCyclesWanted, "park"))
-                        .transition(new Transition(() -> elapsedTime.seconds() <= 27 && numCyclesCompleted < numCyclesWanted, "startCycle")),
+                        .transition(new Transition(() -> elapsedTime.seconds() > 27.5 || numCyclesCompleted >= numCyclesWanted, "park"))
+                        .transition(new Transition(() -> elapsedTime.seconds() <= 27.5 && numCyclesCompleted < numCyclesWanted, "startCycle")),
                 new State("park")
                         .onEnter(() -> {
                             follower.followPath(park, true);
@@ -253,7 +258,8 @@ public class RedFar30 extends OpMode {
         ShootingConstants.ShooterOutputs shooterOutputs;
 
         if (lockShooter) {
-            shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
+            // shooterOutputs = sotm.calculateShooterOutputs(lockedPose, new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
+            shooterOutputs = sotm.calculateShooterOutputs(new Pose(lockedPose.getX(), lockedPose.getY(), follower.getHeading()), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
         } else {
             shooterOutputs =
                     RobotConstants.useShootOnTheMove ?
@@ -261,11 +267,11 @@ public class RedFar30 extends OpMode {
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
         }
 
-        robot.shooter.wantedVelocity = -400;
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = Math.toRadians(180);
-        robot.turret.wantedAngularVelocity = 0;
+        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
+        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
         stateMachine.update();
         follower.update();

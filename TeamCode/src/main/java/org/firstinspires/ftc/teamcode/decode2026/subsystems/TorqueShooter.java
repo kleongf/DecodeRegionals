@@ -39,6 +39,7 @@ public class TorqueShooter extends Subsystem {
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         shooterMotor2 = hardwareMap.get(DcMotorEx.class, "shooterMotor2");
+        shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -77,6 +78,10 @@ public class TorqueShooter extends Subsystem {
 
                 if (TorqueShooterConstants.useVoltageCompensation) {
                     power *= (TorqueShooterConstants.nominalVoltage / voltageSensor.getVoltage());
+                }
+                // crazy
+                if (Math.signum(error)  > 300) {
+                    power = 1 * Math.signum(error);
                 }
 
                 if (!TorqueShooterConstants.useMotorCaching || Math.abs(prevSetPower - power) > TorqueShooterConstants.cachingThreshold) {

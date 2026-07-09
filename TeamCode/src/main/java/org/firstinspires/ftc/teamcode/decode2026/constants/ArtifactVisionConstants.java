@@ -13,7 +13,7 @@ public class ArtifactVisionConstants {
     public static final double CAMERA_HEIGHT = MathUtil.mmToIn(237); // in
     public static final double FORWARD_OFFSET = 8.0; // in
     public static final double CAMERA_PITCH = Math.toRadians(12); // 12 degrees tilted down
-    public static final double CORNER_MAX_MULTIPLIER = 1.5;
+    public static final double CORNER_MAX_MULTIPLIER = 1.7;
     public static final double WINDOW_SIZE = 15.0; // intake width (roughly)
     // update this
     public static final Matrix cameraMatrix = new Matrix(

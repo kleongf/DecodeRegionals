@@ -242,12 +242,16 @@ public class TuningTeleop {
                                 drivetrain.getVelocity(),
                                 drivetrain.getAcceleration(),
                                 drivetrain.getAngularVelocity(),
-                                RobotConstants.dt, Alliance.BLUE);
+                                RobotConstants.dt, alliance);
 
         robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
+                // wheelSpeed;
+                // shooterOutputs.wheelVelocity;
         // wheelSpeed
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+                // Math.toRadians(hoodAngle);
+                // shooterOutputs.hoodAngle;
                 // Math.toRadians(hoodAngle);
         robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
         robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
