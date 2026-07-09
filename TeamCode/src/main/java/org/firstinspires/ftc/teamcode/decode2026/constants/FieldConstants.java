@@ -55,7 +55,7 @@ public class FieldConstants {
     public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE.getX()-DISTANCE_IN,BLUE_GATE_AUTO_POSE.getY(), BLUE_GATE_AUTO_POSE.getHeading()+TURN_IN);
     public static Pose RED_GATE_AUTO_POSE_IN = new Pose(RED_GATE_AUTO_POSE.getX()+DISTANCE_IN,RED_GATE_AUTO_POSE.getY(), RED_GATE_AUTO_POSE.getHeading()+TURN_IN);
 
-    public static Pose BLUE_CLOSE_ZONE_POSE = new Pose(55, 76);
+    public static Pose BLUE_CLOSE_ZONE_POSE = new Pose(50, 94);
     public static Pose RED_CLOSE_ZONE_POSE = Flipper.flip(BLUE_CLOSE_ZONE_POSE);
     public static Pose BLUE_FAR_ZONE_POSE = new Pose(FIELD_WIDTH / 2, FIELD_WIDTH / 6);
     public static Pose RED_FAR_ZONE_POSE = Flipper.flip(BLUE_FAR_ZONE_POSE);

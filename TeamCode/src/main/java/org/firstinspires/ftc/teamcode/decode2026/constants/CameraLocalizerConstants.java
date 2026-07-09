@@ -52,7 +52,7 @@ public class CameraLocalizerConstants {
 
     public static final double fxLeft = 909.26403429;
     public static final double fyLeft = 905.63651776;
-    public static final double cxLeft = 628.49810599;
+    public static final double cxLeft = 628.49810599; // add or subtract about 30 to reduce error, idk which direction tho
     public static final double cyLeft = 413.74093954;
     // todo: needs a bit more tuning but should be fine
     public static final double fxRight = 912.59997673; //915.89533774;

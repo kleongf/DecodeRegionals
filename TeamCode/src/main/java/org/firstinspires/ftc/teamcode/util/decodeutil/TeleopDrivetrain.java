@@ -36,7 +36,7 @@ public class TeleopDrivetrain {
     private DrivetrainState state;
     private boolean robotCentric = false;
     private double KICK_TIME = 0.8;
-    private double KICK_DISTANCE_EPSILON = 4;
+    private double KICK_DISTANCE_EPSILON = 15;
     public boolean gateHeadingLock = false;
     public boolean openGateHeadingLock = false;
     public boolean kicking = false;
@@ -57,7 +57,7 @@ public class TeleopDrivetrain {
 
         headingPIDFController = new PIDFController(new PIDFCoefficients(0.6, 0, 0.03, 0));
 
-        strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(0.8, 0, 0.04, 0));
+        strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(1, 0, 0.04, 0));
         yController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
         xController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
 
@@ -219,7 +219,7 @@ public class TeleopDrivetrain {
             return new double[] {outX, outY, outHeading};
         } else if (gateHeadingLock) {
             // added angle
-            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading() : FieldConstants.RED_GATE_AUTO_POSE.getHeading();
+            targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE.getHeading() + Math.toRadians(4) : FieldConstants.RED_GATE_AUTO_POSE.getHeading() - Math.toRadians(4);
             //targetHeading = alliance == Alliance.BLUE ? FieldConstants.BLUE_GATE_AUTO_POSE_24.getHeading()-Math.toRadians(3) : FieldConstants.RED_GATE_AUTO_POSE_24.getHeading()+Math.toRadians(3);
             double headingError = MathFunctions.getTurnDirection(follower.getPose().getHeading(), targetHeading) * MathFunctions.getSmallestAngleDifference(follower.getPose().getHeading(), targetHeading);
             headingPIDFController.updateError(headingError);

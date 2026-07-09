@@ -26,8 +26,7 @@ public class CameraLocalizer extends Subsystem {
     public Pose currentPose;
     public Alliance alliance;
     public boolean isGoodDetection;
-    private final AprilTagProcessor aprilTagLeft;
-    private final AprilTagProcessor aprilTagRight;
+    private final AprilTagProcessor aprilTag;
     public static Pose toPinpointPose(Pose webcamPose) {
         return new Pose(FieldConstants.FIELD_WIDTH / 2d + webcamPose.getY(), FieldConstants.FIELD_WIDTH / 2d - webcamPose.getX(), webcamPose.getHeading());
     }
@@ -35,20 +34,12 @@ public class CameraLocalizer extends Subsystem {
         alliance = Alliance.BLUE;
         currentPose = new Pose();
 
-        aprilTagLeft = new AprilTagProcessor.Builder()
+        aprilTag = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(CameraLocalizerConstants.fxLeft, CameraLocalizerConstants.fyLeft, CameraLocalizerConstants.cxLeft, CameraLocalizerConstants.cyLeft)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 .setCameraPose(CameraLocalizerConstants.cameraPositionLeft, CameraLocalizerConstants.cameraOrientationLeft)
-                .build();
-
-        aprilTagRight = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(CameraLocalizerConstants.fxRight, CameraLocalizerConstants.fyRight, CameraLocalizerConstants.cxRight, CameraLocalizerConstants.cyRight)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                .setDrawTagOutline(true)
-                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-                .setCameraPose(CameraLocalizerConstants.cameraPositionRight, CameraLocalizerConstants.cameraOrientationRight)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -58,8 +49,11 @@ public class CameraLocalizer extends Subsystem {
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         // todo: comment out because wastes cpu
         // builder.enableLiveView(true);
-        builder.addProcessors(aprilTagLeft, aprilTagRight);
+        builder.addProcessor(aprilTag);
         builder.setLiveViewContainerId(0);
+
+        // close: 3 right
+        // far: 1?
 
         builder.build();
     }
@@ -84,12 +78,7 @@ public class CameraLocalizer extends Subsystem {
             // if multiple detections, use the closest one because it will be the most accurate
             // apparently aprilTag.getFreshDetections() is more efficient
             case CAMERA_ON:
-                List<AprilTagDetection> currentDetections;
-                if (alliance == Alliance.BLUE) {
-                    currentDetections = aprilTagRight.getDetections();
-                } else {
-                    currentDetections = aprilTagLeft.getDetections();
-                }
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
                 double bestDistance = Integer.MAX_VALUE;
                 Pose bestPose = null;
 

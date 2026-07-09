@@ -40,7 +40,7 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
     private Turret turret;
     private SOTMUtil sotm;
     private VisionPortal visionPortal;
-    private final double CAMERA_DISTANCE_TO_CENTER = 5.0; // idk rn
+    private final double CAMERA_DISTANCE_TO_CENTER = 6.0; // idk rn
 
 
     @Override
@@ -123,7 +123,7 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
         // actually left cam is better calibrated so we gonna use it
 
         Position cameraPosition = new Position(DistanceUnit.MM,
-                0, 0, 130, 0);
+                0, 0, 270, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 0, -70, 0, 0);
 
@@ -171,6 +171,8 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
             if (detection.metadata != null) {
                 if (!detection.metadata.name.contains("Obelisk")) {
                     // get pose from camera
+
+                    // note: for some reason, robot always thinks its x position is closer to the tag than it should be, but y is good? ask gpt
                     double cameraFieldX = detection.robotPose.getPosition().x;
                     double cameraFieldY = detection.robotPose.getPosition().y;
                     double cameraFieldHeading = detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS);
@@ -180,8 +182,8 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
                     double robotY = cameraFieldY - (CAMERA_DISTANCE_TO_CENTER * Math.sin(cameraFieldHeading));
 
                     // calculate robot heading based on turret rotation
-                    double turretAngle = turret.currentAngle;
-                    double robotHeading = MathUtil.angleWrap(cameraFieldHeading - turretAngle);
+                    double turretAngle = MathUtil.normalizeAngle(turret.currentAngle) - Math.PI;
+                    double robotHeading = cameraFieldHeading - turretAngle;
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
                             detection.robotPose.getPosition().x,
                             detection.robotPose.getPosition().y,
@@ -191,8 +193,10 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
                             detection.robotPose.getOrientation().getRoll(AngleUnit.DEGREES),
                             detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
                     Pose ppPose = toPinpointPose(new Pose(robotX, robotY, robotHeading));
+                    Pose cameraFieldPose = toPinpointPose(new Pose(cameraFieldX, cameraFieldY, cameraFieldHeading));
                     telemetry.addData("Turret angle", turretAngle);
                     telemetry.addLine("Pinpoint Pose: " + ppPose);
+                    telemetry.addLine("Camera field pose: " + cameraFieldPose);
                 }
             }
         }

@@ -11,7 +11,7 @@ public class TorqueShooterConstants {
     public static final double kOmega = 12 / 2800d; // back emf, volts ticks^-1 s^-1
     public static double kV = 0.000005; // viscous friction
     public static double kS = 0.01; // static friction
-    public static double kP = 0.001;
+    public static double kP = 0.002;
     public static double kA = 0.0002;
     public static boolean useVoltageCompensation = true;
     public static double PITCH_I = Math.toRadians(31);

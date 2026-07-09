@@ -97,9 +97,9 @@ public class ShootingConstants {
         134, -3
         154, -3
          */
-        blueOffsetLUT.addData(50, Math.toRadians(3));
-        blueOffsetLUT.addData(80, Math.toRadians(2));
-        blueOffsetLUT.addData(154, Math.toRadians(1));
+        blueOffsetLUT.addData(50, Math.toRadians(-3));
+        // blueOffsetLUT.addData(80, Math.toRadians());
+        blueOffsetLUT.addData(144, Math.toRadians(1));
         /*
         134: -1
         154: -1
@@ -107,8 +107,8 @@ public class ShootingConstants {
         otherwise: 0
          */
         // need to tune red offset but i lazy
-        redOffsetLUT.addData(154, Math.toRadians(0));
-        redOffsetLUT.addData(134, Math.toRadians(0));
-        redOffsetLUT.addData(90, Math.toRadians(0));
+        // redOffsetLUT.addData(154, Math.toRadians(0));
+        redOffsetLUT.addData(134, Math.toRadians(-1.5));
+        redOffsetLUT.addData(50, Math.toRadians(0));
     }
 }
