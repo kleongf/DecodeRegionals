@@ -50,11 +50,14 @@ public class CameraLocalizerConstants {
 //             [  0.         910.71508727 408.55061061]
 //             [  0.           0.           1.        ]]
 
-    public static final double fxLeft = 909.26403429;
-    public static final double fyLeft = 905.63651776;
-    public static final double cxLeft = 628.49810599; // add or subtract about 30 to reduce error, idk which direction tho
-    public static final double cyLeft = 413.74093954;
+    public static final double fxLeft = 861.56076179; // 900.08175537; // 903.34224034; // 909.26403429;
+    public static final double fyLeft = 858.4588433; //897.90567972; // 902.35294549; // 905.63651776;
+    public static final double cxLeft = 605.73678713; // 645.17147241; // 611.39603775+40; // 628.49810599; // add or subtract about 30 to reduce error, idk which direction tho
+    public static final double cyLeft = 410.39120739; // 402.97331128; // 398.09160871; // 413.74093954;
     // todo: needs a bit more tuning but should be fine
+    // red: subtract 10 from y
+    // blue: add 7 to x
+    // wtf why is it so fried
     public static final double fxRight = 912.59997673; //915.89533774;
     public static final double fyRight = 910.71508727; //916.57002166;
     public static final double cxRight = 657.3040482; // 665.64617643;

@@ -40,7 +40,7 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
     private Turret turret;
     private SOTMUtil sotm;
     private VisionPortal visionPortal;
-    private final double CAMERA_DISTANCE_TO_CENTER = 6.0; // idk rn
+    private final double CAMERA_DISTANCE_TO_CENTER = MathUtil.mmToIn(153); // idk rn
 
 
     @Override
@@ -123,7 +123,7 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
         // actually left cam is better calibrated so we gonna use it
 
         Position cameraPosition = new Position(DistanceUnit.MM,
-                0, 0, 270, 0);
+                0, 0, 272, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 0, -70, 0, 0);
 
@@ -139,6 +139,7 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
+        // aprilTag.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_ITERATIVE);
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -182,7 +183,7 @@ public class TurretWebcamLocalizationTest extends LinearOpMode {
                     double robotY = cameraFieldY - (CAMERA_DISTANCE_TO_CENTER * Math.sin(cameraFieldHeading));
 
                     // calculate robot heading based on turret rotation
-                    double turretAngle = MathUtil.normalizeAngle(turret.currentAngle) - Math.PI;
+                    double turretAngle = MathUtil.angleWrap(turret.currentAngle);
                     double robotHeading = cameraFieldHeading - turretAngle;
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
                             detection.robotPose.getPosition().x,

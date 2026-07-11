@@ -68,7 +68,7 @@ public class Turret extends Subsystem {
             currentPositionTicks = turretMotor.getCurrentPosition() + offset;
         }
 
-        currentAngle = turretMotor.getCurrentPosition() / TurretConstants.ticksPerRadian;
+        currentAngle = currentPositionTicks / TurretConstants.ticksPerRadian;
         currentVelocityTicks = turretMotor.getVelocity();
         wantedPositionTicks = weirdAngleWrap(wantedAngle) * TurretConstants.ticksPerRadian;
 

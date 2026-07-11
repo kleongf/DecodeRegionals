@@ -218,7 +218,6 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
     private void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        aprilTag.getFreshDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.

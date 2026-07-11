@@ -193,11 +193,17 @@ public class TuningTeleop {
 
         // left stick: webcam relocalization and reset turret, also left bumper
         if (gamepad2.leftStickButtonWasPressed() || gamepad1.leftBumperWasPressed()) {
-            robot.turret.resetEncoderWithAbsoluteReading();
-            Pose webcamPose = robot.cameraLocalizer.currentPose;
+            // robot.turret.resetEncoderWithAbsoluteReading();
+            Pose webcamPose = robot.cameraLocalizer.getPoseFromApriltag(robot.turret.currentAngle);
             if (webcamPose.getX() != 0 && webcamPose.getY() != 0) {
                 robot.ledIndicator.indicateRelocalization();
-                drivetrain.follower.setPose(webcamPose);
+                turretOffset = 0;
+                ShootingConstants.wheelSpeedMultiplier = 1.0;
+                if (Math.abs(MathUtil.getSmallestAngleDifference(webcamPose.getHeading(), currentPose.getHeading())) > Math.toRadians(10)) {
+                    drivetrain.follower.setPose(webcamPose);
+                } else {
+                    drivetrain.follower.setPose(new Pose(webcamPose.getX(), webcamPose.getY(), currentPose.getHeading()));
+                }
             }
         }
 

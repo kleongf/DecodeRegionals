@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.decode2026.constants.CameraLocalizerConstants;
 import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.lib.robot.Subsystem;
@@ -20,7 +18,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraLocalizer extends Subsystem {
+public class TurretCameraLocalizer extends Subsystem {
     public enum Mode {
         CAMERA_ON,
         CAMERA_OFF
@@ -31,20 +29,15 @@ public class CameraLocalizer extends Subsystem {
     public static Pose toPinpointPose(Pose webcamPose) {
         return new Pose(FieldConstants.FIELD_WIDTH / 2d + webcamPose.getY(), FieldConstants.FIELD_WIDTH / 2d - webcamPose.getX(), webcamPose.getHeading());
     }
-    public CameraLocalizer(HardwareMap hardwareMap) {
+    public TurretCameraLocalizer(HardwareMap hardwareMap) {
         alliance = Alliance.BLUE;
-
-        Position cameraPosition = new Position(DistanceUnit.MM,
-                0, 0, 272, 0);
-        YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-                0, -70, 0, 0);
 
         aprilTag = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(CameraLocalizerConstants.fxLeft, CameraLocalizerConstants.fyLeft, CameraLocalizerConstants.cxLeft, CameraLocalizerConstants.cyLeft)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-                .setCameraPose(cameraPosition, cameraOrientation)
+                .setCameraPose(CameraLocalizerConstants.cameraPositionLeft, CameraLocalizerConstants.cameraOrientationLeft)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -101,14 +94,6 @@ public class CameraLocalizer extends Subsystem {
                         double robotHeading = cameraFieldHeading - turretAngle;
 
                         bestPose = toPinpointPose(new Pose(robotX, robotY, robotHeading));
-                        // red: subtract 10 from y
-                        // blue: add 7 to x
-                        // wtf why is it so fried
-                        if (alliance == Alliance.BLUE) {
-                            bestPose = new Pose(bestPose.getX() + 7, bestPose.getY(), bestPose.getHeading());
-                        } else {
-                            bestPose = new Pose(bestPose.getX(), bestPose.getY() - 10, bestPose.getHeading());
-                        }
                     }
                 }
             }
