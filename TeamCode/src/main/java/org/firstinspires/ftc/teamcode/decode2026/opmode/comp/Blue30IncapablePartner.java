@@ -94,7 +94,8 @@ public class Blue30IncapablePartner extends OpMode {
                                 new Pose(50.000, 82.000)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         intakeFirst = follower.pathBuilder()
@@ -229,12 +230,7 @@ public class Blue30IncapablePartner extends OpMode {
                         .transition(new Transition(() -> robot.shooter.atTarget(30) && !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            if(robot.intake.isFull){
-                                robot.shootCommandSlow.start();
-                            }
-                            else{
-                                robot.shootCommandFast.start();
-                            }
+                            robot.shootCommandSlow.start();
                             follower.setMaxPower(1);
                         })
                         .maxTime(500),
@@ -450,16 +446,16 @@ public class Blue30IncapablePartner extends OpMode {
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.BLUE);
         }
 
-//        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;
-//        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
-//        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-//        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
-//        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
-        robot.shooter.wantedVelocity = -400;
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
-        robot.turret.wantedAngle = Math.toRadians(180);
-        robot.turret.wantedAngularVelocity = 0;
+        robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
+        robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
+//        robot.shooter.wantedVelocity = -400;
+//        robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
+//        robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
+//        robot.turret.wantedAngle = Math.toRadians(180);
+//        robot.turret.wantedAngularVelocity = 0;
 
         stateMachine.update();
         follower.update();

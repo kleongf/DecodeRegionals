@@ -55,8 +55,8 @@ public class TeleopDrivetrain {
         follower.startTeleopDrive(true);
         follower.usePredictiveBraking = true;
 
-        headingPIDFController = new PIDFController(new PIDFCoefficients(0.6, 0, 0.03, 0));
-
+//        headingPIDFController = new PIDFController(new PIDFCoefficients(0.6, 0, 0.03, 0));
+        headingPIDFController = new PIDFController(new PIDFCoefficients(0.5, 0, 0.035, 0));
         strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(1, 0, 0.04, 0));
         yController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
         xController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
@@ -239,7 +239,8 @@ public class TeleopDrivetrain {
             // wait i think that x and y outputs are actually reversed,
             // since from human pov, x is sideways, but from coord sys,
             // that's actually y error that.
-            // outY = y * DrivetrainConstants.ySpeed;
+
+            outY = y * DrivetrainConstants.ySpeed;
 
             // on red this will need to be retested but it should work
 

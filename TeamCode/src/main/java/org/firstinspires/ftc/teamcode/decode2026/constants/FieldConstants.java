@@ -42,6 +42,7 @@ public class FieldConstants {
 
     // Autonomous Poses
     public static Pose BLUE_CLOSE_START_AUTO_POSE = new Pose(FIELD_WIDTH / 6 + HALF_ROBOT_WIDTH, FIELD_WIDTH - GOAL_TO_WALL_DISTANCE - ROBOT_BACK_TO_CENTER_DISTANCE, Math.toRadians(270));
+    //
     public static Pose RED_CLOSE_START_AUTO_POSE = Flipper.flip(BLUE_CLOSE_START_AUTO_POSE);
     public static Pose BLUE_FAR_START_AUTO_POSE = new Pose(FIELD_WIDTH / 3 - ROBOT_BACK_TO_CENTER_DISTANCE + 1.0, HALF_ROBOT_WIDTH, Math.toRadians(180));
     public static Pose RED_FAR_START_AUTO_POSE = Flipper.flip(BLUE_FAR_START_AUTO_POSE);
@@ -55,7 +56,7 @@ public class FieldConstants {
     public static Pose BLUE_GATE_AUTO_POSE_IN = new Pose(BLUE_GATE_AUTO_POSE.getX()-DISTANCE_IN,BLUE_GATE_AUTO_POSE.getY(), BLUE_GATE_AUTO_POSE.getHeading()+TURN_IN);
     public static Pose RED_GATE_AUTO_POSE_IN = new Pose(RED_GATE_AUTO_POSE.getX()+DISTANCE_IN,RED_GATE_AUTO_POSE.getY(), RED_GATE_AUTO_POSE.getHeading()+TURN_IN);
 
-    public static Pose BLUE_CLOSE_ZONE_POSE = new Pose(50, 94);
+    public static Pose BLUE_CLOSE_ZONE_POSE = new Pose(50, 94-5);
     public static Pose RED_CLOSE_ZONE_POSE = Flipper.flip(BLUE_CLOSE_ZONE_POSE);
     public static Pose BLUE_FAR_ZONE_POSE = new Pose(FIELD_WIDTH / 2, FIELD_WIDTH / 6);
     public static Pose RED_FAR_ZONE_POSE = Flipper.flip(BLUE_FAR_ZONE_POSE);
