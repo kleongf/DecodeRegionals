@@ -198,7 +198,7 @@ public class TeleopDrivetrain {
             }
             double angle = Math.atan2(targetPose.getY()- currentPose.getY(), targetPose.getX() - currentPose.getX());
             double angleReversed = angle - Math.PI;
-            double targetAngle = MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(angleReversed, currentPose.getHeading()) ? angle : angleReversed;
+            double targetAngle = MathUtil.getSmallestAngleDifference(angle, currentPose.getHeading()) < MathUtil.getSmallestAngleDifference(3*angleReversed, currentPose.getHeading()) ? angle : angleReversed;
 
             double headingError = MathFunctions.getTurnDirection(currentPose.getHeading(), targetAngle) * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), targetAngle);
             strongHeadingPIDFController.updateError(headingError);
