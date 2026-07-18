@@ -223,7 +223,9 @@ public class MainTeleop {
                 robot.ledIndicator.indicateRelocalization();
                 turretOffset = 0;
                 ShootingConstants.wheelSpeedMultiplier = 1.0;
-                if (Math.abs(MathUtil.getSmallestAngleDifference(webcamPose.getHeading(), currentPose.getHeading())) > Math.toRadians(10)) {
+                // if large angle diff, trust the camera bc that means imu drifted, otherwise use pinpoint heading
+                // also magic number here but wtf
+                if (Math.abs(MathUtil.getSmallestAngleDifference(webcamPose.getHeading(), currentPose.getHeading())) > Math.toRadians(5)) {
                     drivetrain.follower.setPose(webcamPose);
                 } else {
                     drivetrain.follower.setPose(new Pose(webcamPose.getX(), webcamPose.getY(), currentPose.getHeading()));

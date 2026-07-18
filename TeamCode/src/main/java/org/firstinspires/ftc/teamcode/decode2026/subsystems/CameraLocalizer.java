@@ -87,28 +87,20 @@ public class CameraLocalizer extends Subsystem {
                     double distance = detection.ftcPose.range;
                     if (distance < bestDistance) {
                         bestDistance = distance;
-                        // note: for some reason, robot always thinks its x position is closer to the tag than it should be, but y is good? ask gpt
-                        double cameraFieldX = detection.robotPose.getPosition().x;
-                        double cameraFieldY = detection.robotPose.getPosition().y;
-                        double cameraFieldHeading = detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS);
+                        Pose cameraFieldConverted = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
+                        double cameraFieldXConverted = cameraFieldConverted.getX();
+                        double cameraFieldYConverted = cameraFieldConverted.getY();
+                        double cameraFieldHeadingConverted = cameraFieldConverted.getHeading();
 
                         // translate backward by the distance to center along the camera's global heading line
-                        double robotX = cameraFieldX - (MathUtil.mmToIn(153) * Math.cos(cameraFieldHeading));
-                        double robotY = cameraFieldY - (MathUtil.mmToIn(153) * Math.sin(cameraFieldHeading));
+                        double robotX = cameraFieldXConverted - (MathUtil.mmToIn(153) * Math.cos(cameraFieldHeadingConverted));
+                        double robotY = cameraFieldYConverted - (MathUtil.mmToIn(153) * Math.sin(cameraFieldHeadingConverted));
 
                         // calculate robot heading based on turret rotation
-                        double turretAngle = MathUtil.normalizeAngle(currentAngle) - Math.PI;
-                        double robotHeading = cameraFieldHeading - turretAngle;
-
-                        bestPose = toPinpointPose(new Pose(robotX, robotY, robotHeading));
-                        // red: subtract 10 from y
-                        // blue: add 7 to x
-                        // wtf why is it so fried
-                        if (alliance == Alliance.BLUE) {
-                            bestPose = new Pose(bestPose.getX() + 7, bestPose.getY(), bestPose.getHeading());
-                        } else {
-                            bestPose = new Pose(bestPose.getX(), bestPose.getY() - 10, bestPose.getHeading());
-                        }
+                        double turretAngle = MathUtil.angleWrap(currentAngle);
+                        double robotHeading = cameraFieldHeadingConverted - turretAngle;
+                        // yayyyyy uwu kitty cat meow
+                        bestPose = new Pose(robotX, robotY, robotHeading);
                     }
                 }
             }
