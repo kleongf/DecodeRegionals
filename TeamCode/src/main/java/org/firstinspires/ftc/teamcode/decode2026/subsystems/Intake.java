@@ -26,6 +26,7 @@ public class Intake extends Subsystem {
     public DetectionState detectionState;
     public boolean isFull;
     public boolean isMostlyFull;
+    public boolean isOneBall;
     private final DcMotorEx intakeMotor;
     private final DigitalChannel top, middle, bottom;
     private double prevSetPower = 0;
@@ -100,6 +101,7 @@ public class Intake extends Subsystem {
             case THIRD_TRIGGERED:
                 break;
         }
+        isOneBall = detectionState == DetectionState.FIRST_TRIGGERED;
         isMostlyFull = detectionState == DetectionState.SECOND_TRIGGERED;
         isFull = detectionState == DetectionState.THIRD_TRIGGERED;
     }

@@ -42,7 +42,7 @@ public class BlueClose24 extends OpMode {
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, donderaShift, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
     private PathChain shootFirstOpenGate, intakeSecondOpenGate, shootSecondOpenGate;
 
     // important: to flip any pose, use Pose)
@@ -143,7 +143,6 @@ public class BlueClose24 extends OpMode {
                 .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.95)
                 .build();
-
         shootGate1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -339,7 +338,7 @@ public class BlueClose24 extends OpMode {
                         .onEnter(() -> {
                             lockShooter = true;
                             lockedPose = new Pose(57,76, Math.toRadians(-160));
-                            turretOffset = Math.toRadians(3+2);
+                            turretOffset = Math.toRadians(3);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -394,7 +393,7 @@ public class BlueClose24 extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(2200),
+                        .maxTime(2300),
                 new State()
                         .onEnter(() -> {
 
@@ -420,7 +419,7 @@ public class BlueClose24 extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(2200),
+                        .maxTime(2300),
                 new State()
                         .onEnter(() -> {
 
@@ -446,7 +445,7 @@ public class BlueClose24 extends OpMode {
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(2200),
+                        .maxTime(2300),
                 new State()
                         .onEnter(() -> {
 
@@ -462,11 +461,10 @@ public class BlueClose24 extends OpMode {
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.followPath(intakePile, false);
-                            speedOffset = 30;
+                            speedOffset = 40;
                             turretOffset = Math.toRadians(2);
                             hoodOffset = Math.toRadians(-2);
                             lockShooter = false;
-
                         })
                         .maxTime(2000) // so we don't get stuck
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.9))
@@ -474,7 +472,7 @@ public class BlueClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootPile, true);
-                            ShootingConstants.tofMultiplier = 0.93;
+                            ShootingConstants.tofMultiplier = 0.94;
                         })
                         .maxTime(300)
                         .transition(new Transition(() -> robot.intake.isFull)),
@@ -515,7 +513,7 @@ public class BlueClose24 extends OpMode {
         robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
         robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
-        if ((robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED)) {
+        if (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) {
             robot.ledIndicator.indicateIntakeFull();
         }
         prevState = robot.intake.detectionState;
