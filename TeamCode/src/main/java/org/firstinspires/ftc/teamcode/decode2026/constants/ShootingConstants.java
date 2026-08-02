@@ -77,19 +77,20 @@ public class ShootingConstants {
 
     static {
         // TODO: tune TOF, put into a quadratic function for least squares, then put that into function
-        addData(154, Math.toRadians(54), 2070+30, Math.toRadians(-5)); // tof: 1.5
-        addData(144, Math.toRadians(53), 2000+30, Math.toRadians(-4));
-        addData(134, Math.toRadians(51.5), 1920+40, Math.toRadians(-4));
-        addData(124, Math.toRadians(50), 1860+40, Math.toRadians(-4));
-        addData(114, Math.toRadians(49), 1780+30, Math.toRadians(-3.75));
-        addData(104, Math.toRadians(48), 1720+30, Math.toRadians(-3.5));
-        addData(94, Math.toRadians(46), 1640+30, Math.toRadians(-3));
-        addData(84, Math.toRadians(43), 1570+30, Math.toRadians(-3));
-        addData(74, Math.toRadians(40), 1480+30, Math.toRadians(-2));
-        addData(64, Math.toRadians(37), 1400+30, Math.toRadians(-2));
-        addData(54, Math.toRadians(34), 1320+30, Math.toRadians(-1)); // 19 frames
-        addData(44, Math.toRadians(31), 1230+30, Math.toRadians(-1));
-        addData(34, Math.toRadians(26), 1170+30, Math.toRadians(-1)); // 18 frames
+        addData(158, Math.toRadians(56), 2070+30, Math.toRadians(-2)); // tof: 1.5
+        addData(148, Math.toRadians(56), 1980+30, Math.toRadians(-2));
+        addData(138, Math.toRadians(56), 1900+30, Math.toRadians(-2));
+        addData(128, Math.toRadians(55), 1860+30, Math.toRadians(-2));
+        addData(118, Math.toRadians(53), 1800+30, Math.toRadians(-2));
+        addData(108, Math.toRadians(52), 1740, Math.toRadians(-2));
+        addData(98, Math.toRadians(50), 1700, Math.toRadians(-2));
+        addData(88, Math.toRadians(48), 1600, Math.toRadians(-2));
+        addData(78, Math.toRadians(43), 1500, Math.toRadians(-2));
+        addData(68, Math.toRadians(41), 1420, Math.toRadians(-2));
+        addData(58, Math.toRadians(39), 1360, Math.toRadians(-1)); // 19 frames
+        addData(48, Math.toRadians(37), 1300, Math.toRadians(-1));
+        addData(38, Math.toRadians(34), 1220, Math.toRadians(-1)); // 18 frames
+        addData(28, Math.toRadians(31), 1140, Math.toRadians(-1));
 
         /*
         50, -1
