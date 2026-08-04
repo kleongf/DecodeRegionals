@@ -233,7 +233,7 @@ public class MainTeleop {
             }
         }
 
-        // right stick: corner relocalization:
+        // right stick: gate relocalization:
         if (gamepad2.rightStickButtonWasPressed()) {
             if (alliance == Alliance.BLUE) {
                 drivetrain.follower.setPose(FieldConstants.BLUE_RELOCALIZATION_POSE);
@@ -262,11 +262,11 @@ public class MainTeleop {
 
         // dpad left: trim turret
         if (gamepad2.dpadLeftWasPressed()) {
-            turretOffset += Math.toRadians(2);
+            turretOffset += Math.toRadians(1);
         }
         // dpad right: trim turret
         if (gamepad2.dpadRightWasPressed()) {
-            turretOffset -= Math.toRadians(2);
+            turretOffset -= Math.toRadians(1);
         }
 
         if (gamepad2.left_trigger > 0.1) {
@@ -315,6 +315,7 @@ public class MainTeleop {
         telemetry.addData("Pose", currentPose);
         telemetry.addData("Offset", turretOffset);
         telemetry.addData("Distance", currentPose.distanceFrom(goalPose));
+        telemetry.addData("Turret offset (from dpad): ", turretOffset);
 //        telemetry.addData("Current state", drivetrain.getState());
 //        telemetry.addData("Angle to goal", Math.atan2(-(goalPose.getX()-currentPose.getX()), (goalPose.getY()- currentPose.getY())));
 //        telemetry.addLine("Robot in shooting zone: " + inZone);

@@ -57,7 +57,7 @@ public class TeleopDrivetrain {
 
 //        headingPIDFController = new PIDFController(new PIDFCoefficients(0.6, 0, 0.03, 0));
         headingPIDFController = new PIDFController(new PIDFCoefficients(0.5, 0, 0.035, 0));
-        strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(1, 0, 0.04, 0));
+        strongHeadingPIDFController = new PIDFController(new PIDFCoefficients(0.8, 0, 0.04, 0));
         yController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
         xController = new PIDFController(new PIDFCoefficients(0.04, 0, 0.001, 0));
 

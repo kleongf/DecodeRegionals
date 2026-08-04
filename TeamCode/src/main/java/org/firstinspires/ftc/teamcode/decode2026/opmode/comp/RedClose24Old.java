@@ -29,22 +29,22 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 // last one is going to be a pile cycle, it will always be a pile cycle
 
 
-@Autonomous(name="Red Close 24", group="!")
-public class RedClose24 extends OpMode {
-    private boolean openGate = false;
+@Autonomous(name="Red Close 24 Old", group="!")
+public class RedClose24Old extends OpMode {
     private Pose lockedPose = new Pose();
     private boolean lockShooter = true;
     private double turretOffset = 0;
-    private double speedOffset = 0;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, donderaShift, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
-    private PathChain shootFirstOpenGate, intakeSecondOpenGate, shootSecondOpenGate;
+    private PathChain shootPreload, intakeFirst, shootFirst, shootFirstOpenGate, intakeSecondOpenGate, intakeSecond, shootSecond, shootSecondOpenGate, intakeGate, shootGate, park;
+    private int numGateCyclesCompleted = 0;
+    private final int numGateCyclesWanted = 5;
+    private boolean openGate = true;
 
-    // important: to flip any pose, use Pose)
+    // important: to flip any pose, use Flipper.flip(Pose)
     public void buildPaths() {
         shootPreload = follower.pathBuilder().addPath(
                 new BezierLine(
@@ -62,10 +62,11 @@ public class RedClose24 extends OpMode {
                 )
         ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()).build();
 
+
         shootFirstOpenGate = follower.pathBuilder().addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(23.500, 83.000)),
-                                Flipper.flip(new Pose(57.000, 76.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 // optimal angle trust defined by deriv of curve
@@ -81,9 +82,11 @@ public class RedClose24 extends OpMode {
                 .setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                 .build();
 
+
+
         intakeSecondOpenGate = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                Flipper.flip(new Pose(57.000, 76.000)),
+                                Flipper.flip(new Pose(57.000, 77.000)),
                                 Flipper.flip(new Pose(46.741, 65.108)),
                                 Flipper.flip(new Pose(31.688, 59.731)),
                                 Flipper.flip(new Pose(16.000, 63.000))
@@ -95,9 +98,9 @@ public class RedClose24 extends OpMode {
         intakeSecond = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 Flipper.flip(new Pose(32.00, 108.000)),
-                                Flipper.flip(new Pose(22, 82.000)),
-                                Flipper.flip(new Pose(24, 72.000)),
-                                Flipper.flip(new Pose(23.5, 64.000))
+                                Flipper.flip(new Pose(22.5, 82.000)),
+                                Flipper.flip(new Pose(22.5, 72.000)),
+                                Flipper.flip(new Pose(24.5, 62.000))
                         )
                 ).setConstantHeadingInterpolation(FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading())
                 .build();
@@ -105,7 +108,7 @@ public class RedClose24 extends OpMode {
         shootSecondOpenGate = follower.pathBuilder().addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(24.00, 67.000)),
-                                Flipper.flip(new Pose(57.000, 76.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 )
                 .setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
@@ -114,10 +117,11 @@ public class RedClose24 extends OpMode {
         shootSecond = follower.pathBuilder().addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(24.500, 62.000)),
-                                Flipper.flip(new Pose(57.000, 76.000))
+                                Flipper.flip(new Pose(57.000, 77.000))
                         )
                 ).setConstantHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)))
                 .build();
+
 
         HeadingInterpolator toGate = HeadingInterpolator.piecewise(
                 new HeadingInterpolator.PiecewiseNode(
@@ -132,140 +136,37 @@ public class RedClose24 extends OpMode {
                 )
         );
 
-        intakeGate1 = follower.pathBuilder()
+        intakeGate = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(57.000, 76.000)),
+                                Flipper.flip(new Pose(57.000, 77.000)),
                                 FieldConstants.RED_GATE_AUTO_POSE
                         )
                 )
                 .setHeadingInterpolation(toGate)
                 .setTValueConstraint(0.95)
                 .build();
-        shootGate1 = follower.pathBuilder()
+
+        shootGate = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 FieldConstants.RED_GATE_AUTO_POSE,
-                                Flipper.flip(new Pose(57, 76))
+                                Flipper.flip(new Pose(56, 75))
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        intakeGate2 = follower.pathBuilder()
+        park = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(57.000, 76.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE.getX(),FieldConstants.RED_GATE_AUTO_POSE.getY()+.1)
+                                Flipper.flip(new Pose(56.000, 75.000)),
+                                Flipper.flip(new Pose(40.000, 78.000))
                         )
                 )
-                .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.95)
+                .setLinearHeadingInterpolation(Flipper.flipAngle(Math.toRadians(-160)), Flipper.flipAngle(Math.toRadians(180)))
                 .build();
-
-        shootGate2 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                FieldConstants.RED_GATE_AUTO_POSE,
-                                Flipper.flip(new Pose(57.000, 76.000))
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
-
-        intakeGate3 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                Flipper.flip(new Pose(57.000, 76.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE.getX(),FieldConstants.RED_GATE_AUTO_POSE.getY()+.2)
-
-                        )
-                )
-                .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.95)
-                .build();
-
-        shootGate3 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                FieldConstants.RED_GATE_AUTO_POSE,
-                                Flipper.flip(new Pose(57.000, 76.000))
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
-
-        intakeGate4 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                Flipper.flip(new Pose(57.000, 76.000)),
-                                new Pose(FieldConstants.RED_GATE_AUTO_POSE.getX(),FieldConstants.RED_GATE_AUTO_POSE.getY()+.3)
-                        )
-                )
-                .setHeadingInterpolation(toGate)
-                .setTValueConstraint(0.95)
-                .build();
-
-        shootGate4 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                FieldConstants.RED_GATE_AUTO_POSE,
-                                Flipper.flip(new Pose(57.000, 76.000))
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
-
-        HeadingInterpolator pileCycle = HeadingInterpolator.piecewise(
-                new HeadingInterpolator.PiecewiseNode(
-                        0,
-                        0.5,
-                        HeadingInterpolator.constant(Flipper.flipAngle(Math.toRadians(-130)))
-                ),
-                new HeadingInterpolator.PiecewiseNode(
-                        0.5,
-                        1,
-                        HeadingInterpolator.linear(Flipper.flipAngle(Math.toRadians(-130)), Flipper.flipAngle(Math.toRadians(-90)))
-                )
-        );
-
-        intakePile = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                Flipper.flip(new Pose(57.000, 76.000)),
-                                Flipper.flip(new Pose(8, 12))
-                        )
-                )
-                .setHeadingInterpolation(pileCycle)
-                .build();
-
-        shootPile = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                Flipper.flip(new Pose(8, 12)),
-                                Flipper.flip(new Pose(58.000, 120.000))
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
-    }
-
-    @Override
-    public void init_loop() {
-        telemetry.addLine("Press dpad left/right buttons to configure opening gate.");
-        telemetry.addData("Open Gate", openGate);
-        if (gamepad1.dpadRightWasPressed()) {
-            openGate = true;
-        }
-        if (gamepad1.dpadLeftWasPressed()) {
-            openGate = false;
-        }
-        telemetry.update();
     }
 
     @Override
@@ -277,7 +178,7 @@ public class RedClose24 extends OpMode {
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.RED_GOAL_POSE);
         lockedPose = Flipper.flip(new Pose(32, 108, FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()));
-        turretOffset = Math.toRadians(4);
+        turretOffset = Math.toRadians(0);
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -304,15 +205,14 @@ public class RedClose24 extends OpMode {
                             follower.followPath(intakeFirst, true);
                             robot.intakeCommand.start();
                             ShootingConstants.tofMultiplier = 0.35;
-                            //lockedPose = Flipper.flip(new Pose(56, 75);
                         })
                         .maxTime(25),
                 new State()
                         .onEnter(() -> {
-                            if(openGate) {
+                            if (openGate) {
                                 lockShooter = true;
                                 lockedPose = Flipper.flip(new Pose(57,76, Math.toRadians(-130.37)));
-                                turretOffset = Math.toRadians(-3);
+                                turretOffset = Math.toRadians(0);
                             }
                             else{
                                 lockShooter = false;
@@ -336,8 +236,8 @@ public class RedClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             lockShooter = true;
-                            lockedPose = Flipper.flip(new Pose(57,76, Math.toRadians(-160)));
-                            turretOffset = Math.toRadians(-6);
+                            lockedPose = new Pose(57,76, Math.toRadians(-160));
+                            turretOffset = Math.toRadians(3);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -349,139 +249,40 @@ public class RedClose24 extends OpMode {
                         .onEnter(() -> robot.shootCommand.start())
                         .transition(new Transition(() -> robot.shootCommand.isFinished())),
                 // gate cycle 1
-                new State()
+                new State("gateCycleStart")
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.setMaxPower(.8);
-                            follower.followPath(intakeGate1, true);
-                            //speedOffset = 30;
+                            follower.followPath(intakeGate, 0.8, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.setMaxPower(1);
                             follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                            turretOffset = Math.toRadians(-2);
                         })
                         .minTime(600)
-                        .transition(new Transition(() -> robot.intake.isMostlyFull))
+                        .transition(new Transition(() -> robot.intake.isFull))
                         .maxTime(2200),
                 new State()
-                        .maxTime(50),
-                new State()
                         .onEnter(() -> {
-                            follower.followPath(shootGate1, true);
+                            turretOffset = Math.toRadians(0);
+                            follower.followPath(shootGate, true);
                             robot.prepareShootCommandLonger.start();
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
-                // gate cycle 2
-                new State()
-                        .onEnter(() -> {
-                            robot.intakeCommand.start();
-                            follower.setMaxPower(.7);
-                            follower.followPath(intakeGate2, true);
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> {
-                            follower.setMaxPower(1);
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                        })
-                        .minTime(600)
-                        .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(2300),
-                new State()
-                        .onEnter(() -> {
-
-                            follower.followPath(shootGate2, true);
-                            robot.prepareShootCommandLonger.start();
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
-                // gate cycle 3
-                new State()
-                        .onEnter(() -> {
-                            robot.intakeCommand.start();
-                            follower.setMaxPower(.8);
-                            follower.followPath(intakeGate3, true);
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> {
-                            follower.setMaxPower(1);
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                        })
-                        .minTime(600)
-                        .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(2300),
-                new State()
-                        .onEnter(() -> {
-
-                            follower.followPath(shootGate3, true);
-                            robot.prepareShootCommandLonger.start();
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
-                // gate cycle 4
-                new State()
-                        .onEnter(() -> {
-                            robot.intakeCommand.start();
-                            follower.setMaxPower(.8);
-                            follower.followPath(intakeGate4, true);
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> {
-                            follower.setMaxPower(1);
-                            follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                        })
-                        .minTime(600)
-                        .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(2300),
-                new State()
-                        .onEnter(() -> {
-
-                            follower.followPath(shootGate4, true);
-                            robot.prepareShootCommandLonger.start();
-                        })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
-                // pile intake
-                new State()
-                        .onEnter(() -> {
-                            robot.intakeCommand.start();
-                            follower.followPath(intakePile, false);
-                            //speedOffset = 40;
-                            turretOffset = Math.toRadians(2);
-                            lockShooter = false;
-                        })
-                        .maxTime(2000) // so we don't get stuck
-                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.9))
-                        .transition(new Transition(() -> robot.intake.isFull)),
-                new State()
-                        .onEnter(() -> {
-                            follower.followPath(shootPile, true);
-                            ShootingConstants.tofMultiplier = 0.94;
-                        })
-                        .maxTime(300)
-                        .transition(new Transition(() -> robot.intake.isFull)),
-                new State()
-                        .onEnter(() -> robot.prepareShootCommandLonger.start())
-                        .transition(new Transition(() -> follower.getCurrentTValue() > 0.52)),
                 new State()
                         .onEnter(() -> {
                             robot.shootCommand.start();
+                            numGateCyclesCompleted++;
                         })
-                        .transition(new Transition(() -> robot.shootCommand.isFinished()))
+                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                new State()
+                        .transition(new Transition(() -> numGateCyclesCompleted < numGateCyclesWanted, "gateCycleStart"))
+                        .transition(new Transition(() -> numGateCyclesCompleted >= numGateCyclesWanted, "park")),
+                // park
+                new State("park")
+                        .onEnter(() -> follower.followPath(park, true))
+                        .transition(new Transition(() -> !follower.isBusy()))
+
         );
 
         try {
@@ -490,6 +291,19 @@ public class RedClose24 extends OpMode {
             throw new RuntimeException(e);
         }
         robot.reset();
+    }
+
+    @Override
+    public void init_loop() {
+        telemetry.addLine("Press dpad left/right buttons to configure opening gate.");
+        telemetry.addData("Open Gate", openGate);
+        if (gamepad1.dpadRightWasPressed()) {
+            openGate = true;
+        }
+        if (gamepad1.dpadLeftWasPressed()) {
+            openGate = false;
+        }
+        telemetry.update();
     }
 
     @Override
@@ -505,13 +319,13 @@ public class RedClose24 extends OpMode {
                             sotm.calculateShooterOutputs(follower.getPose(), new Vector(), new Vector(), 0, RobotConstants.dt, Alliance.RED);
         }
 
-        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity + speedOffset;
+        robot.shooter.wantedVelocity = shooterOutputs.wheelVelocity;
         robot.shooter.wantedAcceleration = shooterOutputs.wheelFeedforward;
         robot.shooter.wantedPitch = shooterOutputs.hoodAngle;
         robot.turret.wantedAngle = shooterOutputs.turretAngle + turretOffset;
         robot.turret.wantedAngularVelocity = shooterOutputs.turretFeedforward;
 
-        if (robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED) {
+        if ((robot.intake.detectionState == Intake.DetectionState.THIRD_TRIGGERED && prevState == Intake.DetectionState.SECOND_TRIGGERED)) {
             robot.ledIndicator.indicateIntakeFull();
         }
         prevState = robot.intake.detectionState;
