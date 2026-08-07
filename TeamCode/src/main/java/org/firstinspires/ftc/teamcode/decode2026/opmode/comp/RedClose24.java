@@ -337,7 +337,7 @@ public class RedClose24 extends OpMode {
                         .onEnter(() -> {
                             lockShooter = true;
                             lockedPose = Flipper.flip(new Pose(57,76, Math.toRadians(-160)));
-                            turretOffset = Math.toRadians(-6);
+                            turretOffset = Math.toRadians(-8);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -361,13 +361,13 @@ public class RedClose24 extends OpMode {
                         .onEnter(() -> {
                             follower.setMaxPower(1);
                             follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                            turretOffset = Math.toRadians(-2);
+                            turretOffset = Math.toRadians(-4);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isMostlyFull))
                         .maxTime(2200),
                 new State()
-                        .maxTime(50),
+                        .maxTime(35),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate1, true);
@@ -460,7 +460,7 @@ public class RedClose24 extends OpMode {
                         .onEnter(() -> {
                             robot.intakeCommand.start();
                             follower.followPath(intakePile, false);
-                            //speedOffset = 40;
+                            speedOffset = 40;
                             turretOffset = Math.toRadians(2);
                             lockShooter = false;
                         })
