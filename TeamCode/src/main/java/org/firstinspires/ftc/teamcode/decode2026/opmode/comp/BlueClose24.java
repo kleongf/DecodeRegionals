@@ -277,12 +277,13 @@ public class BlueClose24 extends OpMode {
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
         lockedPose = new Pose(32, 108, FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading());
-        turretOffset = Math.toRadians(-4);
+        turretOffset = Math.toRadians(-1);
         buildPaths();
 
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
+                            speedOffset = 30;
                             follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
@@ -312,7 +313,7 @@ public class BlueClose24 extends OpMode {
                             if(openGate) {
                                 lockShooter = true;
                                 lockedPose = new Pose(57,76, Math.toRadians(-130.37));
-                                turretOffset = Math.toRadians(3);
+                                turretOffset = Math.toRadians(6);
                             }
                             else{
                                 lockShooter = false;
@@ -337,7 +338,7 @@ public class BlueClose24 extends OpMode {
                         .onEnter(() -> {
                             lockShooter = true;
                             lockedPose = new Pose(57,76, Math.toRadians(-160));
-                            turretOffset = Math.toRadians(3);
+                            turretOffset = Math.toRadians(6);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -354,14 +355,14 @@ public class BlueClose24 extends OpMode {
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
                             follower.followPath(intakeGate1, true);
-                            //speedOffset = 30;
+                            speedOffset = 40;
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                            turretOffset = Math.toRadians(1+2+2);
+                            turretOffset = Math.toRadians(2+2);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isMostlyFull))

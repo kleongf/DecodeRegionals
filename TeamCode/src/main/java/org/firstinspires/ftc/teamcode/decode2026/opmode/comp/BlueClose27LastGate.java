@@ -282,7 +282,7 @@ public class BlueClose27LastGate extends OpMode {
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
         lockedPose = (new Pose(32, 108, FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading()));
-        turretOffset = Math.toRadians(4);
+        turretOffset = Math.toRadians(0);
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -303,8 +303,7 @@ public class BlueClose27LastGate extends OpMode {
                             robot.intakeCommand.start();
                             ShootingConstants.tofMultiplier = 0.7;
                             lockedPose = (new Pose(56, 75));
-                            turretOffset = Math.toRadians(3);
-                            // turretOffset = Math.toRadians(0);
+                            turretOffset = Math.toRadians(1);
                             lockShooter = false;
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > pathSOTMTValue)),

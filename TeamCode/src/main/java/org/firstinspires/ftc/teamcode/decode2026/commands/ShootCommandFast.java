@@ -25,7 +25,7 @@ public class ShootCommandFast extends Command {
                             robot.intake.wantedMode = Intake.Mode.INTAKE_FAST;
                             robot.shooter.closeLatch();
                         })
-                        .maxTime(500)
+                        .maxTime(550)
         );
     }
 }
