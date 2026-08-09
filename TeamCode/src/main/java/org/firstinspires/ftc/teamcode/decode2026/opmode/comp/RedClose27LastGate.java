@@ -296,7 +296,8 @@ public class RedClose27LastGate extends OpMode {
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .maxTime(250),
+                        //.transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);

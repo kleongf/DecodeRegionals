@@ -32,16 +32,17 @@ import org.firstinspires.ftc.teamcode.util.fsm.Transition;
 @Autonomous(name="Red Close 24", group="!")
 public class RedClose24 extends OpMode {
     private boolean openGate = false;
-    private Pose lockedPose = new Pose();
+    private Pose lockedPose = Flipper.flip(new Pose());
     private boolean lockShooter = true;
     private double turretOffset = 0;
+    private final double pathSOTMTValue = .99;
     private double speedOffset = 0;
     private Follower follower;
     private StateMachine stateMachine;
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, donderaShift, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakePile, shootPile;
     private PathChain shootFirstOpenGate, intakeSecondOpenGate, shootSecondOpenGate;
 
     // important: to flip any pose, use Pose)
@@ -237,7 +238,7 @@ public class RedClose24 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 Flipper.flip(new Pose(57.000, 76.000)),
-                                Flipper.flip(new Pose(8, 12))
+                                Flipper.flip(new Pose(8, 12+4))
                         )
                 )
                 .setHeadingInterpolation(pileCycle)
@@ -246,7 +247,7 @@ public class RedClose24 extends OpMode {
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                Flipper.flip(new Pose(8, 12)),
+                                Flipper.flip(new Pose(8, 12+4)),
                                 Flipper.flip(new Pose(58.000, 120.000))
                         )
                 )
@@ -277,12 +278,13 @@ public class RedClose24 extends OpMode {
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.RED_GOAL_POSE);
         lockedPose = Flipper.flip(new Pose(32, 108, FieldConstants.RED_CLOSE_START_AUTO_POSE.getHeading()));
-        turretOffset = Math.toRadians(4);
+        turretOffset = 0;
         buildPaths();
 
         stateMachine = new StateMachine(
                 new State()
                         .onEnter(() -> {
+                            speedOffset = 30;
                             follower.setMaxPower(0.7);
                             follower.followPath(shootPreload, true);
                             robot.prepareShootCommand.start();
@@ -297,7 +299,8 @@ public class RedClose24 extends OpMode {
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .maxTime(250),
+                        //.transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -312,7 +315,7 @@ public class RedClose24 extends OpMode {
                             if(openGate) {
                                 lockShooter = true;
                                 lockedPose = Flipper.flip(new Pose(57,76, Math.toRadians(-130.37)));
-                                turretOffset = Math.toRadians(-3);
+                                turretOffset = Math.toRadians(-2.5);
                             }
                             else{
                                 lockShooter = false;
@@ -326,18 +329,19 @@ public class RedClose24 extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .maxTime(250),
+                        //.transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(intakeSecond, true);
                             robot.intakeCommand.start();
                         })
-                        .maxTime(50),
+                        .maxTime(35),
                 new State()
                         .onEnter(() -> {
-                            lockShooter = true;
+                            lockShooter = false;
                             lockedPose = Flipper.flip(new Pose(57,76, Math.toRadians(-160)));
-                            turretOffset = Math.toRadians(-8);
+                            turretOffset = Math.toRadians(-2.5);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -354,20 +358,20 @@ public class RedClose24 extends OpMode {
                             robot.intakeCommand.start();
                             follower.setMaxPower(.8);
                             follower.followPath(intakeGate1, true);
-                            //speedOffset = 30;
+                            speedOffset = 40;
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
                             follower.holdPoint(new BezierPoint(FieldConstants.RED_GATE_AUTO_POSE_IN), FieldConstants.RED_GATE_AUTO_POSE_IN.getHeading());
-                            turretOffset = Math.toRadians(-4);
+                            turretOffset = Math.toRadians(-2.5);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isMostlyFull))
                         .maxTime(2200),
                 new State()
-                        .maxTime(35),
+                        .maxTime(50),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(shootGate1, true);
@@ -381,7 +385,7 @@ public class RedClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.setMaxPower(.7);
+                            follower.setMaxPower(.8);
                             follower.followPath(intakeGate2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -461,10 +465,10 @@ public class RedClose24 extends OpMode {
                             robot.intakeCommand.start();
                             follower.followPath(intakePile, false);
                             speedOffset = 40;
-                            turretOffset = Math.toRadians(2);
+                            turretOffset = Math.toRadians(-2);
                             lockShooter = false;
                         })
-                        .maxTime(2000) // so we don't get stuck
+                        .maxTime(2000)
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.9))
                         .transition(new Transition(() -> robot.intake.isFull)),
                 new State()

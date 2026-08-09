@@ -300,7 +300,15 @@ public class TeleopDrivetrain {
                 double[] powers = calculateDrivetrainPowers(x, y, rx, follower.getHeading());
                 // boolean isAssisted = gateHeadingLock || openGateHeadingLock || kicking;
                 if (alliance == Alliance.BLUE) {
-                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, Math.toRadians(180));
+                    double headingOffset;
+                    if(robotCentric){
+                        headingOffset = Math.toRadians(0);
+                    }
+                    else{
+                        headingOffset = Math.toRadians(180);
+                    }
+
+                    follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric, headingOffset);//made 0 for robo, 180 for
                     // follower.setTeleOpDrive(powers[1], powers[0], powers[2], robotCentric);
                 } else {
                     follower.setTeleOpDrive(powers[0], powers[1], powers[2], robotCentric);

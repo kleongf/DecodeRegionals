@@ -35,6 +35,7 @@ public class BlueClose24 extends OpMode {
     private Pose lockedPose = new Pose();
     private boolean lockShooter = true;
     private double turretOffset = 0;
+    private final double pathSOTMTValue = .99;
     private double speedOffset = 0;
     private Follower follower;
     private StateMachine stateMachine;
@@ -237,7 +238,7 @@ public class BlueClose24 extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(57.000, 76.000),
-                                new Pose(8, 12)
+                                new Pose(8, 12+4)
                         )
                 )
                 .setHeadingInterpolation(pileCycle)
@@ -246,7 +247,7 @@ public class BlueClose24 extends OpMode {
         shootPile = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(8, 12),
+                                new Pose(8, 12+4),
                                 new Pose(58.000, 120.000)
                         )
                 )
@@ -277,7 +278,7 @@ public class BlueClose24 extends OpMode {
         robot = new CurrentRobot(hardwareMap);
         sotm = new SOTMUtil(FieldConstants.BLUE_GOAL_POSE);
         lockedPose = new Pose(32, 108, FieldConstants.BLUE_CLOSE_START_AUTO_POSE.getHeading());
-        turretOffset = Math.toRadians(-1);
+        turretOffset = Math.toRadians(0);
         buildPaths();
 
         stateMachine = new StateMachine(
@@ -298,7 +299,8 @@ public class BlueClose24 extends OpMode {
                         .transition(new Transition(() -> follower.atParametricEnd() && robot.shooter.atTarget(40))),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .maxTime(250),
+                        //.transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
                             follower.setMaxPower(1);
@@ -313,7 +315,7 @@ public class BlueClose24 extends OpMode {
                             if(openGate) {
                                 lockShooter = true;
                                 lockedPose = new Pose(57,76, Math.toRadians(-130.37));
-                                turretOffset = Math.toRadians(6);
+                                turretOffset = Math.toRadians(2.5);
                             }
                             else{
                                 lockShooter = false;
@@ -327,7 +329,8 @@ public class BlueClose24 extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished())),
+                        .maxTime(250),
+                        //.transition(new Transition(() -> robot.shootCommand.isFinished())),
                 new State()
                         .onEnter(() -> {
                             follower.followPath(intakeSecond, true);
@@ -336,9 +339,9 @@ public class BlueClose24 extends OpMode {
                         .maxTime(35),
                 new State()
                         .onEnter(() -> {
-                            lockShooter = true;
+                            lockShooter = false;
                             lockedPose = new Pose(57,76, Math.toRadians(-160));
-                            turretOffset = Math.toRadians(6);
+                            turretOffset = Math.toRadians(2.5);
                         })
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.85)),
                 new State()
@@ -362,7 +365,7 @@ public class BlueClose24 extends OpMode {
                         .onEnter(() -> {
                             follower.setMaxPower(1);
                             follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
-                            turretOffset = Math.toRadians(2+2);
+                            turretOffset = Math.toRadians(2.5);
                         })
                         .minTime(600)
                         .transition(new Transition(() -> robot.intake.isMostlyFull))
@@ -382,7 +385,7 @@ public class BlueClose24 extends OpMode {
                 new State()
                         .onEnter(() -> {
                             robot.intakeCommand.start();
-                            follower.setMaxPower(.7);
+                            follower.setMaxPower(.8);
                             follower.followPath(intakeGate2, true);
                         })
                         .transition(new Transition(() -> !follower.isBusy())),
@@ -465,7 +468,7 @@ public class BlueClose24 extends OpMode {
                             turretOffset = Math.toRadians(2);
                             lockShooter = false;
                         })
-                        .maxTime(2000) // so we don't get stuck
+                        .maxTime(2000)
                         .transition(new Transition(() -> follower.getCurrentTValue() > 0.9))
                         .transition(new Transition(() -> robot.intake.isFull)),
                 new State()
