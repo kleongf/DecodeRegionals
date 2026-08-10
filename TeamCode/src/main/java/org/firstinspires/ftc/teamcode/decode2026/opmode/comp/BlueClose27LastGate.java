@@ -5,6 +5,7 @@ import static java.lang.Thread.sleep;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -39,7 +40,7 @@ public class BlueClose27LastGate extends OpMode {
     private CurrentRobot robot;
     private SOTMUtil sotm;
     private Intake.DetectionState prevState;
-    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeGate6, shootGate6, intakePile, shootPile;
+    private PathChain shootPreload, intakeFirst, shootFirst, intakeSecond, shootSecond, intakeGate1, shootGate1, intakeGate2, shootGate2, intakeGate3, shootGate3, intakeGate4, shootGate4, intakeGate5, shootGate5, intakeGate6, shootGate6, intakePile, shootPile, park;
 
     // important: to flip any pose, use (Pose)
     public void buildPaths() {
@@ -266,6 +267,15 @@ public class BlueClose27LastGate extends OpMode {
                 .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Pose(57.000, 77.000),
+                                new Pose(43, 71)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-160))
+                .build();
     }
 
     @Override
@@ -345,7 +355,7 @@ public class BlueClose27LastGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN, false);
+                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
                         })
                         .minTime(600)
@@ -371,7 +381,7 @@ public class BlueClose27LastGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN, false);
+                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
                         })
                         .minTime(600)
@@ -397,7 +407,7 @@ public class BlueClose27LastGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN, false);
+                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
                         })
                         .minTime(600)
@@ -423,7 +433,7 @@ public class BlueClose27LastGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN, false);
+                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
                         })
                         .minTime(600)
@@ -449,7 +459,7 @@ public class BlueClose27LastGate extends OpMode {
                         .transition(new Transition(() -> !follower.isBusy())),
                 new State()
                         .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN, false);
+                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
                             // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
                         })
                         .minTime(600)
@@ -465,32 +475,38 @@ public class BlueClose27LastGate extends OpMode {
                 new State()
                         .onEnter(() -> robot.shootCommand.start())
                         .maxTime(100),
-                // gate cycle 6
                 new State()
                         .onEnter(() -> {
-                            robot.intakeCommand.start();
-                            follower.setMaxPower(.8);
-                            follower.followPath(intakeGate6, true);
+                            follower.followPath(park, true);
                         })
-                        .transition(new Transition(() -> !follower.isBusy())),
-                new State()
-                        .onEnter(() -> {
-                            follower.holdPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN, false);
-                            // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
-                        })
-                        .minTime(600)
-                        .transition(new Transition(() -> robot.intake.isFull))
-                        .maxTime(1900),
-                new State()
-                        .onEnter(() -> {
-                            follower.setMaxPower(1);
-                            follower.followPath(shootGate6, true);
-                            robot.prepareShootCommandLonger.start();
-                        })
-                        .transition(new Transition(() -> follower.getCurrentTValue() > pathSOTMTValue)),
-                new State()
-                        .onEnter(() -> robot.shootCommand.start())
-                        .transition(new Transition(() -> robot.shootCommand.isFinished()))
+                        .transition(new Transition(() -> !follower.isBusy()))
+
+//                // gate cycle 6
+//                new State()
+//                        .onEnter(() -> {
+//                            robot.intakeCommand.start();
+//                            follower.setMaxPower(.8);
+//                            follower.followPath(intakeGate6, true);
+//                        })
+//                        .transition(new Transition(() -> !follower.isBusy())),
+//                new State()
+//                        .onEnter(() -> {
+//                            follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE_IN), FieldConstants.BLUE_GATE_AUTO_POSE_IN.getHeading());
+//                            // follower.holdPoint(new BezierPoint(FieldConstants.BLUE_GATE_AUTO_POSE), FieldConstants.BLUE_GATE_AUTO_POSE.getHeading());
+//                        })
+//                        .minTime(600)
+//                        .transition(new Transition(() -> robot.intake.isFull))
+//                        .maxTime(1900),
+//                new State()
+//                        .onEnter(() -> {
+//                            follower.setMaxPower(1);
+//                            follower.followPath(shootGate6, true);
+//                            robot.prepareShootCommandLonger.start();
+//                        })
+//                        .transition(new Transition(() -> follower.getCurrentTValue() > pathSOTMTValue)),
+//                new State()
+//                        .onEnter(() -> robot.shootCommand.start())
+//                        .transition(new Transition(() -> robot.shootCommand.isFinished()))
         );
 
         try {
