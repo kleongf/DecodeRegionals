@@ -1,3 +1,41 @@
+# FTC DECODE 2025–2026 Robot Code
+
+An archived snapshot of DECODE-season FTC robot software built on SDK 11.0 and Pedro Pathing 2.1. The project uses a command/subsystem architecture for competition autonomous and teleop programs.
+
+## Highlights
+
+- blue/red close and far competition autonomous routines
+- alliance-specific and standard-start teleop programs
+- intake, turret, tilt, shooter, LED, artifact vision, and camera-localisation subsystems
+- reusable command, finite-state-machine, controller, spline, matrix, and robot utilities
+- Limelight and webcam localisation plus artifact-processing experiments
+- Pedro Pathing tuning and robot-specific tuning OpModes
+
+## Build
+
+Install Android Studio Ladybug (2024.2) or newer, open the repository, allow Gradle to sync, and build with:
+
+```bash
+./gradlew :TeamCode:assembleDebug
+```
+
+Install the `FtcRobotController` app from Android Studio on a configured FTC Control Hub/Robot Controller device.
+
+## Robot configuration
+
+The main code expects devices including `intakeMotor`, `shooterMotor`, `shooterMotor2`, `turretMotor`, `externalEncoder`, `topSensor`, `middleSensor`, `bottomSensor`, `limelight`, `Webcam 2`, and the pitch/latch/light/hang servos. Constants under `decode2026/constants/` contain robot- and field-specific values that must be checked before use.
+
+## Source layout
+
+- `decode2026/opmode/comp/` and `decode2026/opmode/teleop/` — competition programs.
+- `decode2026/opmode/tuning/` — hardware, localisation, vision, and controller tests.
+- `decode2026/commands/` and `decode2026/subsystems/` — command/subsystem implementation.
+- `lib/`, `util/`, and `pedroPathing/` — shared framework and motion utilities.
+
+---
+
+## FTC SDK reference
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
