@@ -90,39 +90,59 @@ public class Drivetrain extends Subsystem {
 
         double heading = follower.getPose().getHeading();
 
-        // Locked axes are absolute field-frame PID targets, so they must never be rotated
-        // by the alliance offset (only raw manual joystick input needs that). Manual input
-        // is rotated into field frame here — by the live heading in robot-centric mode
-        // (a no-op once the final rotation below undoes it), or by the fixed alliance
-        // offset in field-centric mode — so that locked and manual axes can be combined
-        // in a single shared field frame before one final rotation into robot frame.
         double manualX = driveX * DrivetrainConstants.MOVEMENT_SPEED_MULTIPLIER;
         double manualY = driveY * DrivetrainConstants.MOVEMENT_SPEED_MULTIPLIER;
+        double manualTurn = driveTurn * DrivetrainConstants.TURN_SPEED_MULTIPLIER;
+
+        double xPidOutput = xLocked
+                ? MathUtil.clamp(xController.calculate(follower.getPose().getX(), lockedX), -1, 1)
+                : 0;
+        double yPidOutput = yLocked
+                ? MathUtil.clamp(yController.calculate(follower.getPose().getY(), lockedY), -1, 1)
+                : 0;
+        double headingPidOutput = 0;
+        if (headingLocked) {
+            double headingError = MathFunctions.getTurnDirection(heading, lockedHeading)
+                    * MathFunctions.getSmallestAngleDifference(heading, lockedHeading);
+            headingPidOutput = MathUtil.clamp(headingController.calculate(0, headingError), -1, 1);
+        }
+
+        double[] powers = computeDrivePowers(
+                heading, allianceHeadingOffset, robotCentric,
+                manualX, manualY, manualTurn,
+                xLocked, xPidOutput,
+                yLocked, yPidOutput,
+                headingLocked, headingPidOutput
+        );
+
+        follower.setTeleOpDrive(powers[0], powers[1], powers[2], true);
+    }
+
+    /**
+     * Pure geometry: blends locked-axis PID output (already absolute field-frame, alliance-
+     * invariant) with manual joystick input (rotated into field frame by the live heading in
+     * robot-centric mode, or by the fixed alliance offset in field-centric mode), then rotates
+     * the combined field-frame vector into robot frame for {@code Follower#setTeleOpDrive}.
+     * Extracted as a static pure function (no Follower/hardware access) so it's unit-testable.
+     */
+    static double[] computeDrivePowers(
+            double heading, double allianceHeadingOffset, boolean robotCentric,
+            double manualX, double manualY, double manualTurn,
+            boolean xLocked, double xPidOutput,
+            boolean yLocked, double yPidOutput,
+            boolean headingLocked, double headingPidOutput
+    ) {
         double manualRotation = robotCentric ? heading : allianceHeadingOffset;
         double fieldManualX = manualX * Math.cos(manualRotation) - manualY * Math.sin(manualRotation);
         double fieldManualY = manualX * Math.sin(manualRotation) + manualY * Math.cos(manualRotation);
 
-        double fieldX = xLocked
-                ? MathUtil.clamp(xController.calculate(follower.getPose().getX(), lockedX), -1, 1)
-                : fieldManualX;
-        double fieldY = yLocked
-                ? MathUtil.clamp(yController.calculate(follower.getPose().getY(), lockedY), -1, 1)
-                : fieldManualY;
+        double fieldX = xLocked ? xPidOutput : fieldManualX;
+        double fieldY = yLocked ? yPidOutput : fieldManualY;
+        double turn = headingLocked ? headingPidOutput : manualTurn;
 
-        double turn = driveTurn * DrivetrainConstants.TURN_SPEED_MULTIPLIER;
-        if (headingLocked) {
-            double headingError = MathFunctions.getTurnDirection(heading, lockedHeading)
-                    * MathFunctions.getSmallestAngleDifference(heading, lockedHeading);
-            turn = MathUtil.clamp(headingController.calculate(0, headingError), -1, 1);
-        }
-
-        // Rotate the combined field-frame vector into robot frame ourselves, then always
-        // drive the follower in robot-centric mode — this keeps us in full control of when
-        // the alliance offset applies instead of relying on Follower's own field-centric
-        // rotation, which would apply uniformly to locked-axis output too.
         double robotX = fieldX * Math.cos(-heading) - fieldY * Math.sin(-heading);
         double robotY = fieldX * Math.sin(-heading) + fieldY * Math.cos(-heading);
 
-        follower.setTeleOpDrive(robotX, robotY, turn, true);
+        return new double[] {robotX, robotY, turn};
     }
 }

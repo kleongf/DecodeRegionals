@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decode2026.opmode.tuning;
+package org.firstinspires.ftc.teamcode.biobuzz.opmode.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.decode2026.constants.ShooterConstants;
-import org.firstinspires.ftc.teamcode.decode2026.constants.TiltConstants;
 
 @Config
 @TeleOp(name="Position Tuner", group="?")
@@ -20,11 +17,12 @@ public class PositionTuner extends OpMode {
     public DcMotorEx intakeMotor;
     public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
-    public static double latchTarget = ShooterConstants.LATCH_CLOSED;
+    // TODO: ShooterConstants/TiltConstants no longer exist; re-tune these starting positions
+    public static double latchTarget = 0.5;
     public static double shooterPower = 0;
     public static double intakePower = 0;
-    public static double liftTarget = TiltConstants.TILT_SERVO_UNTILTED;
-    public static double pitchTarget = ShooterConstants.PITCH_SERVO_MIN;
+    public static double liftTarget = 0.0;
+    public static double pitchTarget = 0.0;
     public static boolean shooterMotor1On = true;
     public static boolean shooterMotor2On = true;
 

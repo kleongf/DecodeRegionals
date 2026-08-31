@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decode2026.opmode.tuning;
+package org.firstinspires.ftc.teamcode.biobuzz.opmode.tuning;
 
 import android.util.Size;
 
@@ -15,11 +15,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.decode2026.constants.CameraLocalizerConstants;
-import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.biobuzz.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -64,23 +64,6 @@ public class WebcamLocalizationTest extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
-
-    public static AprilTagLibrary getDecodeTagLibraryAdjusted(){
-        return new AprilTagLibrary.Builder()
-                .addTag(20, "BlueTarget",
-                        6.5, new VectorF(-58.3727f, -55.6425f, 29.5f), DistanceUnit.INCH,
-                        new Quaternion(0.2182149f, -0.2182149f, -0.6725937f, 0.6725937f, 0))
-                .addTag(21, "Obelisk_GPP",
-                        6.5, DistanceUnit.INCH)
-                .addTag(22, "Obelisk_PGP",
-                        6.5, DistanceUnit.INCH)
-                .addTag(23, "Obelisk_PPG",
-                        6.5, DistanceUnit.INCH)
-                .addTag(24, "RedTarget",
-                        6.5, new VectorF(-58.3727f, 55.6425f, 29.5f), DistanceUnit.INCH,
-                        new Quaternion(0.6725937f, -0.6725937f, -0.2182149f, 0.2182149f, 0))
-                .build();
-    }
 
     @Override
     public void runOpMode() {
@@ -150,37 +133,21 @@ public class WebcamLocalizationTest extends LinearOpMode {
          * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
          * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
          */
-        // TODO: GET THIS POSITION RIGHT
-        // -122, 142, 230, 0); // this camera is on the other side: on the right side
-//        Position cameraPosition = new Position(DistanceUnit.MM,
-//                138, 119, 236, 0);
-//        // straight up is zero, so i guess 20 deg up would be -70
-//        YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-//                0, -70, 0, 0);
 
         Position cameraPosition = new Position(DistanceUnit.MM,
                 169, -120, 130, 0);
         YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
                 -90, -70, 0, 0);
 
-        /*
-            private Matrix K = new Matrix(new double[][] {
-            {214.1037056, 0, 313},
-            {0, 212.72822576, 254.488},
-            {0, 0, 1}
-    });
-         */
-
-        // TODO: open: 0.78, close: 0.55 for the lift
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 // i think it may be fx focal length
-                .setLensIntrinsics(CameraLocalizerConstants.fxRight, CameraLocalizerConstants.fyRight, CameraLocalizerConstants.cxRight, CameraLocalizerConstants.cyRight)
+                .setLensIntrinsics(214.1037056, 212.72822576, 313, 254.488)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setDrawTagOutline(true)
-                .setTagLibrary(getDecodeTagLibraryAdjusted())
-                .setCameraPose(CameraLocalizerConstants.cameraPositionRight, CameraLocalizerConstants.cameraOrientationRight)
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setCameraPose(cameraPosition, cameraOrientation)
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
@@ -240,10 +207,6 @@ public class WebcamLocalizationTest extends LinearOpMode {
      * Add telemetry about AprilTag detections.
      */
     private Pose toPinpointPose(Pose webcamPose) {
-        // x is the webcampose.getY() and it is negative, but it should be more negative (larger in magnitude)
-        // so we should probably decrease fx
-        // If estimated X is too large, your fx is too small
-        //If estimated X is too small, your fx is too large
         return new Pose(71 + webcamPose.getY(), 71 - webcamPose.getX(), webcamPose.getHeading());
     }
     private void telemetryAprilTag() {
@@ -254,8 +217,6 @@ public class WebcamLocalizationTest extends LinearOpMode {
 
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
-                // TODO: use the degree output to power the pid
-                // say when we have the trigger pressed down, we turn on the turret pid thingy
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
 //                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
 //                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
@@ -271,13 +232,13 @@ public class WebcamLocalizationTest extends LinearOpMode {
                             detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES)));
                     Pose ppPose = toPinpointPose(new Pose(detection.robotPose.getPosition().x, detection.robotPose.getPosition().y, detection.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)));
                     telemetry.addLine("Pinpoint Pose: " + ppPose.toString());
-                    telemetry.addLine("Follower pose:" + follower.getPose());
                 }
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
         }   // end for() loop
+        telemetry.addLine("Follower pose:" + follower.getPose());
 
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
