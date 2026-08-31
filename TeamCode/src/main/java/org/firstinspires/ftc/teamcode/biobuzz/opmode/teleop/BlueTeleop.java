@@ -1,0 +1,40 @@
+package org.firstinspires.ftc.teamcode.decode2026.opmode.teleop;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.lib.Alliance;
+
+@Config
+@TeleOp(name="Blue Teleop COMP", group="!")
+public class BlueTeleop extends OpMode {
+    private MainTeleop teleop;
+    private final Pose startPose = (Pose) blackboard.getOrDefault(FieldConstants.END_POSE_KEY, FieldConstants.BLUE_STANDARD_START_POSE);
+
+    @Override
+    public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        // teleop = new MainTeleop(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2);
+    }
+
+    @Override
+    public void loop() {
+        teleop.periodic();
+        telemetry.update();
+    }
+
+    @Override
+    public void init_loop() {
+        teleop.init_loop();
+    }
+
+    @Override
+    public void start() {
+        teleop.start();
+    }
+}

@@ -1,23 +1,16 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
-
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PredictiveBrakingCoefficients;
-import com.pedropathing.drivetrain.Drivetrain;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
-import com.pedropathing.ftc.localization.Encoder;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
-import com.pedropathing.ftc.localization.constants.ThreeWheelConstants;
-import com.pedropathing.ftc.localization.constants.TwoWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
@@ -26,15 +19,13 @@ public class Constants {
             .mass(11)
             .forwardZeroPowerAcceleration((-33 + (-30)) / 2.0)
             .lateralZeroPowerAcceleration(((-50) + (-62) + (-58)) / 3.0)
-            // TODO: test again with predictive braking hmmm lowkey linear could be stronger? probably not, but have to retune velocity and zpam
             .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.10, 0.10, 0.001))
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
-            .centripetalScaling(0.000) // TODO: maybe set to 0?
+            .centripetalScaling(0.000)
             .holdPointHeadingScaling(0.35)
             .holdPointTranslationalScaling(0.35)
-            // hmm maybe i need an f component and strengthen p for translational
             .translationalPIDFCoefficients(new PIDFCoefficients(0.14, 0, 0.008, 0.0))
             .secondaryTranslationalPIDFCoefficients(
                     new PIDFCoefficients(0.2, 0, 0.012, 0.0)
@@ -63,31 +54,6 @@ public class Constants {
             .useVoltageCompensation(true)
             .nominalVoltage(12.0);
 
-//    public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
-//            .forwardEncoder_HardwareMapName("leftFront")
-//            .strafeEncoder_HardwareMapName("rightRear")
-//            .IMU_HardwareMapName("imu")
-//            .IMU_Orientation(
-//                    new RevHubOrientationOnRobot(
-//                            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-//                            RevHubOrientationOnRobot.UsbFacingDirection.UP
-//                    )
-//            );
-
-//    public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
-//            .forwardTicksToInches(0.00197895600226)
-//            .strafeTicksToInches(0.00197895600226)
-//            .turnTicksToInches(.001989436789)
-//            .leftPodY(4.3503937)
-//            .rightPodY(-3.30709)
-//            .strafePodX(-3.77953-0.04)
-//            .leftEncoder_HardwareMapName("front_right_drive")
-//            .rightEncoder_HardwareMapName("front_left_drive")
-//            .strafeEncoder_HardwareMapName("intakeMotor")
-//            .leftEncoderDirection(Encoder.REVERSE)
-//            .rightEncoderDirection(Encoder.FORWARD)
-//            .strafeEncoderDirection(Encoder.REVERSE);
-
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-3.30709)
             .strafePodX(-3.77953-0.04)
@@ -101,7 +67,7 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(
-            0.97,
+            0.975,
             0,
             1,
             1
