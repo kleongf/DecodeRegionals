@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.biobuzz;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.biobuzz.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.lib.Alliance;
 import org.firstinspires.ftc.teamcode.lib.robot.Robot;
 
 public class CurrentRobot extends Robot {
     public final Drivetrain drivetrain;
 
-    public CurrentRobot(HardwareMap hardwareMap) {
-        drivetrain = new Drivetrain(hardwareMap);
+    public CurrentRobot(HardwareMap hardwareMap, Alliance alliance) {
+        drivetrain = new Drivetrain(hardwareMap, alliance);
     }
 
     @Override
@@ -20,5 +21,11 @@ public class CurrentRobot extends Robot {
     @Override
     public void start() {
         drivetrain.start();
+    }
+
+    @Override
+    public void periodic() {
+        // TODO: put robot logic inside here
+        super.periodic();
     }
 }

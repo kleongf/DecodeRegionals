@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.biobuzz.CurrentRobot;
 import org.firstinspires.ftc.teamcode.biobuzz.commands.TurnToHeadingCommand;
+import org.firstinspires.ftc.teamcode.lib.Alliance;
 import org.firstinspires.ftc.teamcode.lib.fsm.State;
 import org.firstinspires.ftc.teamcode.lib.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.lib.fsm.Transition;
@@ -45,7 +46,9 @@ public class ExampleAuto extends OpMode {
 
     @Override
     public void init() {
-        robot = new CurrentRobot(hardwareMap);
+        // this auto only drives via followPath/TurnToHeadingCommand, never manual joystick
+        // input, so the alliance-dependent heading offset (see Drivetrain) has no effect here
+        robot = new CurrentRobot(hardwareMap, Alliance.BLUE);
         robot.drivetrain.follower.setStartingPose(startPose);
         robot.init();
         buildPaths();
