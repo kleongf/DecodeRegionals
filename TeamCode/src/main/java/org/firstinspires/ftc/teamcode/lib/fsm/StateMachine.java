@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.fsm;
+package org.firstinspires.ftc.teamcode.lib.fsm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class StateMachine {
                 .orElse(-1);
     }
 
-    public void update() {
+    public void periodic() {
         if (!running) return;
 
         State current = states.get(index);
@@ -53,6 +53,13 @@ public class StateMachine {
 
     public boolean isFinished() {
         return !running;
+    }
+
+    public void interrupt() {
+        if (running) {
+            states.get(index).interrupt();
+            running = false;
+        }
     }
 }
 

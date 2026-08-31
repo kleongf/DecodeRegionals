@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.fsm;
+package org.firstinspires.ftc.teamcode.lib.fsm;
 
 import com.pedropathing.util.Timer;
 
@@ -51,6 +51,13 @@ public class State {
             if (exitRunnable != null) exitRunnable.run();
             state = -1;
             // nextState should already be fallback if one was set
+        }
+    }
+
+    public void interrupt() {
+        if (state == 0) {
+            if (exitRunnable != null) exitRunnable.run();
+            state = -1;
         }
     }
 

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.lib.robot;
 
 public abstract class Subsystem {
-    public Subsystem() {}
-    public void update() {}
+    public Subsystem() {
+        CommandScheduler.getInstance().registerSubsystem(this);
+    }
+    public void init() {}
     public void start() {}
-    public void reset() {}
+    public void periodic() {}
 }
