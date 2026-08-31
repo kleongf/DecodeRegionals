@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.decodeutil;
+package org.firstinspires.ftc.teamcode.lib;
 
 public enum Alliance {
     RED,

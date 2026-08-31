@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.util.decodeutil;
+package org.firstinspires.ftc.teamcode.lib.math;
 
 import java.util.TreeMap;
 
-public class LUT {
+public class LookupTable {
     private TreeMap<Double, Double> data;
-    public LUT() {
+    public LookupTable() {
         this.data = new TreeMap<>();
     }
     public void addData(double x, double fx) {

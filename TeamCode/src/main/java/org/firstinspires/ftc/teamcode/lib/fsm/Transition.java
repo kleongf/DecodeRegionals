@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.fsm;
+package org.firstinspires.ftc.teamcode.lib.fsm;
 
 import java.util.function.Supplier;
 
