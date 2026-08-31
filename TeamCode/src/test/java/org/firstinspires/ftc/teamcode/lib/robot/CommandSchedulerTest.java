@@ -39,7 +39,7 @@ public class CommandSchedulerTest {
                             .onExit(exits::incrementAndGet)
                             .transition(new Transition(finished::get))
             );
-            command = new Command(null, Arrays.asList(requirements), sm);
+            command = new Command(Arrays.asList(requirements), sm);
         }
     }
 

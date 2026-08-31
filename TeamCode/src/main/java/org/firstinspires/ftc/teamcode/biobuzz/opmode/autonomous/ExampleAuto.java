@@ -59,7 +59,7 @@ public class ExampleAuto extends OpMode {
                         .transition(new Transition(() -> !robot.drivetrain.follower.isBusy())),
                 new State("holdHeading")
                         .onEnter(() -> {
-                            turnCommand = new TurnToHeadingCommand(robot, robot.drivetrain, scorePose.getHeading());
+                            turnCommand = new TurnToHeadingCommand(robot.drivetrain, scorePose.getHeading());
                             CommandScheduler.getInstance().schedule(turnCommand);
                         })
                         .transition(new Transition(() -> turnCommand.isFinished())),

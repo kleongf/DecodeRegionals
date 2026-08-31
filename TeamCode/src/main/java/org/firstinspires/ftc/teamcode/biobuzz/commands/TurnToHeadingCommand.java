@@ -6,13 +6,12 @@ import org.firstinspires.ftc.teamcode.lib.fsm.State;
 import org.firstinspires.ftc.teamcode.lib.fsm.StateMachine;
 import org.firstinspires.ftc.teamcode.lib.fsm.Transition;
 import org.firstinspires.ftc.teamcode.lib.robot.Command;
-import org.firstinspires.ftc.teamcode.lib.robot.Robot;
 
 import java.util.Collections;
 
 public class TurnToHeadingCommand extends Command {
-    public TurnToHeadingCommand(Robot robot, Drivetrain drivetrain, double targetHeadingRadians) {
-        super(robot, Collections.singletonList(drivetrain), new StateMachine(
+    public TurnToHeadingCommand(Drivetrain drivetrain, double targetHeadingRadians) {
+        super(Collections.singletonList(drivetrain), new StateMachine(
                 new State()
                         .onEnter(() -> drivetrain.lockHeading(targetHeadingRadians))
                         .onExit(drivetrain::unlockHeading)

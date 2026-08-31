@@ -5,12 +5,10 @@ import org.firstinspires.ftc.teamcode.lib.fsm.StateMachine;
 import java.util.List;
 
 public class Command {
-    private final Robot robot;
     private final List<Subsystem> requirements;
     private final StateMachine stateMachine;
 
-    public Command(Robot robot, List<Subsystem> requirements, StateMachine stateMachine) {
-        this.robot = robot;
+    public Command(List<Subsystem> requirements, StateMachine stateMachine) {
         this.requirements = requirements;
         this.stateMachine = stateMachine;
     }
