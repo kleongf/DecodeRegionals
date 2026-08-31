@@ -51,11 +51,6 @@ public class MathUtil {
         return val - start <= 0 ? 0 : (val-start) / range;
     }
 
-    public static double normalizeAngle(double angleRadians) {
-        double angle = angleRadians % (Math.PI * 2D);
-        return angle < (double)0.0F ? angle + (Math.PI * 2D) : angle;
-    }
-
     public static boolean epsilonEquals(double val, double expected, double epsilon) {
         return Math.abs(val - expected) <= epsilon;
     }
@@ -99,7 +94,7 @@ public class MathUtil {
     public static Pose rotatePose(Pose pose, double theta, boolean rotateHeading) {
         double x = pose.getX() * Math.cos(theta) - pose.getY() * Math.sin(theta);
         double y = pose.getX() * Math.sin(theta) + pose.getY() * Math.cos(theta);
-        double heading = rotateHeading ? normalizeAngle(pose.getHeading() + theta) : pose.getHeading();
+        double heading = rotateHeading ? angleModulus(pose.getHeading() + theta) : pose.getHeading();
         return new Pose(x, y, heading);
     }
 
