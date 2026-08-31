@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decode2026.opmode.teleop;
+package org.firstinspires.ftc.teamcode.biobuzz.opmode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -7,7 +7,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.decode2026.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.biobuzz.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.lib.Alliance;
 
 @Config
@@ -19,13 +19,13 @@ public class BlueTeleop extends OpMode {
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        // teleop = new MainTeleop(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2);
+        teleop = new MainTeleop(startPose, Alliance.BLUE, hardwareMap, telemetry, gamepad1, gamepad2);
+        teleop.init();
     }
 
     @Override
     public void loop() {
         teleop.periodic();
-        telemetry.update();
     }
 
     @Override
